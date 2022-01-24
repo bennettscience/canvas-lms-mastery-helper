@@ -1,0 +1,15 @@
+{# TODO: Refactor to accept a dict of hx-attributes to apply #} {# TODO:
+Refactor to name inner container? #} {# Several params are passed in to make
+this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
+4. Hidden: bool #}
+<section
+    _="on closeModal remove me"
+    id="{{position}}-sidebar"
+    class="sidebar sidebar--{{ position }} {{'hide' if hide}}"
+>
+    <div id="{{position}}-sidebar-inner">
+        <p _="on click trigger closeModal">close</p>
+        {% for item in items %} {{ render_partial(partial, item=item)}}
+        {%endfor%}
+    </div>
+</section>

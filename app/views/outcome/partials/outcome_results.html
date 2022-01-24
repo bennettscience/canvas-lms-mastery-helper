@@ -1,0 +1,23 @@
+<tr class="details-wrap" _="on closeModal remove me">
+    <td colspan="{{colspan}}">
+        <div class="details">
+            <h3>{{outcome.name}}</h3>
+            <b>Attempts</b>
+            <ul>
+                {% for attempt in scores %}
+                <li>{{attempt.occurred}} - {{attempt.score}}</li>
+                {%endfor%}
+            </ul>
+            <p class="closer" _="on click trigger closeModal">close</p>
+            {#
+            <svg
+                bind:this="{chart}"
+                class="sparkline"
+                width="300"
+                height="90"
+                stroke-width="2"
+            />
+            #}
+        </div>
+    </td>
+</tr>

@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+
+.flaskenv
+config.py
+app.db
+tables.txt
+
+app/client/*
+.vscode/

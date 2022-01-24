@@ -1,0 +1,8 @@
+<div class="item assignment-item">
+    <div class="assignment-item-inner">
+        <p>{{ item.name }}</p>
+        {% if item.watching %}
+        <p>Watching: {{ item.watching.name }}</p>
+        {% endif %}
+    </div>
+</div>

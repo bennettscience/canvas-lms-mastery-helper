@@ -1,0 +1,12 @@
+{%extends 'shared/_layout.html'%} {# Autoload the courses sidebar. This is
+visible by default. #} {% block main_content %}
+<main
+    hx-trigger="load once"
+    hx-target="main"
+    hx-swap="beforeend"
+    hx-get="/courses"
+>
+    <div id="course-details"></div>
+</main>
+
+{% endblock %}

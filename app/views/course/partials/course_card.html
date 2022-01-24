@@ -1,0 +1,11 @@
+<div
+    class="course-item"
+    hx-get="/courses/{{ item.id }}"
+    hx-trigger="click"
+    hx-target="#course-details"
+>
+    <div class="course-item-inner">
+        <p>{{ item.name }}</p>
+        <span>{{item.outcomes|length}}</span>
+    </div>
+</div>

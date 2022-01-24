@@ -1,0 +1,19 @@
+<select
+    id="assignment-id"
+    name="assignment-id"
+    hx-trigger="onSave(assignmentId)"
+    hx-put=`/assignments/${assignmentId}/alignment`
+    hx-ext="json-enc"
+>
+    <option value="">---</option>
+    {% for item in items %}
+    <option value="{{ item.canvas_id }}">{{ item.name }}</option>
+    {% endfor %}
+</select>
+<button
+    _="on click 
+        set assignmentId to the value of #assignment-id
+        send onSave(assignmentId:assignmentId) to the closest parent .outcome"
+>
+    Save
+</button>

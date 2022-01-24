@@ -1,0 +1,29 @@
+{# Render the course title and any outcomes already attached. #} {{
+render_partial( '/shared/partials/sidebar.html', position="right", method="",
+endpoint="", hide=True ) }}
+<h1>{{ course.name }}</h1>
+{% if course.outcomes|length > 0 %}
+<div class="course-header">
+    <h2>Outcomes</h2>
+    <button>+ Outcome</button>
+</div>
+<section class="stored-outcomes">
+    {% for outcome in course.outcomes %}
+    {{render_partial('outcome/partials/outcome_card.html', outcome=outcome,
+    course_id=course.canvas_id)}} {%endfor%}
+</section>
+{% else %} {{render_partial('course/partials/align_outcome.html')}} {% endif %}
+{# Include the roster. #}
+<table>
+    <thead class="headers">
+        <th>Name</th>
+        {% for outcome in course.outcomes %}
+        <th>{{ outcome.name }}</th>
+        {% endfor %}
+    </thead>
+    <tbody class="scroller">
+        {% for student in students %}
+        {{render_partial('course/partials/student_entry.html', student=student,
+        course=course)}} {% endfor %}
+    </tbody>
+</table>
