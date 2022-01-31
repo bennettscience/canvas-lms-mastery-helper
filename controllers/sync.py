@@ -1,5 +1,5 @@
 from typing import List
-from flask import jsonify, abort
+from flask import jsonify, abort, render_template
 from flask.views import MethodView
 
 from app import db
@@ -49,10 +49,28 @@ class SyncOutcomesAPI(MethodView):
         Returns:
             list: Outcomes represented as JSON
         """
-        from canvasapi.outcome import Outcome
+        from app.models import Outcome as Outcome
 
-        outcomes = self.service.get_outcomes(course_id)
-        return jsonify(OutcomeSchema(many=True).dump(outcomes))
+        # We don't want to duplicate Outcomes already stored in the database, so
+        # this filters those out before returning the list. The Outcomes fetched
+        # are specific to the course.
+        fetched_outcomes = self.service.get_outcomes(course_id)
+        stored_outcomes = [outcome.canvas_id for outcome in Outcome.query.all()]
+
+        outcomes = [outcome for outcome in fetched_outcomes if outcome['id'] not in stored_outcomes]
+
+        # Return a list of Outcomes in the right sidebar
+        content = {
+            "items": outcomes,
+            "course_id": course_id,
+            "partial": "outcome/partials/outcome_small.html"
+        }
+        return render_template(
+            'shared/partials/sidebar.html',
+            position="right",
+            **content
+        )
+        # return jsonify(OutcomeSchema(many=True).dump(outcomes))
 
 
 class SyncOutcomeAttemptsAPI(MethodView):
@@ -80,8 +98,26 @@ class SyncAssignmentsAPI(MethodView):
         Returns:
             list: <Assignment>
         """
-        assignments = self.service.get_assignments(course_id)
-        return jsonify(AssignmentSchema(many=True).dump(assignments))
+        from app.models import Assignment
+
+        fetched_assignments = self.service.get_assignments(course_id)
+        stored_assignments = [assignment.canvas_id for assignment in Assignment.query.all()]
+
+        print(stored_assignments)
+
+        assignments = [assignment for assignment in fetched_assignments if assignment.id not in stored_assignments]
+
+        content = {
+            "items": assignments,
+            "course_id": course_id,
+            "partial": "assignment/partials/assignment_small.html"
+        }
+        return render_template(
+            'shared/partials/sidebar.html',
+            position="right",
+            **content
+        )
+        # return jsonify(AssignmentSchema(many=True).dump(assignments))
 
 
 # class SyncAssignmentAPI(MethodView):
