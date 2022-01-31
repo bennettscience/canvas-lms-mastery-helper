@@ -8,8 +8,14 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
     class="sidebar sidebar--{{ position }} {{'hide' if hide}}"
 >
     <div id="{{position}}-sidebar-inner">
-        <p _="on click trigger closeModal">close</p>
-        {% for item in items %} {{ render_partial(partial, item=item)}}
-        {%endfor%}
+        {%if position == 'right' %}
+        <button class="btn-close" _="on click trigger closeModal">
+            × close
+        </button>
+        {% endif %} {% for item in items %} {{ render_partial(partial,
+        item=item,course_id=course_id, partial=partial)}} {%endfor%} {% if
+        position == 'left' %}
+        <button class="course-item btn-new-course">Add new course</button>
+        {% endif %}
     </div>
 </section>
