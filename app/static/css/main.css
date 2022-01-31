@@ -14,6 +14,10 @@ body {
         Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 }
 
+hr {
+    border-style: solid;
+}
+
 a {
     color: rgb(0, 100, 200);
     text-decoration: none;
@@ -73,6 +77,7 @@ main {
     /* max-width: 240px; */
     margin: 0 auto;
     margin-left: 356px;
+    font-family: inherit;
 }
 
 .sidebar {
@@ -101,8 +106,32 @@ main {
     border-left: 1px solid black;
 }
 
+.btn-close {
+    background-color: transparent;
+    border: none;
+}
+
+.btn-close:hover {
+    cursor: pointer;
+}
+
 .hide {
     display: none;
+}
+
+.small-assignment,
+.small-outcome {
+    box-sizing: border-box;
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.small-assignment:hover,
+.small-outcome:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .course-item,
@@ -128,6 +157,10 @@ main {
     border: 1px solid black;
     border-radius: 3px;
     box-sizing: border-box;
+}
+.btn-new-course {
+    margin-top: 25px;
+    font-weight: bold;
 }
 .active {
     border-color: blue;
@@ -162,6 +195,27 @@ main {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
+.item.attempt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item.attempt > p {
+    margin: 0.75rem;
+}
+
+.item.attempt > .score {
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.item.attempt:hover {
+    background-color: inherit;
+    cursor: default;
+}
+
 .course-header {
     display: flex;
     justify-content: space-between;
@@ -180,14 +234,24 @@ main {
 }
 
 nav {
+    box-sizing: border-box;
     position: sticky;
     top: 0;
     height: 55px;
-    background-color: lightblue;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-bottom: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.25);
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: right;
     z-index: 1;
+    padding-right: 25px;
+}
+
+.nav-item {
+    display: block;
+    padding: 0 5px;
 }
 
 table {
@@ -226,19 +290,37 @@ td:not(:first-child):hover {
     display: grid;
     grid-template-rows: 1fr 80%;
     grid-template-columns: 1fr 1fr;
-    grid-template-areas: 'title .' 'attempts chart';
+    grid-template-areas: 'title action' 'attempts chart';
+    margin-bottom: 10px;
 }
 .details h3 {
     grid-area: title;
 }
-ul,
-b {
-    grid-area: attempts;
+.details > .closer {
+    grid-area: action;
 }
-svg {
+.details > .attempts {
+    grid-area: attempts;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+.details > .attempts > b {
+    width: 100%;
+}
+
+.details > svg {
     grid-area: chart;
 }
 .sparkline {
     stroke: #000;
-    fill: #dfdfdf;
+    fill: rgba(0, 0, 0, 0.15);
+}
+
+.selected {
+    background-color: lightgreen;
 }

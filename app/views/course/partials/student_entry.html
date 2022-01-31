@@ -6,6 +6,10 @@
         hx-swap="afterend"
         hx-target="closest tr"
         hx-trigger="click"
+        _="
+            on click toggle .selected on me
+            add me to $currentSelected
+            "
     >
         {{outcome.score}}
     </td>

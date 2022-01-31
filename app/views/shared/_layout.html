@@ -11,12 +11,11 @@
     </head>
     <body>
         <nav>
-            <ul>
-                <li>Home</li>
-            </ul>
+            <a href="/" class="nav-item">Home</a>
         </nav>
         {% block main_content %} {%endblock%}
 
+        <script type="module" src="static/js/main.js"></script>
         <script src="https://unpkg.com/htmx.org@1.6.1"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.4"></script>
         {% block additional_js %} {% endblock %}

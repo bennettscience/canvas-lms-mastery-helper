@@ -1,23 +1,34 @@
-<tr class="details-wrap" _="on closeModal remove me">
+<tr
+    class="details-wrap"
+    _="
+        on closeModal
+            remove .selected from $currentSelection
+            remove me 
+        end
+        init call sparkline(document.querySelector('.sparkline'), {{ scores_only }}) end
+    "
+>
     <td colspan="{{colspan}}">
         <div class="details">
             <h3>{{outcome.name}}</h3>
-            <b>Attempts</b>
-            <ul>
+            <div class="attempts">
                 {% for attempt in scores %}
-                <li>{{attempt.occurred}} - {{attempt.score}}</li>
+                <span class="item attempt">
+                    <p
+                        _="init call formatDate('dateOnly', '{{attempt.occurred}}') 
+                            then set my innerHTML to it"
+                    ></p>
+                    <p class="score">{{ attempt.score }}</p>
+                </span>
                 {%endfor%}
-            </ul>
+            </div>
             <p class="closer" _="on click trigger closeModal">close</p>
-            {#
             <svg
-                bind:this="{chart}"
                 class="sparkline"
                 width="300"
                 height="90"
                 stroke-width="2"
-            />
-            #}
+            ></svg>
         </div>
     </td>
 </tr>

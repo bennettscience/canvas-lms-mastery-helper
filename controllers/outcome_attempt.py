@@ -55,7 +55,9 @@ class UserOutcomeAttemptAPI(MethodView):
         course = Course.query.filter(Course.canvas_id == course_id).first()
         user = course.enrollments.filter(User.canvas_id == user_id).first()
         outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
+        
         scores = user.assessments.filter(OutcomeAttempt.outcome_canvas_id == outcome_id).all()
+        scores_only = [score.score for score in scores]
         
         # return jsonify({
         #     "user": user.name,
@@ -68,5 +70,6 @@ class UserOutcomeAttemptAPI(MethodView):
             student=user.name,
             outcome=OutcomeSchema().dump(outcome),
             scores=OutcomeAttemptSchema(many=True).dump(scores),
-            colspan=len(course.outcomes.all())
+            scores_only=scores_only,
+            colspan=len(course.outcomes.all())+1
             )
