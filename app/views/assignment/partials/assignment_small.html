@@ -1,0 +1,20 @@
+<div
+    class="assignment small-assignment"
+    _='on click
+        set obj to {
+            "canvas_id": {{item.id}},
+            "course_id": {{course_id}},
+            "name": "{{item.name}}"
+        }
+        log obj
+        fetch `/assignments`
+            with 
+                method:"POST", 
+                body: obj as JSON,
+                headers: {"Content-Type": "application/json"}
+        then 
+            remove me'
+    hx-oob-swap=".stored-outcomes"
+>
+    <p>{{item.name}}</p>
+</div>
