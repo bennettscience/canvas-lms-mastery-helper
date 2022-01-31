@@ -106,8 +106,9 @@ class CourseAssignmentsAPI(MethodView):
 
         course = Course.query.filter(Course.canvas_id == course_id).first()
         return render_template(
-            'assignments/partials/assignment_select.html',
-            items=AssignmentSchema(many=True).dump(course.assignments)
+            'assignment/partials/assignment_select.html',
+            items=AssignmentSchema(many=True).dump(course.assignments),
+            course_id=course_id
         )
         # return render_template(
         #     'shared/partials/sidebar.html',

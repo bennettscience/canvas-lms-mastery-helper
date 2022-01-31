@@ -3,9 +3,13 @@
     hx-get="/courses/{{ item.id }}"
     hx-trigger="click"
     hx-target="#course-details"
+    hx-swap="innerHTML"
 >
     <div class="course-item-inner">
         <p>{{ item.name }}</p>
-        <span>{{item.outcomes|length}}</span>
+        <span
+            title="{{item.outcomes|length}} alignment{%if item.outcomes|length == 0 or item.outcomes|length > 1%}s{%endif%}"
+            >{{item.outcomes|length}}</span
+        >
     </div>
 </div>
