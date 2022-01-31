@@ -2,17 +2,33 @@
 render_partial( '/shared/partials/sidebar.html', position="right", method="",
 endpoint="", hide=True ) }}
 <h1>{{ course.name }}</h1>
-{% if course.outcomes|length > 0 %}
 <div class="course-header">
     <h2>Outcomes</h2>
-    <button>+ Outcome</button>
+    {% if course.outcomes|length == 0 %}
+    <p>No outcomes imported. Use the + Outcome button to get started.</p>
+    {% endif %}
+    <div class="actions">
+        <button
+            hx-get="/sync/outcomes/{{course.canvas_id}}"
+            hx-target="main"
+            hx-swap="beforeend"
+        >
+            + Outcome
+        </button>
+        <button
+            hx-get="/sync/assignments/{{course.canvas_id}}"
+            hx-target="main"
+            hx-swap="beforeend"
+        >
+            + Assignment
+        </button>
+    </div>
 </div>
 <section class="stored-outcomes">
     {% for outcome in course.outcomes %}
-    {{render_partial('outcome/partials/outcome_card.html', outcome=outcome,
+    {{render_partial('outcome/partials/outcome_card.html', item=outcome,
     course_id=course.canvas_id)}} {%endfor%}
 </section>
-{% else %} {{render_partial('course/partials/align_outcome.html')}} {% endif %}
 {# Include the roster. #}
 <table>
     <thead class="headers">
