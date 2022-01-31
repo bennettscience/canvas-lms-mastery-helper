@@ -1,18 +1,22 @@
 <div
     class="item outcome"
-    _='on onSave(assignmentId)
-        set obj to {"outcome_canvas_id": {{outcome.canvas_id}} }
-        log obj
-        fetch `assignments/${assignmentId}/alignment`
-            with 
-                method:"PUT", 
-                body: obj as JSON,
-                headers: {"Content-Type": "application/json"}
-        then 
-            set my outerHTML to result
+    _='on 
+        onSave(assignmentId)
+            set obj to {"outcome_canvas_id": {{item.canvas_id}} }
+            log obj
+            fetch `assignments/${assignmentId}/alignment`
+                with 
+                    method:"PUT", 
+                    body: obj as JSON,
+                    headers: {"Content-Type": "application/json"}
+            then 
+                set my outerHTML to result
+        on
+            onCancel fetch `outcomes/{{ item.canvas_id }}`
+            then set my outerHTML to result
         '
 >
-    <h3>{{outcome.name}}</h3>
+    <h3>{{item.name}}</h3>
     <div
         id="watching"
         hx-trigger="click"
@@ -20,10 +24,10 @@
         hx-target="this"
         hx-swap="outerHTML"
     >
-        {% if not outcome.alignment %}
+        {% if not item.alignment %}
         <button>Set up alignment</button>
         {% else %}
-        <p>Watching {{ outcome.alignment.name }}</p>
+        <p>Watching {{ item.alignment.name }}</p>
         {% endif %}
     </div>
 </div>

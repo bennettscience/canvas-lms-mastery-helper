@@ -1,4 +1,4 @@
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, render_template
 from flask.views import MethodView
 from webargs import fields
 from webargs.flaskparser import parser
@@ -56,8 +56,9 @@ class OutcomeListAPI(MethodView):
                 return jsonify({"messages": "Cannot import an outcome which isn't assessed in this course. Add the Outcome to your canvas course and try again."}), 422
         else:
             abort(409)
-
-        return result
+        
+        outcomes = Outcome.query.all()
+        return jsonify(OutcomeListSchema(many=True).dump(outcomes))
             
 
 class OutcomeAPI(MethodView):
@@ -70,8 +71,13 @@ class OutcomeAPI(MethodView):
         Returns:
             Outcome: <Outcome> instance
         """
-        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id)
+        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
         if not outcome:
             abort(404)
         
-        return jsonify(OutcomeSchema().dump(outcome))
+        return render_template(
+            "outcome/partials/outcome_card.html",
+            item=outcome,
+            course_id=outcome.course[0].canvas_id
+        )
+            # jsonify(OutcomeSchema().dump(outcome))
