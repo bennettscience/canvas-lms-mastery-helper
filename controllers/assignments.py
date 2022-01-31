@@ -41,10 +41,11 @@ class AssignmentListAPI(MethodView):
         from app.models import Course
         args = parser.parse(CreateAssignmentSchema(), location="json")
         exists = Assignment.query.filter(Assignment.canvas_id == args['canvas_id']).scalar()
-        
+
         if not exists:
             assignment = Assignment(name=args['name'], canvas_id=args['canvas_id'])
-            assignment.course.append(Course.query.get(args['course_id']))
+            course = Course.query.filter(Course.canvas_id == args['course_id']).first()
+            assignment.course.append(course)
             db.session.add(assignment)
             db.session.commit()
 
@@ -53,12 +54,13 @@ class AssignmentListAPI(MethodView):
             abort(409, 'Assignment already exists. Please select a different assignment.')
         
         # Return a sidebar of all of the assignments.
-        return render_template(
-            'shared/partials/sidebar.html', 
-            position="right",
-            method="get",
-            endpoint="/courses/{}/assignments".format(args['course_id']),
-            )
+        return result
+        # return render_template(
+        #     'shared/partials/sidebar.html', 
+        #     position="right",
+        #     method="get",
+        #     endpoint="/courses/{}/assignments".format(args['course_id']),
+        #     )
 
 
 class AssignmentAPI(MethodView):
@@ -128,7 +130,7 @@ class AlignmentAPI(MethodView):
         # Return an Assignment object as an Assignment Card
         return render_template(
             'outcome/partials/outcome_card.html',
-            outcome=OutcomeSchema().dump(outcome),
+            item=OutcomeSchema().dump(outcome),
             course_id=course_id
         )
 
