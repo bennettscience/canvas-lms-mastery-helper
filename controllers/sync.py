@@ -21,19 +21,31 @@ class SyncCoursesAPI(MethodView):
         Returns:
             list: Canvas courses as JSON
         """
-        courses = self.service.get_courses("TeacherEnrollment", "available")
-        
-        length = len(list(courses))
-        return jsonify(
-            {
-                "results": length, 
-                "query_params": {
-                    "enrollment_type": "TeacherEnrollment", 
-                    "state": "available"
-                }, 
-            "courses": CourseSchema(many=True).dump(courses)
-            }
+        from app.models import Course
+        fetched_courses = self.service.get_courses("TeacherEnrollment", "available")
+        stored_courses = [course.canvas_id for course in Course.query.all()]
+
+        courses = [{"name": course.name, "id": course.id} for course in fetched_courses if course.id not in stored_courses]
+
+        content = {
+            "items": CourseSchema(many=True).dump(courses),
+            "partial": 'course/partials/course_small.html' 
+        }
+        return render_template(
+            'shared/partials/sidebar.html',
+            position="right",
+            **content
         )
+        # return jsonify(
+        #     {
+        #         "results": length, 
+        #         "query_params": {
+        #             "enrollment_type": "TeacherEnrollment", 
+        #             "state": "available"
+        #         }, 
+        #     "courses": CourseSchema(many=True).dump(courses)
+        #     }
+        # )
 
 
 class SyncOutcomesAPI(MethodView):

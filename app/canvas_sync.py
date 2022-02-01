@@ -5,6 +5,7 @@ from typing import List
 from app import db
 from config import Config
 from app.models import Assignment, Course, Outcome, User
+from app.errors import deprecation
 
 
 
@@ -23,7 +24,8 @@ class CanvasSyncService:
     """
 
     # TODO: Set current user param on Sync object to cut down on passing IDs around
-    def __init__(self):
+    # TODO: Initialize Canvas API tokens with the Auth module
+    def __init__(self: None) -> None:
         self.canvas = Canvas(Config.CANVAS_URI, Config.CANVAS_KEY)
 
     def get_courses(self: None, enrollment_type: str='TeacherEnrollment', state: str='active') -> List[Course]:
@@ -39,7 +41,8 @@ class CanvasSyncService:
         return self.canvas.get_courses(enrollment_role=enrollment_type, state=state)
     
     def get_course(self: None, course_id: int) -> Course:
-        """ Fetch a single course from Canvas.
+        """ Fetch a single course from Canvas. Most resources are course-bound, so this provides
+        a nice way to scope requests automatically.
 
         Args:
             course_id (int): Canvas course ID
@@ -47,32 +50,38 @@ class CanvasSyncService:
         Returns:
             Course: instance of <Course>
         """
+        deprecation('This is a warning.')
         return self.canvas.get_course(course_id)
     
-    def get_outcomes(self, course_id: int) -> List["Outcome"]:
-        """ Get Outcomes from Canvas, but don't store in the database
+    def get_outcomes(self: None, course_id: int) -> List["Outcome"]:
+        """ Fetch Outcomes available in a given Canvas course.
 
-        This fetches outcomes from Canvas. All storage will go into the POST route
-        from the frontend.
+        This fetches outcomes from Canvas but does not write results to the database. 
+        Available outcomes are displayed to the user and an interaction is requred before storing them locally. 
+        
+        All storage will go into the POST route from the frontend.
 
         Args:
             endpoint (str): which resource to get
 
         Returns:
-            list: list of dict(Outcome)
+            list: list of dict
         """
-        from canvasapi.outcome import Outcome
-
+        deprecation("This will be removed in a future version. Use `SyncOutcomesAPI.get()` instead.")
         request = self.canvas.get_course(course_id).get_all_outcome_links_in_context()
-        # Instantiate each Outcome as a canvas object to maintain methods
+        
+        # We don't need full Outcome objects to do the work, so pare the results down into
+        # smaller dicts.
         outcomes = [
             {"name": item.outcome['title'], "id": item.outcome['id']} for item in request
             ]
+
         return outcomes
 
     def get_outcome(self: None, outcome_id: int) -> None:
         """ 
-        Retrieve a single Outcome from Canvas. This does not include results. For
+        
+        Store a single Outcome from Canvas. This does not include results. For
         Outcomes with results, use `Sync().get_outcome_results()`.
 
         Args:
@@ -82,6 +91,8 @@ class CanvasSyncService:
         Returns:
             Outcome: <Outcome>
         """
+        deprecation("This method will be removed in a future version. Use `SyncOutcomesAPI.get()` instead")
+        # Check that the Outcome does not exist locally. 
         outcome_exists = Outcome.query.filter(Outcome.canvas_id == outcome_id).scalar()
         if outcome_exists is None:
             outcome = self.canvas.get_outcome(outcome_id)

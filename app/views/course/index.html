@@ -1,6 +1,6 @@
-{# Render the course title and any outcomes already attached. #} {{
-render_partial( '/shared/partials/sidebar.html', position="right", method="",
-endpoint="", hide=True ) }}
+{# Render the course title and any outcomes already attached. {{ render_partial(
+'/shared/partials/sidebar.html', position="right", method="", endpoint="",
+hide=True ) }} #}
 <h1>{{ course.name }}</h1>
 <div class="course-header">
     <h2>Outcomes</h2>

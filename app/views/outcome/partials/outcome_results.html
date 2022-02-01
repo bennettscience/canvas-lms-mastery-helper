@@ -2,7 +2,6 @@
     class="details-wrap"
     _="
         on closeModal
-            remove .selected from $currentSelection
             remove me 
         end
         init call sparkline(document.querySelector('.sparkline'), {{ scores_only }}) end

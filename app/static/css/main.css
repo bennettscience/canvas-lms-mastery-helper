@@ -120,6 +120,7 @@ main {
 }
 
 .small-assignment,
+.small-course,
 .small-outcome {
     box-sizing: border-box;
     border: 1px solid black;
@@ -129,6 +130,7 @@ main {
 }
 
 .small-assignment:hover,
+.small-course:hover,
 .small-outcome:hover {
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.05);

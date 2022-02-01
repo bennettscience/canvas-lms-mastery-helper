@@ -18,6 +18,7 @@ class CourseListAPI(MethodView):
         """
         courses = Course.query.all()
 
+        print('Returning a sidebar')
         return render_template(
             'shared/partials/sidebar.html',
             position='left',

@@ -1,6 +1,10 @@
 import json
+from warnings import warn
 
 from app import app
+
+def deprecation(message: str) -> str:
+    warn(message, DeprecationWarning, stacklevel=2)
 
 class AlignmentExistsException(Exception):
     def __init__(self, description):

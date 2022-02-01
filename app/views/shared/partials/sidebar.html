@@ -15,7 +15,13 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
         {% endif %} {% for item in items %} {{ render_partial(partial,
         item=item,course_id=course_id, partial=partial)}} {%endfor%} {% if
         position == 'left' %}
-        <button class="course-item btn-new-course">Add new course</button>
+        <button
+            class="course-item btn-new-course"
+            hx-get="/sync/courses"
+            hx-trigger="click"
+        >
+            Add new course
+        </button>
         {% endif %}
     </div>
 </section>
