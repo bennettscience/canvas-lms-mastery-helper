@@ -19,6 +19,8 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
             class="course-item btn-new-course"
             hx-get="/sync/courses"
             hx-trigger="click"
+            hx-target="main"
+            hx-swap="beforeend"
         >
             Add new course
         </button>

@@ -16,7 +16,7 @@ class CourseListAPI(MethodView):
         Returns:
             List[Course]: List of <Course>
         """
-        courses = Course.query.all()
+        courses = current_user.enrollments.all()
 
         print('Returning a sidebar')
         return render_template(
@@ -37,7 +37,6 @@ class CourseListAPI(MethodView):
         args = parser.parse(CourseSchema(), location="json")
         exists = Course.query.filter(Course.canvas_id == args['canvas_id']).scalar()
         
-        # TODO: Get all students and outcome results for the course.
         if not exists:
             course = Manager().create(Course, args)
             current_user.enroll(course)
@@ -46,11 +45,14 @@ class CourseListAPI(MethodView):
 
             # Store all students as new users and enroll in the course.
             service.get_enrollments(course.canvas_id)
-            result = jsonify(CourseSchema().dump(course))
+            # courses = current_user.enrollments.all()
         else:
             abort(409)
         
-        return result
+        return render_template(
+            'course/partials/course_card.html',
+            item=CourseSchema().dump(course)
+        )
 
 
 
