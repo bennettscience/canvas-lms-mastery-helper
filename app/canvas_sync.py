@@ -255,7 +255,7 @@ class CanvasSyncService:
             List[User]: List of Users to append to the course.
         """
         users = []
-        new_users = []
+
         canvas_course = self.canvas.get_course(course_id)
         enrollments = canvas_course.get_enrollments(
             type='StudentEnrollment',
@@ -266,7 +266,7 @@ class CanvasSyncService:
         # with the course. Right now, this saves multiple database commits after each
         # record is created. It might not be making any performance difference.
         for enrollment in enrollments:
-            user_exists = User.query.filter(User.canvas_id == enrollment.user_id).scalar()
+            user_exists = User.query.filter(User.canvas_id == enrollment.user_id).first()
             if not user_exists:
                 user = User(
                     canvas_id=enrollment.user_id, 
@@ -274,13 +274,12 @@ class CanvasSyncService:
                     usertype_id=2,
                     email=None
                 )
-                new_users.append(user)
+                db.session.add(user)
+                db.session.commit()
+
                 users.append(user)
             else:
                 users.append(user_exists)
-
-        if len(new_users) > 0:
-            db.session.add_all(users)
 
         course = Course.query.filter(Course.canvas_id == course_id).first()
         course.enrollments.extend(users)
