@@ -20,12 +20,12 @@ from app.schemas import UserLoginSchema
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     # Fake a login for the time being
-    user = User.query.get(7)
+    user = User.query.get(1)
     # If a user isn't a teacher, prevent the login for now
-    if user.usertype_id is not 1:
+    if user.usertype_id != 1:
         abort(403)
     else:
-        login_user(User.query.get(7))
+        login_user(User.query.get(1))
         return render_template('home/partials/user_ready.html')
     # return redirect(url_for('home_bp.index'))
     # args = parser.parse(UserLoginSchema(), location='json')

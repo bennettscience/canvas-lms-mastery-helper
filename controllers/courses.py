@@ -16,7 +16,7 @@ class CourseListAPI(MethodView):
         Returns:
             List[Course]: List of <Course>
         """
-        courses = Course.query.all()
+        courses = current_user.enrollments.all()
 
         print('Returning a sidebar')
         return render_template(
