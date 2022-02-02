@@ -52,7 +52,7 @@ def page_not_found(err):
 @app.errorhandler(409)
 def request_conflict(err):
     response = err.get_response()
-    response.data = json.dumps(
+    response.errors = json.dumps(
         {
             "code": err.code,
             "name": err.name,
@@ -75,6 +75,7 @@ def handle_error(err):
             "messages": messages['json']
         }
     )
+
     response.content_type = "application/json"
     return response
 

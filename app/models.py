@@ -143,7 +143,7 @@ class Assignment(db.Model):
             self.watching = outcome
             db.session.commit()
         else:
-            raise AlignmentExistsException(f"{self.name} is aleady aligned to {outcome.name}.")
+            raise AlignmentExistsException(f"Assignment {self.name} is aleady aligned to Outcome {outcome.name}.")
         
     def unwatch(self):
         self.watching = None

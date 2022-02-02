@@ -59,6 +59,10 @@ textarea {
     border-radius: 2px;
 }
 
+select {
+    width: 100%;
+}
+
 input:disabled {
     color: #ccc;
 }
@@ -130,6 +134,7 @@ main {
     padding: 0.75rem 0.5rem;
     cursor: pointer;
     background-color: var(--neutral-color);
+    margin-right: 25px;
 }
 
 .btn:hover {
@@ -145,6 +150,10 @@ main {
 
 .btn-secondary {
     background-color: var(--neutral-gray);
+}
+
+.btn-warn {
+    background-color: var(--warn-color);
 }
 
 .btn-close {
@@ -221,11 +230,11 @@ main {
 }
 
 .item {
+    box-sizing: border-box;
     padding: 10px 25px;
     border: 1px solid var(--neutral-dark);
-    /* width: 20%; */
-    /* height: 150px; */
     border-radius: 5px;
+    /* transition: all 250ms ease-in; */
 }
 .item:hover {
     cursor: pointer;
@@ -251,6 +260,11 @@ main {
 .item.attempt:hover {
     background-color: inherit;
     cursor: default;
+}
+
+.item.outcome {
+    width: 250px;
+    height: 250px;
 }
 
 .course-header {
@@ -382,4 +396,10 @@ td:not(:first-child):hover {
 #toast.htmx-request.htmx-indicator {
     bottom: 1.5rem;
     opacity: 1;
+}
+
+#toast.htmx-request.htmx-indicator.error {
+    background-color: var(--warn-color);
+    border-color: transparent;
+    width: auto;
 }

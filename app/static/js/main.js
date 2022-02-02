@@ -21,8 +21,23 @@ function formatDate(target, strDate) {
     return new Intl.DateTimeFormat('en', formats[target]).format(date)
 }
 
-// Listen for new elements in lists and inititalize HTMX on them
-htmx.onLoad((detail) => console.log(detail))
+// Handle errors from the server
+document.addEventListener('htmx:responseError', (evt) => {
+    let toast = document.querySelector(`#toast`)
+    toast.innerHTML = evt.detail.xhr.responseText;
+    toast.classList.add('htmx-request', 'error');
+    setTimeout(() => {
+        toast.classList.remove('htmx-request', 'error')
+        toast.innerHTML = "";
+    }, 7000
+})
+
+document.addEventListener('error', (evt) => { console.log(evt)})
+
+// For debugging requests
+// document.addEventListener('htmx:beforeSend', function(evt) {
+//     console.log(evt.detail)
+// })
 
 // Hyperscript can only access global function names. Because this
 // is in a module, it has to be assigned explicitely to the 
