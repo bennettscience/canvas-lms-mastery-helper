@@ -29,7 +29,7 @@ document.addEventListener('htmx:responseError', (evt) => {
     setTimeout(() => {
         toast.classList.remove('htmx-request', 'error')
         toast.innerHTML = "";
-    }, 7000
+    }, 7000)
 })
 
 document.addEventListener('error', (evt) => { console.log(evt)})

@@ -169,31 +169,6 @@ main {
     right: -356px;
 }
 
-.small-assignment,
-.small-course,
-.small-outcome {
-    box-sizing: border-box;
-    border: 1px solid black;
-    border-radius: 3px;
-    padding: 5px;
-    margin: 5px;
-}
-
-.small-assignment:hover,
-.small-course:hover,
-.small-outcome:hover {
-    cursor: pointer;
-}
-
-.course-item,
-.assignment-item {
-    display: block;
-    height: auto;
-    margin: 10px 0;
-    padding: 15px 25px;
-    border-radius: 3px;
-    box-sizing: border-box;
-}
 .course-item-inner {
     display: flex;
     flex-direction: row;
@@ -234,11 +209,20 @@ main {
     padding: 10px 25px;
     border: 1px solid var(--neutral-dark);
     border-radius: 5px;
-    /* transition: all 250ms ease-in; */
+    margin: 10px 0;
 }
+
 .item:hover {
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.05);
+}
+
+.item--small {
+    box-sizing: border-box;
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 5px;
 }
 
 .item.attempt {
@@ -262,7 +246,7 @@ main {
     cursor: default;
 }
 
-.item.outcome {
+.outcome {
     width: 250px;
     height: 250px;
 }
