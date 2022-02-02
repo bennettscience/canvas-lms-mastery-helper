@@ -1,29 +1,12 @@
 <div
+    id="watching"
+    hx-get="courses/{{course_id}}/outcomes/{{item.canvas_id}}/edit"
+    hx-target="this"
+    hx-swap="outerHTML"
     class="item outcome"
-    _='on 
-        onSave(assignmentId)
-            set obj to {"outcome_canvas_id": {{item.canvas_id}} }
-            log obj
-            fetch `assignments/${assignmentId}/alignment`
-                with 
-                    method:"PUT", 
-                    body: obj as JSON,
-                    headers: {"Content-Type": "application/json"}
-            then 
-                set my outerHTML to result
-        on
-            onCancel fetch `outcomes/{{ item.canvas_id }}`
-            then set my outerHTML to result
-        '
 >
     <h3>{{item.name}}</h3>
-    <div
-        id="watching"
-        hx-trigger="click"
-        hx-get="courses/{{course_id}}/assignments"
-        hx-target="this"
-        hx-swap="outerHTML"
-    >
+    <div>
         {% if not item.alignment %}
         <button>Set up alignment</button>
         {% else %}

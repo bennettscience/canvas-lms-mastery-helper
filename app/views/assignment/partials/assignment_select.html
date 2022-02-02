@@ -11,14 +11,14 @@
     {% endfor %}
 </select>
 <button
-    _="on click 
+    type="submit"
+    {# _="on click 
         set assignmentId to the value of #assignment-id
-        send onSave(assignmentId:assignmentId) to the closest parent .outcome"
+        send onSave(assignmentId:assignmentId) to the closest parent .outcome" #}
 >
     Save
 </button>
 {# Handle cancel request on parent to reload the entire element with outcome context. #}
 <button
-    _="on click
-        send onCancel"
+    hx-get=""
 >Cancel</button>
