@@ -94,6 +94,15 @@ main {
     font-family: inherit;
 }
 
+.warn {
+    color: var(--warn-color);
+}
+
+.warn:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .sidebar {
     display: block;
     height: 100%;
@@ -248,7 +257,12 @@ main {
 
 .outcome {
     width: 250px;
-    height: 250px;
+}
+.outcome--header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .course-header {

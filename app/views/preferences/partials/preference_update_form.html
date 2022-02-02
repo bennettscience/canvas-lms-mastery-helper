@@ -8,7 +8,7 @@
         {% for item in opts %}
         <option 
             value="{{item}}" 
-            {%if item==user.preferences.score_calculation_method %} 
+            {%if item == user.preferences.score_calculation_method.name %} 
                 selected="selected" 
             {%endif%}
         >{{item}}</option>

@@ -1,5 +1,16 @@
 <div id="#watching" class="item outcome" hx-target="this" hx-swap="outerHTML">
-    <h3>{{outcome.name}}</h3>
+    <div class="outcome--header">
+        <h3>{{outcome.name}}</h3>
+        {% if outcome.alignment %}
+        <p 
+            class="warn"
+            hx-trigger="click"
+            hx-delete="courses/{{course_id}}/outcomes/{{outcome.canvas_id}}/edit"
+        >
+            Remove alignment
+        </p>
+        {% endif %}
+    </div>
     <form
         hx-put="courses/{{course_id}}/outcomes/{{outcome.canvas_id}}/edit"
         hx-trigger="submit"
@@ -10,7 +21,9 @@
         <select id="assignment-id" name="assignment_id">
             <option value="">---</option>
             {% for assignment in assignments %}
-            <option value="{{ assignment.canvas_id }}">
+            <option value="{{ assignment.canvas_id }}"
+                {% if outcome.alignment.canvas_id == assignment.canvas_id %} selected="selected" {% endif %}
+            >
                 {{ assignment.name }}
             </option>
             {% endfor %}
@@ -22,12 +35,5 @@
     <button class="btn btn-secondary" hx-get="/outcomes/{{outcome.canvas_id}}">
         Cancel
     </button>
-    {#
-    <button
-        hx-delete="courses/{{course_id}}/outcomes/{{outcome.canvas_id}}/edit"
-        class="btn btn-warn"
-    >
-        Remove alignment
-    </button>
-    #}
+
 </div>

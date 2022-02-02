@@ -28,7 +28,8 @@ document.addEventListener('htmx:responseError', (evt) => {
     toast.classList.add('htmx-request', 'error');
     setTimeout(() => {
         toast.classList.remove('htmx-request', 'error')
-        toast.innerHTML = "";
+        // Default back to the loading dialog. It's hacky, but it works.
+        toast.innerHTML = "Loading";
     }, 7000)
 })
 
