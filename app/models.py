@@ -184,7 +184,7 @@ class UserAssignment(db.Model):
     occurred = db.Column(db.DateTime)
 
 
-class UserPreferences(db.Model):
+class UserPreferences(Manager, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE"))
     score_calculation_method = db.Column(db.Enum(MasteryCalculation))

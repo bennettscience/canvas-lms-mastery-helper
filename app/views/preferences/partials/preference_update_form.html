@@ -1,0 +1,23 @@
+<form 
+    hx-trigger="submit"
+    hx-target="this" 
+    hx-swap="outerHTML"
+    hx-put="/users/{{user.id}}/edit"
+    >
+    <select name="score_calculation_method" id="score-calculation-method">
+        {% for item in opts %}
+        <option 
+            value="{{item}}" 
+            {%if item==user.preferences.score_calculation_method %} 
+                selected="selected" 
+            {%endif%}
+        >{{item}}</option>
+        {%endfor%}
+    </select>
+    <span id="description"><span>
+    <label>Mastery Score
+    <input name="mastery_score" value="{{user.preferences.mastery_score}}" type="number" />
+</form>
+    <button class="btn btn-primary" type="submit">Submit</button>
+<button
+    hx-get="/users/{{user.id}}" class="btn btn-secondary">Cancel</button>

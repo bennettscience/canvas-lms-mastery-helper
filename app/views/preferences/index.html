@@ -1,0 +1,4 @@
+{% extends 'shared/_layout.html'%} {% block main_content %}
+<p>You can change your mastery score and calculation method on this page.</p>
+{{ render_partial('preferences/partials/user_prefs.html', user=user)}} {%
+endblock %}
