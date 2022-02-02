@@ -3,20 +3,17 @@ Refactor to name inner container? #} {# Several params are passed in to make
 this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
 4. Hidden: bool #}
 <section
-    _="on closeModal remove me"
+    _="on closeModal
+        add .hide to me
+        then wait 1s
+        then remove me"
     id="{{position}}-sidebar"
     class="sidebar sidebar--{{ position }} {{'hide' if hide}}"
 >
     <div id="{{position}}-sidebar-inner">
-        {%if position == 'right' %}
-        <button class="btn-close" _="on click trigger closeModal">
-            × close
-        </button>
-        {% endif %} {% for item in items %} {{ render_partial(partial,
-        item=item,course_id=course_id, partial=partial)}} {%endfor%} {% if
-        position == 'left' %}
+        {% if position == 'left' %}
         <button
-            class="course-item btn-new-course"
+            class="btn btn-primary"
             hx-get="/sync/courses"
             hx-trigger="click"
             hx-target="main"
@@ -24,6 +21,11 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
         >
             Add new course
         </button>
-        {% endif %}
+        {% endif %} {%if position == 'right' %}
+        <button class="btn-close" _="on click trigger closeModal">
+            × close
+        </button>
+        {% endif %} {% for item in items %} {{ render_partial(partial,
+        item=item,course_id=course_id, partial=partial)}} {%endfor%}
     </div>
 </section>

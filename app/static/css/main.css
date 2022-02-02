@@ -1,3 +1,13 @@
+:root {
+    --black: #333;
+    --primary-color: #4270e1;
+    --neutral-gray: #e6f4f1;
+    --neutral-dark: #444655;
+    --warn-color: #d34600;
+    --success-color: #00915b;
+    --white: #f8f8ff;
+}
+
 html,
 body {
     position: relative;
@@ -6,11 +16,11 @@ body {
 }
 
 body {
-    color: #333;
+    color: var(--black);
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    font-family: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
         Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 }
 
@@ -96,14 +106,45 @@ main {
     z-index: 10;
 }
 
+.sidebar-inner {
+    padding: 0 0.75rem;
+    box-sizing: border-box;
+}
+
 .sidebar--left {
     left: 0;
-    border-right: 1px solid black;
+    border-right: 1px solid var(--neutral-gray);
 }
 
 .sidebar--right {
     right: 0;
     border-left: 1px solid black;
+    transition: right 350ms ease-in;
+}
+
+.sidebar--right.htmx-added {
+    right: -356px;
+}
+
+.btn {
+    padding: 0.75rem 0.5rem;
+    cursor: pointer;
+    background-color: var(--neutral-color);
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+    font-weight: bold;
+}
+
+.btn-secondary {
+    background-color: var(--neutral-gray);
 }
 
 .btn-close {
@@ -116,7 +157,7 @@ main {
 }
 
 .hide {
-    display: none;
+    right: -356px;
 }
 
 .small-assignment,
@@ -133,17 +174,14 @@ main {
 .small-course:hover,
 .small-outcome:hover {
     cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .course-item,
 .assignment-item {
     display: block;
     height: auto;
-    width: 90%;
-    margin: 10px auto;
+    margin: 10px 0;
     padding: 15px 25px;
-    border: 1px solid rgba(0, 0, 0, 0.85);
     border-radius: 3px;
     box-sizing: border-box;
 }
@@ -160,10 +198,7 @@ main {
     border-radius: 3px;
     box-sizing: border-box;
 }
-.btn-new-course {
-    margin-top: 25px;
-    font-weight: bold;
-}
+
 .active {
     border-color: blue;
     background-color: lightblue;
@@ -187,7 +222,7 @@ main {
 
 .item {
     padding: 10px 25px;
-    border: 1px solid gray;
+    border: 1px solid var(--neutral-dark);
     /* width: 20%; */
     /* height: 150px; */
     border-radius: 5px;
@@ -240,9 +275,7 @@ nav {
     position: sticky;
     top: 0;
     height: 55px;
-    background-color: rgba(0, 0, 0, 0.05);
-    border-bottom: rgba(0, 0, 0, 0.15);
-    box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.25);
+    background-color: var(--white);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -253,7 +286,7 @@ nav {
 
 .nav-item {
     display: block;
-    padding: 0 5px;
+    padding: 0 10px;
 }
 
 table {
@@ -291,14 +324,14 @@ td:not(:first-child):hover {
 .details {
     display: grid;
     grid-template-rows: 1fr 80%;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     grid-template-areas: 'title action' 'attempts chart';
     margin-bottom: 10px;
 }
 .details h3 {
     grid-area: title;
 }
-.details > .closer {
+.details > .btn-close {
     grid-area: action;
 }
 .details > .attempts {
@@ -325,4 +358,28 @@ td:not(:first-child):hover {
 
 .selected {
     background-color: lightgreen;
+}
+
+#toast {
+    display: block;
+    position: absolute;
+    opacity: 0;
+    bottom: -1.5rem;
+    right: 1.5rem;
+    width: 250px;
+    background-color: var(--neutral-dark);
+    color: var(--neutral-gray);
+    transition: all 350ms;
+    z-index: 1000;
+}
+.htmx-indicator {
+    transition: none;
+}
+#toast .htmx-request .htmx-indicator {
+    bottom: 1.5rem;
+    opacity: 1;
+}
+#toast.htmx-request.htmx-indicator {
+    bottom: 1.5rem;
+    opacity: 1;
 }

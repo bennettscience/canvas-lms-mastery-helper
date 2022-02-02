@@ -21,6 +21,9 @@ function formatDate(target, strDate) {
     return new Intl.DateTimeFormat('en', formats[target]).format(date)
 }
 
+// Listen for new elements in lists and inititalize HTMX on them
+htmx.onLoad((detail) => console.log(detail))
+
 // Hyperscript can only access global function names. Because this
 // is in a module, it has to be assigned explicitely to the 
 // Window object.

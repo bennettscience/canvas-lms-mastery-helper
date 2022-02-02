@@ -1,9 +1,10 @@
 <div
-    class="course-item"
+    class="item course-item"
     hx-get="/courses/{{ item.id }}"
     hx-trigger="click"
     hx-target="#course-details"
     hx-swap="innerHTML"
+    hx-indicator="#toast"
 >
     <div class="course-item-inner">
         <p>{{ item.name }}</p>
