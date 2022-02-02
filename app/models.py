@@ -98,21 +98,21 @@ class Outcome(db.Model):
             item.score for item in self.attempts.filter(OutcomeAttempt.user_canvas_id == user_id).all()
         ]
 
-    def avg(self, user_id):
+    def AVERAGE(self, user_id):
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
             return 'No attempts'
         else:
             return round(sum(scores) / len(scores), 1)
 
-    def highest(self, user_id):
+    def HIGHEST(self, user_id):
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
             return 'No attempts'
         else:
             return max(scores)
 
-    def highest_last_avg(self, user_id):
+    def HIGH_LAST_AVERAGE(self, user_id):
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
             return 'No attempts'

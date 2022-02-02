@@ -84,9 +84,10 @@ class CourseAPI(MethodView):
         for user in students:
             user.scores = []
             for outcome in course.outcomes.all():
+                user_score = getattr(outcome, current_user.preferences.score_calculation_method.name)(user.canvas_id)
                 user.scores.append({
                     "outcome_canvas_id": outcome.canvas_id,
-                    "score": outcome.avg(user.canvas_id)
+                    "score": user_score
                 })
         
         return render_template(
