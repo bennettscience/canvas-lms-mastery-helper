@@ -225,8 +225,6 @@ main {
 
 .item:hover {
     cursor: pointer;
-    /* opacity: 0.85; */
-    background-color: var(--neutral-gray);
     border-color: var(--primary-color);
 }
 
@@ -236,10 +234,14 @@ main {
 
 .item--small {
     box-sizing: border-box;
-    border: 1px solid var(--neutral-dark);
+    border: 1px solid transparent;
     border-radius: 3px;
     padding: 5px 15px;
     margin: 5px 0;
+}
+
+.item--small:hover {
+    border-color: var(--primary-color);
 }
 
 .item.attempt {

@@ -1,60 +1,59 @@
-{# Render the course title and any outcomes already attached. {{ render_partial(
-'/shared/partials/sidebar.html', position="right", method="", endpoint="",
-hide=True ) }} #}
-<h1>{{ course.name }}</h1>
-<div class="course-header">
-    {% if course.outcomes|length == 0 or course.assignments|length == 0%}
-    <section class="messages">
-        {% if course.outcomes|length == 0 %}
-        <p>
-            No outcomes imported. Use the <b>+ Outcome</b> button to get
-            started.
-        </p>
-        {% endif %} {% if course.assignments|length == 0 %}
-        <p>
-            No assignments imported. Use the <b>+ Assignment</b> button to get
-            started.
-        </p>
-        {% endif %}
-    </section>
-    {%endif%}
-    <div class="actions">
-        <button
-            class="btn"
-            hx-get="/sync/outcomes/{{course.canvas_id}}"
-            hx-target="main"
-            hx-swap="beforeend"
-            hx-indicator="#toast"
-        >
-            + Outcome
-        </button>
-        <button
-            class="btn"
-            hx-get="/sync/assignments/{{course.canvas_id}}"
-            hx-target="main"
-            hx-swap="beforeend"
-            hx-indicator="#toast"
-        >
-            + Assignment
-        </button>
+<div id="course-details">
+    <h1>{{ course.name }}</h1>
+    <div class="course-header">
+        {% if course.outcomes|length == 0 or course.assignments|length == 0%}
+        <section class="messages">
+            {% if course.outcomes|length == 0 %}
+            <p>
+                No outcomes imported. Use the <b>+ Outcome</b> button to get
+                started.
+            </p>
+            {% endif %} {% if course.assignments|length == 0 %}
+            <p>
+                No assignments imported. Use the <b>+ Assignment</b> button to
+                get started.
+            </p>
+            {% endif %}
+        </section>
+        {%endif%}
+        <div class="actions">
+            <button
+                class="btn"
+                hx-get="/sync/outcomes/{{course.canvas_id}}"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+            >
+                + Outcome
+            </button>
+            <button
+                class="btn"
+                hx-get="/sync/assignments/{{course.canvas_id}}"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+            >
+                + Assignment
+            </button>
+        </div>
     </div>
-</div>
-<section class="stored-outcomes">
-    {% for outcome in course.outcomes %}
-    {{render_partial('outcome/partials/outcome_card.html', item=outcome,
-    course_id=course.canvas_id)}} {%endfor%}
-</section>
-{# Include the roster. #}
-<table>
-    <thead class="headers">
-        <th>Name</th>
+    <section class="stored-outcomes">
         {% for outcome in course.outcomes %}
-        <th>{{ outcome.name }}</th>
-        {% endfor %}
-    </thead>
-    <tbody class="scroller">
-        {% for student in students %}
-        {{render_partial('course/partials/student_entry.html', student=student,
-        course=course)}} {% endfor %}
-    </tbody>
-</table>
+        {{render_partial('outcome/partials/outcome_card.html', item=outcome,
+        course_id=course.canvas_id)}} {%endfor%}
+    </section>
+    {# Include the roster. #}
+    <table>
+        <thead class="headers">
+            <th>Name</th>
+            {% for outcome in course.outcomes %}
+            <th>{{ outcome.name }}</th>
+            {% endfor %}
+        </thead>
+        <tbody class="scroller">
+            {% for student in students %}
+            {{render_partial('course/partials/student_entry.html',
+            student=student, course=course)}} {% endfor %}
+        </tbody>
+    </table>
+</div>
