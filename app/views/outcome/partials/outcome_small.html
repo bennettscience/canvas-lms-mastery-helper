@@ -1,20 +1,11 @@
-<div
+<form
     class="item item--small"
-    _='on click
-        set obj to {
-            "canvas_id": {{item.id}},
-            "course_id": {{course_id}},
-            "name": "{{item.name}}"
-        }
-        log obj
-        fetch `/outcomes`
-            with 
-                method:"POST", 
-                body: obj as JSON,
-                headers: {"Content-Type": "application/json"}
-        then 
-            remove me'
-    hx-oob-swap=".stored-outcomes"
+    hx-post="/outcomes"
+    hx-trigger="click"
+    _="on htmx:afterSwap remove me"
 >
+    <input type="hidden" name="canvas_id" value="{{item.id}}" />
+    <input type="hidden" name="course_id" value="{{course_id}}" />
+    <input type="hidden" name="name" value="{{item.name}}" />
     <p>{{item.name}}</p>
-</div>
+</form>

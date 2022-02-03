@@ -34,7 +34,7 @@ class OutcomeListAPI(MethodView):
             'canvas_id': fields.Int(), 
             'name': fields.Str()
         }
-        args = parser.parse(required_args, request)
+        args = parser.parse(required_args, request, location="form")
         outcome = Outcome.query.filter(Outcome.canvas_id == args['canvas_id']).first()
         
         if not outcome:
@@ -58,7 +58,11 @@ class OutcomeListAPI(MethodView):
             abort(409)
         
         outcomes = Outcome.query.all()
-        return jsonify(OutcomeListSchema(many=True).dump(outcomes))
+        return render_template(
+            'outcome/partials/outcome_card_new.html',
+            course_id=args['course_id'],
+            item=OutcomeSchema().dump(outcome)
+        )
             
 
 class OutcomeAPI(MethodView):

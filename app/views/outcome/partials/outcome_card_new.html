@@ -1,0 +1,18 @@
+<div hx-swap-oob="beforeend:.stored-outcomes">
+    <div
+        id="watching"
+        hx-get="courses/{{course_id}}/outcomes/{{item.canvas_id}}/edit"
+        hx-target="this"
+        hx-swap="outerHTML"
+        class="item outcome"
+    >
+        <h3>{{item.name}}</h3>
+        <div>
+            {% if not item.alignment %}
+            <button>Set up alignment</button>
+            {% else %}
+            <p>Watching {{ item.alignment.name }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
