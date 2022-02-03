@@ -7,6 +7,9 @@
         hx-target="#course-details"
         hx-indicator="#toast"
         hx-swap="innerHTML"
+        _="on click 
+            remove .active from .{div} 
+            then add .active to me"
     >
         <div class="course-item-inner">
             <p>{{ item.name }}</p>

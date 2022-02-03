@@ -1,11 +1,14 @@
 :root {
-    --black: #333;
-    --primary-color: #4270e1;
-    --neutral-gray: #e6f4f1;
-    --neutral-dark: #444655;
-    --warn-color: #d34600;
+    --primary-color: #361d32;
+    --secondary-color: #dcdcdc;
+    --hover-color: #f1e8e6;
+    --warn-color: #f55951;
     --success-color: #00915b;
+    --black: #333;
     --white: #f8f8ff;
+
+    --active-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+        rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
 }
 
 html,
@@ -126,7 +129,8 @@ main {
 
 .sidebar--left {
     left: 0;
-    border-right: 1px solid var(--neutral-gray);
+    border-right: 1px solid var(--secondary-color);
+    background-color: var(--secondary-color);
 }
 
 .sidebar--right {
@@ -146,7 +150,6 @@ main {
 .btn {
     padding: 0.75rem 0.5rem;
     cursor: pointer;
-    background-color: var(--neutral-color);
     margin-right: 25px;
 }
 
@@ -162,7 +165,7 @@ main {
 }
 
 .btn-secondary {
-    background-color: var(--neutral-gray);
+    background-color: var(--secondary-color);
 }
 
 .btn-warn {
@@ -196,11 +199,6 @@ main {
     box-sizing: border-box;
 }
 
-.active {
-    border-color: blue;
-    background-color: lightblue;
-    transition: all;
-}
 .course-item:hover {
     cursor: pointer;
 }
@@ -220,7 +218,7 @@ main {
 .item {
     box-sizing: border-box;
     padding: 10px 25px;
-    border: 1px solid var(--neutral-dark);
+    border: 1px solid transparent;
     border-radius: 3px;
     margin: 10px 0;
 }
@@ -229,6 +227,11 @@ main {
     cursor: pointer;
     /* opacity: 0.85; */
     background-color: var(--neutral-gray);
+    border-color: var(--primary-color);
+}
+
+.item.active {
+    border-color: var(--primary-color);
 }
 
 .item--small {
@@ -243,6 +246,7 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-color: var(--primary-color);
 }
 
 .item.attempt > p {
@@ -262,7 +266,13 @@ main {
 
 .outcome {
     width: 250px;
+    border-color: var(--primary-color);
 }
+
+.outcome:hover {
+    box-shadow: var(--active-shadow);
+}
+
 .outcome--header {
     display: flex;
     flex-direction: row;
@@ -275,6 +285,7 @@ main {
     justify-content: space-between;
     padding-right: 25px;
 }
+
 .course-header button {
     margin: 0;
 }
@@ -340,10 +351,10 @@ td:not(:first-child):hover {
 }
 .details {
     display: grid;
-    grid-template-rows: 1fr 80%;
+    grid-template-rows: 1fr auto;
     grid-template-columns: 2fr 1fr;
     grid-template-areas: 'title action' 'attempts chart';
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 .details h3 {
     grid-area: title;
@@ -383,9 +394,9 @@ td:not(:first-child):hover {
     opacity: 0;
     bottom: -1.5rem;
     right: 1.5rem;
-    width: 250px;
-    background-color: var(--neutral-dark);
-    color: var(--neutral-gray);
+    min-width: 250px;
+    background-color: var(--primary-color);
+    color: var(--white);
     transition: all 350ms;
     z-index: 1000;
 }
