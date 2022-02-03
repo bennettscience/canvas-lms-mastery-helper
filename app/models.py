@@ -98,26 +98,107 @@ class Outcome(db.Model):
             item.score for item in self.attempts.filter(OutcomeAttempt.user_canvas_id == user_id).all()
         ]
 
-    def AVERAGE(self, user_id):
+    # Define all of the math to run on an outcome
+    def AVERAGE(self: None, user_id:int) -> float:
+        """ Calculate the outcome average
+
+        Args:
+            user_id (int): Canvas user ID
+
+        Returns:
+            float: average
+        """
+        from statistics import fmean
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
             return 'No attempts'
         else:
-            return round(sum(scores) / len(scores), 1)
+            return round(fmean(scores), 1)
+    
+    def DECAYING_AVERAGE(self: None, user_id: int) -> float:
+        """ Calulate a decaying average for the outcome.
 
-    def HIGHEST(self, user_id):
+        The last attempt is weighted higher than the average of all
+        previous attempts. Canvas defaults to 35/65 for weights,
+        those are matched here for consistency.
+
+        scores = [1, 4, 2, 3, 5, 3, 6]
+        float = 4.95
+
+        Args:
+            user_id (int): Canvas user ID
+
+        Returns:
+            float: decaying average
+        """
+        from statistics import fmean
+        scores = self.__get_scores(user_id)
+        if len(scores) == 0:
+            return 'No attempts'
+        elif len(scores) == 1:
+            # Handle a single attempt, return as a float for aesthetics.
+            return float(scores[0])
+        else:
+            all = round((fmean(scores[:-1]) * 0.35), 2)
+            last = round((scores[-1] * 0.65), 2)
+            return round(all + last, 1)
+
+    def HIGHEST(self: None, user_id: int) -> float:
+        """ Return the highest score attempt
+
+        Args:
+            user_id (int): Canvas user ID
+
+        Returns:
+            float: highest attempt
+        """
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
             return 'No attempts'
         else:
             return max(scores)
 
-    def HIGH_LAST_AVERAGE(self, user_id):
+    def HIGH_LAST_AVERAGE(self: None, user_id: int) -> float:
+        """ Average the last attemp with the highest attempt.
+
+        Example 1:
+        scores = [1, 4, 3, 2]
+        Average = 3
+
+        Example 2:
+        scores = [1, 2, 3, 4]
+        Average = 4
+
+        Args:
+            user_id (int): Canvas user ID
+
+        Returns:
+            float: average
+        """
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
             return 'No attempts'
         else:
             return round((max(scores) + scores[-1]) / 2, 1)
+    
+    def MODE(self: None, user_id: int) -> float:
+        """ Return the mode for the score sample.
+
+        Canvas limits the mode to the nast 1 < n < 5 attemtps.
+        This method will return the mode for all stored attempts.
+
+        Args:
+            user_id (int): Canvas user ID
+
+        Returns:
+            float: mode
+        """
+        from statistics import mode
+        scores = self.__get_scores(user_id)
+        if len(scores) == 0:
+            return 'No attempts'
+        else:
+            return mode(scores)
 
 
 class Assignment(db.Model):
