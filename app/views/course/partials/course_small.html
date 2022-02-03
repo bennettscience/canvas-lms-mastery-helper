@@ -2,23 +2,14 @@
 from one place to another. Moving from one to the other doesn't work well
 because it can't be initialize easily. Click events aren't registered on the new
 element. #}
-<div
+<form
     class="item item--small"
-    _='on click
-        set obj to {
-            "canvas_id": {{item.id}},
-            "name": "{{item.name}}"
-        }
-        log obj
-        fetch `/courses`
-            with 
-                method:"POST", 
-                body: obj as JSON,
-                headers: {"Content-Type": "application/json"}
-        then 
-            put it before .btn-new-course
-        then
-            remove me'
+    hx-trigger="click"
+    hx-post="/courses"
+    hx-indicator="#toast"
+    _="on htmx:afterSwap remove me"
 >
+    <input type="hidden" name="canvas_id" value="{{item.id}}" />
+    <input type="hidden" name="name" value="{{item.name}}" />
     <p>{{item.name}}</p>
-</div>
+</form>

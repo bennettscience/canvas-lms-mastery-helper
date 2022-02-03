@@ -2,6 +2,7 @@ from flask import abort, jsonify, request, render_template
 from flask_login import current_user
 from flask.views import MethodView
 from typing import List
+from webargs import fields
 from webargs.flaskparser import parser
 
 from app import db
@@ -18,7 +19,6 @@ class CourseListAPI(MethodView):
         """
         courses = current_user.enrollments.all()
 
-        print('Returning a sidebar')
         return render_template(
             'shared/partials/sidebar.html',
             position='left',
@@ -34,23 +34,25 @@ class CourseListAPI(MethodView):
         """
         from app.canvas_sync import CanvasSyncService
 
-        args = parser.parse(CourseSchema(), location="json")
+        args = parser.parse({"canvas_id": fields.Int(), "name": fields.Str()}, location="form")
         exists = Course.query.filter(Course.canvas_id == args['canvas_id']).scalar()
         
         if not exists:
             course = Manager().create(Course, args)
+
+            # Add the requester to the course by default.
             current_user.enroll(course)
 
             service = CanvasSyncService()
 
             # Store all students as new users and enroll in the course.
             service.get_enrollments(course.canvas_id)
-            # courses = current_user.enrollments.all()
+
         else:
             abort(409)
         
         return render_template(
-            'course/partials/course_card.html',
+            'course/partials/course_card_new.html',
             item=CourseSchema().dump(course)
         )
 
