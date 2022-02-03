@@ -135,6 +135,10 @@ main {
     transition: right 350ms ease-in;
 }
 
+#right-sidebar-inner input[type='text'] {
+    width: 100%;
+}
+
 .sidebar--right.htmx-added {
     right: -356px;
 }
@@ -217,21 +221,22 @@ main {
     box-sizing: border-box;
     padding: 10px 25px;
     border: 1px solid var(--neutral-dark);
-    border-radius: 5px;
+    border-radius: 3px;
     margin: 10px 0;
 }
 
 .item:hover {
     cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.05);
+    /* opacity: 0.85; */
+    background-color: var(--neutral-gray);
 }
 
 .item--small {
     box-sizing: border-box;
-    border: 1px solid black;
+    border: 1px solid var(--neutral-dark);
     border-radius: 3px;
-    padding: 5px;
-    margin: 5px;
+    padding: 5px 15px;
+    margin: 5px 0;
 }
 
 .item.attempt {

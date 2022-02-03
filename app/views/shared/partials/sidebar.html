@@ -25,7 +25,9 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
         <button class="btn-close" _="on click trigger closeModal">
             × close
         </button>
-        {% endif %} {% for item in items %} {{ render_partial(partial,
-        item=item,course_id=course_id, partial=partial)}} {%endfor%}
+        <h2>{{title}}</h2>
+        {% include 'shared/partials/search.html' %} {% endif %} {% for item in
+        items %} {{ render_partial(partial, item=item,course_id=course_id,
+        partial=partial)}} {%endfor%}
     </div>
 </section>

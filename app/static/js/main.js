@@ -21,19 +21,36 @@ function formatDate(target, strDate) {
     return new Intl.DateTimeFormat('en', formats[target]).format(date)
 }
 
+function showToast(msg, err = false) {
+    const toast = document.querySelector(`#toast`)
+
+    // Handle message objects from hyperscript
+    // For non-template returns, the backend will also return JSON with
+    // the `message` key with details for the user.
+    if(typeof msg === 'object') {
+        
+        // Convert the message to a JSON object
+        let obj = JSON.parse(msg.xhr.responseText)
+        msg = obj.message
+    }
+    toast.innerHTML = msg;
+    if(err) {
+        toast.classList.add('error')
+    }
+    toast.classList.add('htmx-request');
+    setTimeout(() => {
+        toast.classList.remove('htmx-request')
+        if(err) {
+            toast.classList.remove('error')
+        }
+        toast.innerHTML = "Loading"
+    }, 7000)
+}
+
 // Handle errors from the server
 document.addEventListener('htmx:responseError', (evt) => {
-    let toast = document.querySelector(`#toast`)
-    toast.innerHTML = evt.detail.xhr.responseText;
-    toast.classList.add('htmx-request', 'error');
-    setTimeout(() => {
-        toast.classList.remove('htmx-request', 'error')
-        // Default back to the loading dialog. It's hacky, but it works.
-        toast.innerHTML = "Loading";
-    }, 7000)
+    showToast(evt.detail.xhr.responseText, true)
 })
-
-document.addEventListener('error', (evt) => { console.log(evt)})
 
 // For debugging requests
 document.addEventListener('htmx:beforeSend', function(evt) {
@@ -51,3 +68,4 @@ document.addEventListener('htmx:afterRequest', (evt) => {
 // Window object.
 window.sparkline = drawSparkline;
 window.formatDate = formatDate;
+window.toast = showToast;

@@ -3,10 +3,21 @@
 hide=True ) }} #}
 <h1>{{ course.name }}</h1>
 <div class="course-header">
-    <h2>Outcomes</h2>
-    {% if course.outcomes|length == 0 %}
-    <p>No outcomes imported. Use the + Outcome button to get started.</p>
-    {% endif %}
+    {% if course.outcomes|length == 0 or course.assignments|length == 0%}
+    <section class="messages">
+        {% if course.outcomes|length == 0 %}
+        <p>
+            No outcomes imported. Use the <b>+ Outcome</b> button to get
+            started.
+        </p>
+        {% endif %} {% if course.assignments|length == 0 %}
+        <p>
+            No assignments imported. Use the <b>+ Assignment</b> button to get
+            started.
+        </p>
+        {% endif %}
+    </section>
+    {%endif%}
     <div class="actions">
         <button
             class="btn"

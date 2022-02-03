@@ -26,7 +26,7 @@ class AssignmentListAPI(MethodView):
             'shared/partials/sidebar.html',
             position="right",
             partial='assignment/partials/assignment_card.html',
-            items=AssignmentSchema(many=True).dump(assignments)
+            items=AssignmentSchema(many=True).dump(assignments),
             )
 
     def post(self: None) -> Assignment:
@@ -39,7 +39,7 @@ class AssignmentListAPI(MethodView):
             Assignment: <Assignment> instance
         """
         from app.models import Course
-        args = parser.parse(CreateAssignmentSchema(), location="json")
+        args = parser.parse(CreateAssignmentSchema(), location="form")
         exists = Assignment.query.filter(Assignment.canvas_id == args['canvas_id']).scalar()
 
         if not exists:
@@ -54,7 +54,7 @@ class AssignmentListAPI(MethodView):
             abort(409, 'Assignment already exists. Please select a different assignment.')
         
         # Return a sidebar of all of the assignments.
-        return result
+        return jsonify({"message": "Import successful"}), 200
         # return render_template(
         #     'shared/partials/sidebar.html', 
         #     position="right",

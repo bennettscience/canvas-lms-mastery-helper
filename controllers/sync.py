@@ -29,7 +29,8 @@ class SyncCoursesAPI(MethodView):
 
         content = {
             "items": CourseSchema(many=True).dump(courses),
-            "partial": 'course/partials/course_small.html' 
+            "partial": 'course/partials/course_small.html',
+            "title": 'Import a course'
         }
         return render_template(
             'shared/partials/sidebar.html',
@@ -75,7 +76,8 @@ class SyncOutcomesAPI(MethodView):
         content = {
             "items": outcomes,
             "course_id": course_id,
-            "partial": "outcome/partials/outcome_small.html"
+            "partial": "outcome/partials/outcome_small.html",
+            "title": "Import outcome..."
         }
         return render_template(
             'shared/partials/sidebar.html',
@@ -122,7 +124,8 @@ class SyncAssignmentsAPI(MethodView):
         content = {
             "items": assignments,
             "course_id": course_id,
-            "partial": "assignment/partials/assignment_small.html"
+            "partial": "assignment/partials/assignment_small.html",
+            "title": "Import assignment..."
         }
         return render_template(
             'shared/partials/sidebar.html',

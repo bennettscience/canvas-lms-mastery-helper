@@ -1,0 +1,11 @@
+<input
+    type="text"
+    placeholder="Search..."
+    _="on keyup
+        if the event's key is 'Escape'
+            set my value to ''
+            trigger keyup
+        else
+            show <form /> in #right-sidebar-inner when its textContent contains my value
+    "
+/>
