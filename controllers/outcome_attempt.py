@@ -51,7 +51,7 @@ class UserOutcomeAttemptAPI(MethodView):
         """
         from app.models import OutcomeAttempt
         from app.schemas import OutcomeAttemptSchema, OutcomeSchema
-
+        print(course_id, user_id, outcome_id)
         course = Course.query.filter(Course.canvas_id == course_id).first()
         user = course.enrollments.filter(User.canvas_id == user_id).first()
         outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()

@@ -36,7 +36,7 @@ class UserPrefsAPI(MethodView):
             abort(404)
         
         options = MasteryCalculation._member_names_
-        print(options)
+
         return render_template(
             'preferences/partials/preference_update_form.html',
             user=user,
@@ -49,7 +49,6 @@ class UserPrefsAPI(MethodView):
             abort(404)
         
         args = parser.parse({"mastery_score": fields.Int(), "score_calculation_method": fields.Str()}, location='form')
-        print(args)
 
         user.preferences.update(args)
 
