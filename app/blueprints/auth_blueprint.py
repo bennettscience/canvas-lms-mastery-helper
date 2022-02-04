@@ -14,7 +14,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 from app import db
 from app.models import User
-from app.schemas import UserLoginSchema
+from app.enums import MasteryCalculation
 from app.canvas_auth import CanvasAuthService
 
 
@@ -51,6 +51,10 @@ def callback():
             refresh_token=session['oauth_token']['refresh_token']
         )
         db.session.add(user)
+
+        # Set default values for the score calculation method and score cutoff.
+        user.preferences.score_calculation_method = MasteryCalculation['DECAYING_AVERAGE']
+        user.preferences.mastery_score = '3'
         db.session.commit()
     else:
         if user.token != session['oauth_token']['access_token']:
