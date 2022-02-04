@@ -74,9 +74,6 @@ class User(UserMixin, db.Model):
     def is_enrolled(self, course):
         return self.enrollments.filter(user_courses.c.course_id == course.id).count() > 0
 
-    def set_preferences(self):
-        print(self.preferences)
-
 
 class Course(db.Model, Manager):
     id = db.Column(db.Integer, primary_key=True)
@@ -251,7 +248,6 @@ class Log(db.Model):
 
 # Many to many
 
-# TODO: Add attempt ID for a student?
 class OutcomeAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_canvas_id = db.Column(db.Integer, db.ForeignKey("user.canvas_id", onupdate="CASCADE", ondelete="CASCADE"))
