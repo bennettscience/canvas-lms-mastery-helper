@@ -42,7 +42,19 @@
         {{render_partial('outcome/partials/outcome_card.html', item=outcome,
         course_id=course.canvas_id)}} {%endfor%}
     </section>
-    {# Include the roster. #}
+    <input
+        id="roster-search"
+        type="text"
+        placeholder="Search students..."
+        _="on keyup
+        if the event's key is 'Escape'
+            set my value to ''
+            trigger keyup
+        else
+            show <tr /> in .scroller when its textContent contains my value
+    "
+    />
+    {# Include the searchable roster. #}
     <table>
         <thead class="headers">
             <th>Name</th>

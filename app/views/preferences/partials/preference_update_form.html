@@ -1,9 +1,39 @@
 <form 
+    id="user-prefs-form"
     hx-trigger="submit"
     hx-target="this" 
     hx-swap="outerHTML"
     hx-put="/users/{{user.id}}/edit"
     >
+    <table id="mastery-calculation-details">
+        <thead>
+            <th>Calculation Type</th>
+            <th>Description</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>AVERAGE</td>
+                <td>Calculate the Outcome score with a straight average.</td>
+            </tr>
+            <tr>
+                <td>DECAYING_AVERAGE</td>
+                <td>Calculates the Outcome score by weighing the attempts. The last attempt is 65% of the overall weight, the average of all others is 35%. The weights cannot be changed.</td>
+            </tr>
+            <tr>
+                <td>HIGHEST</td>
+                <td>The Outcome score is the highest attempt score, regardless of when that score was achieved.</td>
+            </tr>
+            <tr>
+                <td>HIGH_LAST_AVERAGE</td>
+                <td>The last attempt is averaged with the highest attempt.</td>
+            </tr>
+            <tr>
+                <td>MODE</td>
+                <td>The most frequent score across all attempts will be used as the Outcome score.</td>
+            </tr>
+        </tbody>
+    </table>
+    <label for="score_calculation_method">Mastery Score Calculation</label>
     <select name="score_calculation_method" id="score-calculation-method">
         {% for item in opts %}
         <option 
@@ -14,10 +44,8 @@
         >{{item}}</option>
         {%endfor%}
     </select>
-    <span id="description"><span>
-    <label>Mastery Score
+    <label for="mastery_score">Mastery Score</label>
     <input name="mastery_score" value="{{user.preferences.mastery_score}}" type="number" />
+<button class="btn btn-primary" type="submit" form="user-prefs-form">Submit</button>
+<button hx-get="/users/{{user.id}}" hx-target="#form-wrap" hx-swap="outerHTML" class="btn btn-secondary">Cancel</button>
 </form>
-    <button class="btn btn-primary" type="submit">Submit</button>
-<button
-    hx-get="/users/{{user.id}}" class="btn btn-secondary">Cancel</button>

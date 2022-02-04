@@ -5,14 +5,14 @@
         <p 
             class="warn"
             hx-trigger="click"
-            hx-delete="courses/{{course_id}}/outcomes/{{outcome.canvas_id}}/edit"
+            hx-delete="{{course_id}}/outcomes/{{outcome.canvas_id}}/edit"
         >
             Remove alignment
         </p>
         {% endif %}
     </div>
     <form
-        hx-put="courses/{{course_id}}/outcomes/{{outcome.canvas_id}}/edit"
+        hx-put="{{course_id}}/outcomes/{{outcome.canvas_id}}/edit"
         hx-trigger="submit"
         {#
         hx-ext="json-enc"
