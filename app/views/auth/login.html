@@ -4,8 +4,19 @@
         You are currently logged out. Use the login button below to log into the
         Mastery Helper.
     </p>
+    {#
     <button class="btn btn-primary" hx-get="/auth/login" hx-target="main">
         Login
     </button>
+    #} {# A login anchor is required here because HTMX adds headers that Canvas
+    disallows. Using an anchor tag is just a normal GET, so it can redirect to
+    the auth page. #}
+    <a
+        role="button"
+        class="btn btn-primary"
+        style="color: var(--white); text-decoration: none; border-radius: 3px"
+        href="/auth/login"
+        >Login</a
+    >
 </section>
 {% endblock %}
