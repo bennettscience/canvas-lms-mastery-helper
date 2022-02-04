@@ -1,4 +1,5 @@
 from flask import session
+from flask_login import current_user
 from canvasapi import Canvas
 from canvasapi.course import Course
 from typing import List
@@ -29,7 +30,7 @@ class CanvasSyncService:
     # TODO: Initialize Canvas API tokens with the Auth module
     def __init__(self: None) -> None:
         # self.canvas = Canvas(Config.CANVAS_URI, Config.CANVAS_KEY)
-        self.canvas = CanvasAuthService.init_canvas(session['oauth_token'])
+        self.canvas = CanvasAuthService().init_canvas()
 
     def get_courses(self: None, enrollment_type: str='TeacherEnrollment', state: str='active') -> List[Course]:
         """ Fetch all courses from Canvas. Calls `canvasapi.Canvas.get_courses()`.

@@ -33,7 +33,6 @@ def logout():
 
 @auth_bp.route("/callback", methods=["GET"])
 def callback():
-    print(request.args.get('state') == session.get('oauth_state'))
     token = CanvasAuthService().get_token()
     session['oauth_token'] = token
 

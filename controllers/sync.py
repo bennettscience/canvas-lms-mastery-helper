@@ -1,5 +1,6 @@
 from typing import List
-from flask import jsonify, abort, render_template
+from flask import jsonify, abort, render_template, session
+from flask_login import current_user
 from flask.views import MethodView
 
 from app import db
