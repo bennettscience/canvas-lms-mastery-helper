@@ -9,6 +9,10 @@
 
     --active-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
         rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+    --active-shadow-small: rgba(0, 0, 0, 0.1) 0px 10px 25px -5px,
+        rgba(0, 0, 0, 0.04) 0px 5px 10px -5px;
+    --shadow-left-border: rgba(0, 0, 0, 0.1) 0px 10px 25px -5px,
+        rgba(0, 0, 0, 0.04) -10px 0px 10px -5px;
 }
 
 html,
@@ -135,7 +139,6 @@ main {
 
 .sidebar--right {
     right: 0;
-    border-left: 1px solid black;
     transition: right 350ms ease-in;
 }
 

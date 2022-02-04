@@ -1,45 +1,63 @@
-from flask import abort, Blueprint, jsonify, render_template, redirect, url_for
+from flask import (
+    abort, 
+    Blueprint, 
+    render_template, 
+    request, 
+    redirect, 
+    url_for, 
+    session
+)
 from flask_login import current_user, login_user, logout_user
 from webargs.flaskparser import parser
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
+from app import db
 from app.models import User
 from app.schemas import UserLoginSchema
+from app.canvas_auth import CanvasAuthService
 
-# @auth_bp.route("/getsession", methods=["GET"])
-# def check_session():
-#     if current_user.is_authenticated:
-#         user = User.query.get(current_user.id)
-#         print(f'{user} exists')
-#         print('Redirecting to home')
-#         return redirect(url_for('home_bp.index'))
-#         # return jsonify({"login": True, "user": UserSchema().dump(user)})
-#     return render_template('auth/login.html')
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    # Fake a login for the time being
-    user = User.query.get(1)
-    # If a user isn't a teacher, prevent the login for now
-    if user.usertype_id != 1:
-        abort(403)
-    else:
-        login_user(User.query.get(1))
-        return render_template('home/partials/user_ready.html')
-    # return redirect(url_for('home_bp.index'))
-    # args = parser.parse(UserLoginSchema(), location='json')
-    # user = User.query.get(args['id'])
-    # if not user:
-    #     # TODO: Add new user to database and login
-    #     abort(404)
-    # else:
-    #     login_user(User.query.get(1), True)
-    #     print(f'{current_user} is logged in')
-    #     print('Rendering the home template from /auth/login')
-    #     return render_template('home/index.html')
+    authorization_url, state = CanvasAuthService().login()
+    session['oauth_state'] = state
+
+    return redirect(authorization_url)
 
 @auth_bp.route("/logout", methods=["GET"])
 def logout():
+    session.clear()
     logout_user()
+    return redirect(url_for('home_bp.index'))
+
+@auth_bp.route("/callback", methods=["GET"])
+def callback():
+    print(request.args.get('state') == session.get('oauth_state'))
+    token = CanvasAuthService().get_token()
+    session['oauth_token'] = token
+
+    user_id = session['oauth_token']['user']['id']
+    user_name = session['oauth_token']['user']['name']
+
+    user = User.query.filter(User.canvas_id == user_id).first()
+
+    if user is None:
+        user = User(
+            canvas_id=user_id,
+            name=user_name,
+            usertype_id=1,
+            token=session['oauth_token']['access_token'],
+            expiration=session['oauth_token']['expires_at'],
+            refresh_token=session['oauth_token']['refresh_token']
+        )
+        db.session.add(user)
+        db.session.commit()
+    else:
+        if user.token != session['oauth_token']['access_token']:
+            user.token = session['oauth_token']['access_token']
+            user.expires = session['oauth_token']['expires_at']
+            db.session.commit()
+    
+    login_user(user)
     return redirect(url_for('home_bp.index'))

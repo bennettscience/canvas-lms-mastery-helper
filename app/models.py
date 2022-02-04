@@ -36,6 +36,11 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(255))
     email = db.Column(db.String(255))
 
+    # Used for OAuth
+    token = db.Column(db.String(255))
+    expiration = db.Column(db.Integer)
+    refresh_token = db.Column(db.String(255))
+
     enrollments = db.relationship(
         "Course", 
         secondary="user_courses", 

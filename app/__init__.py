@@ -4,6 +4,7 @@ from flask_login import LoginManager, current_user
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 # from flask_debugtoolbar import DebugToolbarExtension
+from flask_cors import CORS
 from extensions import metadata
 from config import Config
 
@@ -15,6 +16,7 @@ db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
 ma = Marshmallow(app)
 lm = LoginManager(app)
+# CORS(app, resources={r"/auth/*": {"origins": "https://elkhart.instructure.com/*"}})
 
 # toolbar = DebugToolbarExtension(app)
 jinja_partials.register_extensions(app)

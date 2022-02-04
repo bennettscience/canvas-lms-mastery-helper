@@ -1,3 +1,4 @@
+from flask import session
 from canvasapi import Canvas
 from canvasapi.course import Course
 from typing import List
@@ -6,6 +7,7 @@ from app import db
 from config import Config
 from app.models import Assignment, Course, Outcome, User
 from app.errors import deprecation
+from app.canvas_auth import CanvasAuthService
 
 
 
@@ -26,7 +28,8 @@ class CanvasSyncService:
     # TODO: Set current user param on Sync object to cut down on passing IDs around
     # TODO: Initialize Canvas API tokens with the Auth module
     def __init__(self: None) -> None:
-        self.canvas = Canvas(Config.CANVAS_URI, Config.CANVAS_KEY)
+        # self.canvas = Canvas(Config.CANVAS_URI, Config.CANVAS_KEY)
+        self.canvas = CanvasAuthService.init_canvas(session['oauth_token'])
 
     def get_courses(self: None, enrollment_type: str='TeacherEnrollment', state: str='active') -> List[Course]:
         """ Fetch all courses from Canvas. Calls `canvasapi.Canvas.get_courses()`.

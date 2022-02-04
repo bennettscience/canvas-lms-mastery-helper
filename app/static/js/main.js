@@ -53,15 +53,10 @@ document.addEventListener('htmx:responseError', (evt) => {
 })
 
 // For debugging requests
-document.addEventListener('htmx:beforeSend', function(evt) {
-    console.info('Dispatched...')
-    console.info(evt.detail)
-})
-
-document.addEventListener('htmx:afterRequest', (evt) => {
-    console.info('Received...')
-    console.info(evt.detail)
-})
+// document.addEventListener('htmx:beforeSend', function(evt) {
+//     console.info('Dispatched...')
+//     console.info(evt.detail)
+// })
 
 // Hyperscript can only access global function names. Because this
 // is in a module, it has to be assigned explicitely to the 
