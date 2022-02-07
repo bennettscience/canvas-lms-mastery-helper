@@ -118,8 +118,6 @@ class SyncAssignmentsAPI(MethodView):
         fetched_assignments = self.service.get_assignments(course_id)
         stored_assignments = [assignment.canvas_id for assignment in Assignment.query.all()]
 
-        print(stored_assignments)
-
         assignments = [assignment for assignment in fetched_assignments if assignment.id not in stored_assignments]
 
         content = {

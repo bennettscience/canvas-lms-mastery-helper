@@ -21,7 +21,6 @@ class AssignmentListAPI(MethodView):
         """
         assignments = Assignment.query.filter(Assignment.course[0].canvas_id == course_id).all()
         
-        print('rendering template?')
         return render_template(
             'shared/partials/sidebar.html',
             position="right",
