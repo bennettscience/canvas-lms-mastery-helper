@@ -79,6 +79,7 @@ class Course(db.Model, Manager):
     id = db.Column(db.Integer, primary_key=True)
     canvas_id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(255))
+    updated_at = db.Column(db.DateTime)
 
     outcomes = db.relationship("Outcome", secondary="course_outcomes", backref="course", lazy='dynamic')
     assignments = db.relationship("Assignment", secondary="course_assignments", backref="course")
