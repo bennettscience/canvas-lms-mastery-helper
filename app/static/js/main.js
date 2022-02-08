@@ -21,7 +21,7 @@ function formatDate(target, strDate) {
     return new Intl.DateTimeFormat('en', formats[target]).format(date)
 }
 
-function showToast(msg, err = false) {
+function showToast(msg, err = false, timeout = 3000) {
     const toast = document.querySelector(`#toast`)
 
     // Handle message objects from hyperscript
@@ -44,7 +44,7 @@ function showToast(msg, err = false) {
             toast.classList.remove('error')
         }
         toast.innerHTML = "Loading"
-    }, 7000)
+    }, timeout)
 }
 
 // Handle errors from the server

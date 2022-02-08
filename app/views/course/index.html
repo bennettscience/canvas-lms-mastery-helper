@@ -1,4 +1,15 @@
-<div id="course-details">
+<div
+    id="course-details"
+    _="
+        init
+            toast('Checking for new rubric submissions...')
+            then fetch `${location.protocol}//${location.host}/sync/courses/{{course.id}}/outcomes/results`
+            then set parsed to JSON.parse(result)
+            set error to parsed.error
+            then toast(parsed.message, error, 7000)
+        end
+    "
+>
     <h1>{{ course.name }}</h1>
     <div class="course-header">
         {% if course.outcomes|length == 0 or course.assignments|length == 0%}
