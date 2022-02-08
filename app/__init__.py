@@ -14,9 +14,7 @@ db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
 ma = Marshmallow(app)
 lm = LoginManager(app)
-# CORS(app, resources={r"/auth/*": {"origins": "https://elkhart.instructure.com/*"}})
 
-# toolbar = DebugToolbarExtension(app)
 jinja_partials.register_extensions(app)
 
 from app import app, db
