@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, session
 from flask_login import current_user, logout_user
 
-from app.canvas_auth import CanvasAuthService
-
 home_bp = Blueprint('home_bp', __name__)
 
 @home_bp.get('/')
