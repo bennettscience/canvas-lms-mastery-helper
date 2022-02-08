@@ -92,12 +92,29 @@ class SyncOutcomeAttemptsAPI(MethodView):
     def __init__(self):
         self.service = CanvasSyncService()
 
-    def get(self: None, course_id: int, outcome_id: int=None) -> list:
-        try:
-            result = self.service.get_outcome_attempts(course_id)
-            return jsonify({"message": result})
-        except Exception as e:
-            abort(422)
+    def get(self: None, course_id: int, outcome_ids: list=None) -> list:
+        from app.models import Course
+        course = Course.query.filter(Course.id == course_id).first()
+
+        if course is None:
+            abort(404)
+        
+        outcome_ids = [outcome.canvas_id for outcome in course.outcomes.all()]
+
+        if bool(outcome_ids):
+            try:
+                result = self.service.get_outcome_attempts(course.canvas_id, outcome_ids)
+                return jsonify({
+                    "message": result,
+                    "error": False
+                })
+            except Exception as e:
+                abort(422)
+        else:
+            return jsonify({
+                "message": "Sync at least one outcome from Canvas before importing results.",
+                "error": True
+            })
             
 
 class SyncAssignmentsAPI(MethodView):

@@ -49,7 +49,7 @@ class OutcomeListAPI(MethodView):
             course.outcomes.append(outcome)
             result = jsonify(CourseSchema().dump(outcome))    
             try:
-                self.service.get_outcome_attempts(args['course_id'], args['canvas_id'])
+                self.service.get_outcome_attempts(args['course_id'], [args['canvas_id']])
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()

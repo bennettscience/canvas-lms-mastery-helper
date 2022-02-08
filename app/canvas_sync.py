@@ -107,7 +107,7 @@ class CanvasSyncService:
         
         return outcome
 
-    def get_outcome_attempts(self: None, course_id: int, outcome_id: int=None, user_id: int=None, ) -> None:
+    def get_outcome_attempts(self: None, course_id: int, outcome_ids: list=None, user_id: int=None, ) -> None:
         """ 
         Sync all attempts on an outcome for a student. This requests results for all students in a course. Each
         attempt has a unique ID already assigned. If it exists in the database, move on.
@@ -145,7 +145,7 @@ class CanvasSyncService:
             None
         """
         from datetime import datetime
-        from app.models import Course, Outcome, OutcomeAttempt
+        from app.models import Course, OutcomeAttempt
 
         # Track how many attempts are added to the DB
         count = 0
@@ -158,28 +158,13 @@ class CanvasSyncService:
         # This process relies on a modded version of canvasapi stored _locally_
         # which returns results in a PaginatedList.
         
-        # TODO: Handle single outcome request vs all
-        results = canvas_course.get_outcome_results(outcome_ids=[outcome_id])
+        results = canvas_course.get_outcome_results(outcome_ids=outcome_ids)
 
         # Put new results into an array for a single db write.
         attempts = []
 
+        # results is a flat array that can be iterated directly.
         for attempt in results:
-            # breakpoint()
-            # Handle outcomes first. The OutcomeAttempt model has a foreignkey constraint against
-            # outcome foreign keys.
-            # outcome_exists = Outcome.query.filter(Outcome.canvas_id == result['links']['learning_outcome']).scalar()
-            
-            # if outcome_exists is None:
-            #     course = Course.query.filter(Course.canvas_id == course_id).first()
-            #     canvas_outcome = self.canvas.get_outcome(result['links']['learning_outcome'])
-            #     outcome = Outcome(canvas_id=canvas_outcome.id, name=canvas_outcome.title)
-            #     db.session.add(outcome)
-            #     db.session.commit()
-               
-            #     # Store the retrieved outcome in the course context
-            #     course.outcomes.append(outcome)
-            #     db.session.commit()
 
             attempt_exists = OutcomeAttempt.query.filter(OutcomeAttempt.attempt_canvas_id == attempt.id).scalar()
             
@@ -199,9 +184,11 @@ class CanvasSyncService:
 
         if len(attempts) > 0:
             db.session.add_all(attempts)
+            canvas_course.updated_at = datetime.now()
+            
             result = f"Stored {len(attempts)} new attempts."
         else: 
-            result = "No new attempts saved."
+            result = "There were no new Outcome attempts."
             
         db.session.commit()
         return result
