@@ -3,4 +3,10 @@
 <div id="form-wrap">
     {{ render_partial('preferences/partials/user_prefs.html', user=user)}}
 </div>
+<section class="course-manager">
+<h2>Manage Courses</h2>
+    {% for course in courses %}
+     {{ render_partial('preferences/partials/course.html', course=course) }}
+     {% endfor %}
+</div>
 {% endblock %}

@@ -200,6 +200,10 @@ main {
     right: -356px;
 }
 
+.deleted {
+    opacity: 0;
+}
+
 .course-item-inner {
     display: flex;
     flex-direction: row;
@@ -227,7 +231,8 @@ main {
     align-items: center;
     gap: 15px;
     margin-bottom: 15px;
-    transition: all;
+    opacity: 1;
+    transition: all 300ms ease-in;
 }
 
 .item {

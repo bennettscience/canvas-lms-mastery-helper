@@ -96,6 +96,23 @@ class CourseAPI(MethodView):
             "course/index.html", 
             course=CourseSchema().dump(course), students=students
         )
+    
+    def delete(self: None, course_id: int) -> List[Course]:
+        """ Remove a locally-stored course.
+
+        Args:
+            course_id (int): Canvas course ID
+
+        Returns:
+            List[Course]: List of enrollments for the user.
+        """
+        course = Course.query.filter(Course.canvas_id == course_id).first()
+        db.session.delete(course)
+        db.session.commit()
+
+        return "Course deleted."
+
+
 
 
 class CourseAssignmentsAPI(MethodView):

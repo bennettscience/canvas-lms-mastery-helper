@@ -15,8 +15,15 @@ def index():
 
 @home_bp.get('/preferences')
 def user_preferences():
-    from app.schemas import UserSchema
+    from app.schemas import UserSchema, CourseSchema
+
+    courses = current_user.enrollments.all()
+
+    for course in courses:
+        print(course.outcomes)
+
     return render_template(
         'preferences/index.html',
+        courses=CourseSchema(many=True).dump(courses),
         user=UserSchema().dump(current_user)
     )

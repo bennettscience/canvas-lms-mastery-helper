@@ -1,0 +1,27 @@
+<div class="item course">
+    <p>
+        {{course.name}} - {{ course.outcomes|length }} outcome{% if
+        course.outcomes|length == 0 or course.outcomes|length > 1 %}s{% endif %}
+        aligned.
+    </p>
+    <button
+        hx-trigger="confirmed"
+        hx-delete="/courses/{{ course.canvas_id }}"
+        _='on click
+            call Swal.fire({
+                title: "Are you sure?",
+                text: "This will remove the course, enrollments, and any alignments made. You can re-import and re-align everything again if you need to.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete the course",
+                cancelButtonText: "Cancel",
+                confirmButtonColor: "#f55951",
+                cancelButtonColor: "#361d32"
+            })
+            if result.isConfirmed trigger confirmed
+            remove the closest parent <div/>
+        '
+    >
+        Delete
+    </button>
+</div>
