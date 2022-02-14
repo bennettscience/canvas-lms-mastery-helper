@@ -189,7 +189,7 @@ class CanvasSyncService:
             result = f"Stored {len(attempts)} new attempts."
         else: 
             result = "There were no new Outcome attempts."
-            
+        
         db.session.commit()
         return result
 

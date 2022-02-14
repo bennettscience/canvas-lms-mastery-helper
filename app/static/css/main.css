@@ -288,7 +288,7 @@ main {
 
 .outcome {
     width: 250px;
-    border-color: var(--primary-color);
+    border-color: var(--secondary-color);
 }
 
 .outcome:hover {

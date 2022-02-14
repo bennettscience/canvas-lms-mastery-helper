@@ -46,9 +46,6 @@ class CanvasAuthService:
             # a short URL to instantiate.
             return Canvas(app.config['CANVAS_OAUTH']['base_url_short'], session['oauth_token']['access_token'])
         else:
-            print('No session! Load the prebuilt Canvas interface')
-            print('Current config...')
-            print(app.config)
             return Canvas(app.config['CANVAS_URI'], app.config['CANVAS_KEY'])
 
     def login(self):

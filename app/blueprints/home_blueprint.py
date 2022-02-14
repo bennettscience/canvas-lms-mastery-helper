@@ -19,9 +19,6 @@ def user_preferences():
 
     courses = current_user.enrollments.all()
 
-    for course in courses:
-        print(course.outcomes)
-
     return render_template(
         'preferences/index.html',
         courses=CourseSchema(many=True).dump(courses),

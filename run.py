@@ -24,14 +24,17 @@ def make_shell_context():
     }
 
 
-@app.cli.command('scheduled')
-def scheduled():
+@app.cli.command('sync')
+def sync():
+    """ Sync outcome attempts from Canvas for all courses.
+    """
     from app.canvas_sync import CanvasSyncService
-    print('loading...')
+    print('Starting sync...')
     courses = Course.query.all()
     service = CanvasSyncService()
     for course in courses:
         print(f'Syncing {course.name}')
         outcome_ids = [outcome.canvas_id for outcome in course.outcomes.all()]
-        service.get_outcome_attempts(course.canvas_id, outcome_ids)
+        result = service.get_outcome_attempts(course.canvas_id, outcome_ids)
+        print(result)
     print('Done!')
