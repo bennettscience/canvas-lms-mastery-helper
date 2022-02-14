@@ -33,7 +33,7 @@ def sync():
     courses = Course.query.all()
     service = CanvasSyncService()
     for course in courses:
-        print(f'Syncing {course.name}')
+        print('Syncing {}'.format(course.name))
         outcome_ids = [outcome.canvas_id for outcome in course.outcomes.all()]
         result = service.get_outcome_attempts(course.canvas_id, outcome_ids)
         print(result)
