@@ -2,6 +2,7 @@ from flask import abort, jsonify, request, render_template
 from flask.views import MethodView
 from webargs import fields
 from webargs.flaskparser import parser
+from flask_login import current_user
 
 from typing import List
 
@@ -56,11 +57,23 @@ class OutcomeListAPI(MethodView):
                 return jsonify({"messages": "Cannot import an outcome which isn't assessed in this course. Add the Outcome to your canvas course and try again."}), 422
         else:
             abort(409)
+
+        students = course.enrollments.all()
+
+        for user in students:
+            user.scores = []
+            for outcome in course.outcomes.all():
+                user_score = getattr(outcome, current_user.preferences.score_calculation_method.name)(user.canvas_id)
+                user.scores.append({
+                    "outcome_canvas_id": outcome.canvas_id,
+                    "score": user_score
+                })
         
-        outcomes = Outcome.query.all()
         return render_template(
-            'outcome/partials/outcome_card_new.html',
+            'outcome/partials/outcome_new_alignment.html',
             course_id=args['course_id'],
+            course=CourseSchema().dump(course),
+            students=students,
             item=OutcomeSchema().dump(outcome)
         )
             

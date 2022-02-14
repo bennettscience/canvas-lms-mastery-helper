@@ -1,0 +1,13 @@
+<table id="course-roster">
+    <thead class="headers">
+        <th>Name</th>
+        {% for outcome in course.outcomes %}
+        <th>{{ outcome.name }}</th>
+        {% endfor %}
+    </thead>
+    <tbody class="scroller">
+        {% for student in students %}
+        {{render_partial('course/partials/student_entry.html', student=student,
+        course=course)}} {% endfor %}
+    </tbody>
+</table>
