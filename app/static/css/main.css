@@ -76,6 +76,15 @@ input:disabled {
     color: #ccc;
 }
 
+input[type='text'] {
+    height: 36px;
+    line-height: 36px;
+}
+
+#roster-search {
+    width: 50%;
+}
+
 button {
     color: #333;
     background-color: #f4f4f4;
@@ -412,7 +421,7 @@ td {
     display: block;
     position: absolute;
     opacity: 0;
-    bottom: -1.5rem;
+    bottom: -5rem;
     right: 1.5rem;
     min-width: 250px;
     background-color: var(--primary-color);
