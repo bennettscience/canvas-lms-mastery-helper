@@ -5,6 +5,7 @@ __pycache__/
 config.py
 app.db
 tables.txt
+.DS_Store
 
 app/client/*
 .vscode/
