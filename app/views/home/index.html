@@ -12,23 +12,53 @@
         <p>
             This application is meant to help you gather and sort through
             Outcome data in Canvas.
+            <b>It is still in testing, so please be patient.</b> Currently, you
+            can do everything <em>except</em> sync grades to Canvas.
         </p>
+        <h2>Getting Started</h2>
+        <p>
+            If you don't have any courses in the left sidebar, click
+            <b>Add new course</b> at the top left to import one. Your students
+            are automatically imported.
+        </p>
+        <p>
+            Open a course by clicking its card on the left. Import Outcomes and
+            Assignments you'd like to track.
+        </p>
+        <img src="static/img/import.png" />
+        <p>
+            Once you have some materials imported, Outcomes watch Assignments
+            and update the score when it's over your Mastery Score. Set each
+            alignment on the Outcome card.
+        </p>
+        <video muted loop autoplay>
+            <source src="static/img/alignment.mp4" type="video/mp4" />
+            <source src="static/img/alignment.webm" type="video/webm" />
+        </video>
+        <p>
+            Student attempts are available on each outcome. Click the student's
+            score to see the attempts listed by date. If more that one attempt
+            has been imported, a trendline is also displayed. Outcome attempts
+            are imported for all courses nightly.
+        </p>
+        <img src="static/img/attempt.png" />
+        <p>
+            Set your mastery score calculation, your mastery score, and manage
+            your imported courses in the Preferences section.
+        </p>
+        <video autoplay loop muted>
+            <source src="static/img/prefs.webm" type="video/webm" />
+            <source src="static/img/prefs.mp4" type="video/mp4" />
+        </video>
+        <video autoplay loop muted>
+            <source src="static/img/delete.webm" type="video/webm" />
+            <source src="static/img/delete.webm" type="video/webm" />
+        </video>
+        <h2>Work in progress...</h2>
         <ul>
-            <li>
-                Import courses using the "Add new course" button on the left.
-            </li>
-            <li>
-                Click a course title to import Outcomes and Assignments you want
-                to track.
-            </li>
-            <li>
-                Outcomes watch assignments and update the score when it's over
-                your Mastery Score.
-            </li>
-            <li>
-                Change your preferred Mastery Score and Mastery Score Calculaton
-                in <b>Preferences</b>
-            </li>
+            <li>Grade sync: pass 1/0 back to the watched assignment.</li>
+            <li>Keyboard navigation for accessibility.</li>
+            <li>Help tooltips for different actions in the dashboard.</li>
         </ul>
     </div>
 </section>

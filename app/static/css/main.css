@@ -103,6 +103,16 @@ button:focus {
     border-color: #666;
 }
 
+img,
+video {
+    display: block;
+    box-sizing: border-box;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--secondary-color);
+    box-shadow: var(--active-shadow-small);
+}
+
 main {
     text-align: left;
     padding: 1em;
