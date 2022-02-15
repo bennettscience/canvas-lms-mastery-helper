@@ -5,7 +5,7 @@ home_bp = Blueprint('home_bp', __name__)
 
 @home_bp.get('/')
 def index():
-    if not current_user.is_anonymous and session['_fresh']:
+    if not current_user.is_anonymous:
         return render_template('home/index.html')
     else:
         session.clear()
