@@ -1,6 +1,7 @@
 .venv/
 __pycache__/
 
+.env
 .flaskenv
 config.py
 app.db
@@ -9,3 +10,4 @@ tables.txt
 
 app/client/*
 .vscode/
+log/
