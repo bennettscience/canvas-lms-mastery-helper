@@ -33,6 +33,7 @@ def logout():
 
 @auth_bp.route("/callback", methods=["GET"])
 def callback():
+    from app.models import UserPreferences
     token = CanvasAuthService().get_token()
     session['oauth_token'] = token
 
@@ -52,9 +53,13 @@ def callback():
         )
         db.session.add(user)
 
+        # The user has to be committed in order to get the ID for the preferences record.
+        db.session.commit()
+
         # Set default values for the score calculation method and score cutoff.
-        user.preferences.score_calculation_method = MasteryCalculation['DECAYING_AVERAGE']
-        user.preferences.mastery_score = '3'
+        ups = UserPreferences(user_id=user.id, score_calculation_method=MasteryCalculation(2), mastery_score=3)
+        db.session.add(ups)
+
         db.session.commit()
     else:
         if user.token != session['oauth_token']['access_token']:
