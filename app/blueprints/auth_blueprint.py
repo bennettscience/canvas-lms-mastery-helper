@@ -67,5 +67,5 @@ def callback():
             user.expires = session['oauth_token']['expires_at']
             db.session.commit()
     
-    login_user(user, remember=True, fresh=True)
+    login_user(user, remember=True, force=True)
     return redirect(url_for('home_bp.index'))
