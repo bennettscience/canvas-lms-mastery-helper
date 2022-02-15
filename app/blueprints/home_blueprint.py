@@ -6,11 +6,11 @@ home_bp = Blueprint('home_bp', __name__)
 @home_bp.get('/')
 def index():
     if not current_user.is_anonymous and session['_fresh']:
-        return render_template('home/index.html')
+        return render_template('home/index.html', current_user=current_user)
     else:
         session.clear()
         logout_user()
-        return render_template('auth/login.html')
+        return render_template('auth/login.html', current_user=current_user)
 
 
 @home_bp.get('/preferences')
