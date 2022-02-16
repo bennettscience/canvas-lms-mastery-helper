@@ -1,5 +1,7 @@
-<a href="/" class="nav-item">Home</a>
+<a href="{{ url_for('home_bp.index') }}" class="nav-item">Home</a>
 {% if not current_user.is_anonymous %}
-<a href="/preferences" class="nav-item">Preferences</a>
-<a class="nav-item" href="/auth/logout">Logout</a>
+<a href="{{ url_for('home_bp.user_preferences') }}" class="nav-item"
+    >Preferences</a
+>
+<a class="nav-item" href="{{ url_for('auth.logout') }}">Logout</a>
 {% endif %}
