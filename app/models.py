@@ -74,6 +74,10 @@ class User(UserMixin, db.Model):
     def is_enrolled(self, course):
         return self.enrollments.filter(user_courses.c.course_id == course.id).count() > 0
 
+# Manage user logins
+@lm.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 class Course(db.Model, Manager):
     id = db.Column(db.Integer, primary_key=True)

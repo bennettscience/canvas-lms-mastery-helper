@@ -43,10 +43,14 @@ def callback():
     user = User.query.filter(User.canvas_id == user_id).first()
 
     if user is None:
+
+        # The UserType ID field is seeded at startup, so setting an
+        # integer directly is okay. 
+        # TODO: Make this more reliable with enums?
         user = User(
             canvas_id=user_id,
             name=user_name,
-            usertype_id=1,
+            usertype_id=2,
             token=session['oauth_token']['access_token'],
             expiration=session['oauth_token']['expires_at'],
             refresh_token=session['oauth_token']['refresh_token']
@@ -67,6 +71,5 @@ def callback():
             user.expires = session['oauth_token']['expires_at']
             db.session.commit()
     
-    print('Logging in', user)
-    login_user(user, remember=True, force=True)
-    return redirect(url_for('home_bp.index'))
+    login_user(user, True)
+    return redirect('/')

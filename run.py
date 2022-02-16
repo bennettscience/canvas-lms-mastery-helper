@@ -23,6 +23,20 @@ def make_shell_context():
         'UserType': UserType
     }
 
+@app.cli.command('seed')
+def seed():
+    """ Seed the database with roles, permissions, defaults """
+    print('Starting db setup')
+    user_types = [
+        UserType(name='Admin'),
+        UserType(name='Teacher'),
+        UserType(name='Student')
+    ]
+    print('Creating Admin, Teacher, and Student roles')
+    db.session.add_all(user_types)
+    db.session.commit()
+    print('Roles created successfully.')
+
 
 @app.cli.command('sync')
 def sync():

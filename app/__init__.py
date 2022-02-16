@@ -27,10 +27,6 @@ from app.blueprints.outcomes_blueprint import outcomes_bp
 from app.blueprints.users_blueprint import users_bp
 from app.blueprints.auth_blueprint import auth_bp
 
-@lm.user_loader
-def load_user(id):
-    return User.query.get(id)
-
 # Pull live information from Canvas.
 app.register_blueprint(sync_bp)
 app.register_blueprint(courses_bp)
