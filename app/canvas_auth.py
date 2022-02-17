@@ -15,10 +15,6 @@ class CanvasAuthService:
             redirect_uri=app.config['CANVAS_OAUTH']['redirect_url']
         )
 
-        auth_url = oauth.authorization_url(
-            app.config['CANVAS_OAUTH']['authorization_url']
-        )
-
     def init_canvas(self):
         if session and app.config['CANVAS_OAUTH']:
 
@@ -49,7 +45,7 @@ class CanvasAuthService:
             return Canvas(app.config['CANVAS_URI'], app.config['CANVAS_KEY'])
 
     def login(self):
-        return self.auth_url
+        return self.oauth.authorization_url(app.config['CANVAS_OAUTH']['authorizaton_url'])
     
     def get_token(self):
         # Override request.url with an HTTPS protocol because it defaults
