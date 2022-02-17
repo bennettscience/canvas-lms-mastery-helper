@@ -52,10 +52,17 @@ class CanvasAuthService:
         return self.auth_url
     
     def get_token(self):
+        # Override request.url with an HTTPS protocol because it defaults
+        # to http: for some reason and throws an InsecureTransportError.
+        # seehttps://github.com/requests/requests-oauthlib/issues/287#issuecomment-640804112
+        temp_url = request.url
+        if "http:" in temp_url:
+            temp_url = "https:" + temp_url[5:]
+
         token = self.oauth.fetch_token(
             app.config['CANVAS_OAUTH']['token_url'],
             client_secret=app.config['CANVAS_OAUTH']['secret'],
-            authorization_response=request.url,
+            authorization_response=temp_url,
             state=session['oauth_state'],
             replace_tokens=True
         )

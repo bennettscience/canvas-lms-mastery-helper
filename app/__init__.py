@@ -1,3 +1,6 @@
+import os
+import logging
+from logging.handlers import RotatingFileHandler
 from flask import Flask, send_from_directory, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
@@ -16,6 +19,26 @@ ma = Marshmallow(app)
 lm = LoginManager(app)
 
 jinja_partials.register_extensions(app)
+
+# Logging settings
+
+if not app.debug:
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+
+    file_handler = RotatingFileHandler('logs/masteryhelper.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    ))
+
+    # Define the log level in the appropriate environment
+    LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
+    file_handler.setLevel(LOGLEVEL)
+    app.logger.addHandler(file_handler)
+
+    app.logger.setLevel(LOGLEVEL)
+    app.logger.info('Startup')
+
 
 from app import app, db
 from app.models import User
