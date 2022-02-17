@@ -16,7 +16,7 @@ class CanvasAuthService:
         )
 
     def init_canvas(self):
-        if session and app.config['CANVAS_OAUTH']:
+        if session['_fresh'] and app.config['CANVAS_OAUTH']:
 
             expire = session['oauth_token']['expires_at']
 

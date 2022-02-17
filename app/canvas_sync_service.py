@@ -4,11 +4,10 @@ from canvasapi import Canvas
 from canvasapi.course import Course
 from typing import List
 
-from app import db
-from config import Config
+from app import app, db
 from app.models import Assignment, Course, Outcome, User
 from app.errors import deprecation
-from app.canvas_auth import CanvasAuthService
+from app.canvas_auth_service import CanvasAuthService
 
 
 
@@ -54,7 +53,7 @@ class CanvasSyncService:
         Returns:
             Course: instance of <Course>
         """
-        deprecation('This is a warning.')
+        app.logger.warning('This method will be removed in a future version. Use SyncCourseAPI.get() instead.')
         return self.canvas.get_course(course_id)
     
     def get_outcomes(self: None, course_id: int) -> List["Outcome"]:
@@ -71,7 +70,7 @@ class CanvasSyncService:
         Returns:
             list: list of dict
         """
-        deprecation("This will be removed in a future version. Use `SyncOutcomesAPI.get()` instead.")
+        app.logger.warning('This method will be removed in a future version. Use SyncOutcomesAPI.get() instead')
         request = self.canvas.get_course(course_id).get_all_outcome_links_in_context()
         
         # We don't need full Outcome objects to do the work, so pare the results down into
@@ -95,7 +94,7 @@ class CanvasSyncService:
         Returns:
             Outcome: <Outcome>
         """
-        deprecation("This method will be removed in a future version. Use `SyncOutcomesAPI.get()` instead")
+        app.logger.warning('This method will be remove din a future version. Use SyncOutcomesAPI.get() instead')
         # Check that the Outcome does not exist locally. 
         outcome_exists = Outcome.query.filter(Outcome.canvas_id == outcome_id).scalar()
         if outcome_exists is None:
@@ -279,3 +278,19 @@ class CanvasSyncService:
 
         # Return the updated <Course> because it includes all information.
         return course
+
+    def post_assignment_submission(self: None, course_id: int, assignment_id: int, student_id: int, score: int):
+        """ Post a score for the student back to the course gradebook
+
+        Args:
+            assignment (Assignment): Locally stored assignment
+            student_id (User.canvas_id): Student Canvas ID
+
+        """
+        course = self.canvas.get_course(course_id)
+        assignment = course.get_assignment(assignment_id)
+        student_submission = assignment.get_submission(student_id)
+
+        app.logger.info('Posting {} for {}'.format(score, student_id))
+        response = student_submission.edit(submission={"posted_grade": 1})
+
