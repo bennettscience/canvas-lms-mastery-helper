@@ -2,6 +2,8 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask, send_from_directory, render_template, jsonify
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
 from flask_marshmallow import Marshmallow
@@ -17,6 +19,7 @@ db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
 ma = Marshmallow(app)
 lm = LoginManager(app)
+admin = Admin(app, name='masteryhelper')
 
 jinja_partials.register_extensions(app)
 
@@ -41,7 +44,7 @@ if not app.debug:
 
 
 from app import app, db
-from app.models import User
+from app.models import Course, Outcome, User, UserType
 from app.blueprints.home_blueprint import home_bp
 from app.blueprints.sync_blueprint import sync_bp
 from app.blueprints.courses_blueprint import courses_bp
@@ -50,7 +53,13 @@ from app.blueprints.outcomes_blueprint import outcomes_bp
 from app.blueprints.users_blueprint import users_bp
 from app.blueprints.auth_blueprint import auth_bp
 
-# Pull live information from Canvas.
+# Register admin pages
+admin.add_view(ModelView(Course, db.session))
+admin.add_view(ModelView(Outcome, db.session))
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(UserType, db.session))
+
+# Register routes
 app.register_blueprint(sync_bp)
 app.register_blueprint(courses_bp)
 app.register_blueprint(assignments_bp)

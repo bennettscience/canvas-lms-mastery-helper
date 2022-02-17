@@ -15,7 +15,7 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
     canvas_id = fields.Int(dump_only=True)
-    usertype_id = fields.Int()
+    user_type = fields.Str()
     email = fields.Str()
     enrollments = fields.List(fields.Nested("CourseSchema"))
     preferences = fields.Nested(UserPrefsSchema)

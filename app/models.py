@@ -28,6 +28,9 @@ class UserType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
 
+    def __repr__(self):
+        return self.name
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,6 +43,8 @@ class User(UserMixin, db.Model):
     token = db.Column(db.String(255))
     expiration = db.Column(db.Integer)
     refresh_token = db.Column(db.String(255))
+
+    user_type = db.relationship('UserType')
 
     enrollments = db.relationship(
         "Course", 
