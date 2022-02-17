@@ -56,10 +56,17 @@ description = "API wrapper for the Canvas LMS"
 category = "main"
 optional = false
 python-versions = "*"
+develop = false
 
 [package.dependencies]
 pytz = "*"
 requests = "*"
+
+[package.source]
+type = "git"
+url = "https://github.com/bennettscience/canvasapi.git"
+reference = "issue/526-outcome-results"
+resolved_reference = "8a78bf19216fdaf75ec54bf1dc507010344c17cf"
 
 [[package]]
 name = "certifi"
@@ -442,7 +449,7 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "pytz"
-version = "2021.1"
+version = "2021.3"
 description = "World timezone definitions, modern and historical"
 category = "main"
 optional = false
@@ -601,7 +608,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3be375f10cd3888a065bad45f6d74834b4293f3ce0f5ca0180ad70e398633a5f"
+content-hash = "3dd9ef2ae2506cc37287a87d3cdb3148a85d2c2f4e0fc100c98c1fa161dca743"
 
 [metadata.files]
 alembic = [
@@ -615,9 +622,7 @@ black = [
 blinker = [
     {file = "blinker-1.4.tar.gz", hash = "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"},
 ]
-canvasapi = [
-    {file = "canvasapi-2.2.0.tar.gz", hash = "sha256:5087db773cac9d92f4f4609b3c160dbeeceb636801421808afee2d438bc43f62"},
-]
+canvasapi = []
 certifi = [
     {file = "certifi-2021.5.30-py2.py3-none-any.whl", hash = "sha256:50b1e4f8446b06f41be7dd6338db18e0990601dce795c2b1686458aa7e8fa7d8"},
     {file = "certifi-2021.5.30.tar.gz", hash = "sha256:2bbf76fd432960138b3ef6dda3dde0544f27cbf8546c458e60baf371917ba9ee"},
@@ -909,8 +914,8 @@ python-dotenv = [
     {file = "python_dotenv-0.19.0-py2.py3-none-any.whl", hash = "sha256:aae25dc1ebe97c420f50b81fb0e5c949659af713f31fdb63c749ca68748f34b1"},
 ]
 pytz = [
-    {file = "pytz-2021.1-py2.py3-none-any.whl", hash = "sha256:eb10ce3e7736052ed3623d49975ce333bcd712c7bb19a58b9e2089d4057d0798"},
-    {file = "pytz-2021.1.tar.gz", hash = "sha256:83a4a90894bf38e243cf052c8b58f381bfe9a7a483f6a9cab140bc7f702ac4da"},
+    {file = "pytz-2021.3-py2.py3-none-any.whl", hash = "sha256:3672058bc3453457b622aab7a1c3bfd5ab0bdae451512f6cf25f64ed37f5b87c"},
+    {file = "pytz-2021.3.tar.gz", hash = "sha256:acad2d8b20a1af07d4e4c9d2e9285c5ed9104354062f275f3fcd88dcef4f1326"},
 ]
 regex = [
     {file = "regex-2021.8.28-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:9d05ad5367c90814099000442b2125535e9d77581855b9bee8780f1b41f2b1a2"},
