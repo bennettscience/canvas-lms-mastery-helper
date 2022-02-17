@@ -42,7 +42,7 @@ def seed():
 def sync():
     """ Sync outcome attempts from Canvas for all courses.
     """
-    from app.canvas_sync import CanvasSyncService
+    from app.canvas_sync_service import CanvasSyncService
     print('Starting sync...')
     courses = Course.query.all()
     service = CanvasSyncService()
