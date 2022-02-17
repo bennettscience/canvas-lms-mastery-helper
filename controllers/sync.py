@@ -5,7 +5,7 @@ from flask.views import MethodView
 
 from app import db
 from app.schemas import AssignmentSchema, OutcomeSchema, CourseSchema, CanvasSyncServiceOutcome
-from app.canvas_sync import CanvasSyncService
+from app.canvas_sync_service import CanvasSyncService
 
 """
 This module provides an HTTP interface with CanvasSyncService. CanvasSyncService
@@ -38,16 +38,6 @@ class SyncCoursesAPI(MethodView):
             position="right",
             **content
         )
-        # return jsonify(
-        #     {
-        #         "results": length, 
-        #         "query_params": {
-        #             "enrollment_type": "TeacherEnrollment", 
-        #             "state": "available"
-        #         }, 
-        #     "courses": CourseSchema(many=True).dump(courses)
-        #     }
-        # )
 
 
 class SyncOutcomesAPI(MethodView):
@@ -92,13 +82,22 @@ class SyncOutcomeAttemptsAPI(MethodView):
     def __init__(self):
         self.service = CanvasSyncService()
 
-    def get(self: None, course_id: int, outcome_ids: list=None) -> list:
+    def get(self: None, course_id: int) -> list:
+        """ Fetch Outcome attempts from Canvas.
+
+        Args:
+            course_id (int): Canvas course ID
+
+        Returns:
+            list: List of Canvas Outcomes which can be stored locally.
+        """
         from app.models import Course
         course = Course.query.filter(Course.id == course_id).first()
 
         if course is None:
             abort(404)
         
+        # Get attempts for all outcomes already synced to a course locally.
         outcome_ids = [outcome.canvas_id for outcome in course.outcomes.all()]
 
         if bool(outcome_ids):
@@ -148,13 +147,3 @@ class SyncAssignmentsAPI(MethodView):
             position="right",
             **content
         )
-        # return jsonify(AssignmentSchema(many=True).dump(assignments))
-
-
-# class SyncAssignmentAPI(MethodView):
-#     def __init__(self):
-#         self.service = CanvasSyncService()
-
-#     def get(self: None, course_id: int, assignment_id: int) -> "Assignment":
-#         assignment = self.service.get_assignment(course_id, assignment_id)
-

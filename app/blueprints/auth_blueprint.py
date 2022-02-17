@@ -15,7 +15,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 from app import db
 from app.models import User
 from app.enums import MasteryCalculation
-from app.canvas_auth import CanvasAuthService
+from app.canvas_auth_service import CanvasAuthService
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
