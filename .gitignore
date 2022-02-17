@@ -8,6 +8,7 @@ app.db
 tables.txt
 .DS_Store
 *.wsgi
+wsgi.py
 
 app/client/*
 .vscode/
