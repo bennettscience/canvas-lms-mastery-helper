@@ -52,15 +52,8 @@ class AssignmentListAPI(MethodView):
         else:
             abort(409, 'Assignment already exists. Please select a different assignment.')
         
-        # Return a sidebar of all of the assignments.
         return jsonify({"message": "Import successful"}), 200
-        # return render_template(
-        #     'shared/partials/sidebar.html', 
-        #     position="right",
-        #     method="get",
-        #     endpoint="/courses/{}/assignments".format(args['course_id']),
-        #     )
-
+       
 
 class AssignmentAPI(MethodView):
     def get(self: None, assignment_id: int) -> Assignment:

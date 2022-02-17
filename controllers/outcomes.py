@@ -27,7 +27,7 @@ class OutcomeListAPI(MethodView):
         Returns:
             Outcome: <Outcome> instance
         """
-        from app.canvas_sync import CanvasSyncService
+        from app.canvas_sync_service import CanvasSyncService
         self.service = CanvasSyncService()
 
         required_args = {
@@ -48,7 +48,7 @@ class OutcomeListAPI(MethodView):
         
         if outcome_is_imported is None:
             course.outcomes.append(outcome)
-            result = jsonify(CourseSchema().dump(outcome))    
+
             try:
                 self.service.get_outcome_attempts(args['course_id'], [args['canvas_id']])
                 db.session.commit()
@@ -97,12 +97,19 @@ class OutcomeAPI(MethodView):
             item=outcome,
             course_id=outcome.course[0].canvas_id
         )
-            # jsonify(OutcomeSchema().dump(outcome))
 
 
 class AlignmentAPI(MethodView):
     def get(self: None, outcome_id: int, course_id: int):
-        # Return an outcome with assignments in a dropdown
+        """ Return an Outcome with Assignments available to link
+
+        Args:
+            outcome_id (int): Outcome Canvas ID
+            course_id (int): Course Canvas ID
+
+        Returns:
+            _type_: _description_
+        """
         from app.schemas import OutcomeSchema
 
         outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()

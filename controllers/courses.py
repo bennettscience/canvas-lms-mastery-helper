@@ -32,7 +32,7 @@ class CourseListAPI(MethodView):
         Returns:
             Course: Instance of <Course>
         """
-        from app.canvas_sync import CanvasSyncService
+        from app.canvas_sync_service import CanvasSyncService
 
         args = parser.parse({"canvas_id": fields.Int(), "name": fields.Str()}, location="form")
         exists = Course.query.filter(Course.canvas_id == args['canvas_id']).scalar()
@@ -80,7 +80,7 @@ class CourseAPI(MethodView):
         if not course:
             abort(404)
 
-        students = course.enrollments.filter(User.usertype_id == 2).all()
+        students = course.enrollments.filter(User.usertype_id == 3).all()
 
         # Aggregate all student scores into the course object.
         for user in students:
