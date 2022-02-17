@@ -5,7 +5,8 @@ home_bp = Blueprint('home_bp', __name__)
 
 @home_bp.get('/')
 def index():
-    if not current_user.is_anonymous:
+    # If the user session isn't fresh, they need to log in again.
+    if not current_user.is_anonymous and session['_fresh']:
         return render_template('home/index.html')
     else:
         return render_template('auth/login.html')
