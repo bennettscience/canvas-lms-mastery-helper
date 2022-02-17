@@ -11,4 +11,4 @@ tables.txt
 
 app/client/*
 .vscode/
-log/
+logs/
