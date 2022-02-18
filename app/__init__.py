@@ -44,7 +44,7 @@ if not app.debug:
 
 
 from app import app, db
-from app.models import Course, Outcome, User, UserType
+from app.models import Assignment, Course, Outcome, User, UserType
 from app.blueprints.home_blueprint import home_bp
 from app.blueprints.sync_blueprint import sync_bp
 from app.blueprints.courses_blueprint import courses_bp
@@ -58,6 +58,7 @@ admin.add_view(ModelView(Course, db.session))
 admin.add_view(ModelView(Outcome, db.session))
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(UserType, db.session))
+admin.add_view(ModelView(Assignment, db.session))
 
 # Register routes
 app.register_blueprint(sync_bp)

@@ -55,13 +55,13 @@ class User(UserMixin, db.Model):
     
     assessments = db.relationship(
         "OutcomeAttempt",
-        backref="users",
+        backref="user",
         lazy='dynamic'
     )
 
     assignments = db.relationship(
         "UserAssignment",
-        backref="users",
+        backref="user",
         uselist=True,
         lazy="dynamic"
     )
@@ -71,6 +71,9 @@ class User(UserMixin, db.Model):
         backref=backref("user", uselist=False),
         uselist=False
     )
+    
+    def __repr__(self):
+        return self.name
 
     def enroll(self, course):
         if not self.is_enrolled(course):
@@ -96,6 +99,9 @@ class Course(db.Model, Manager):
     outcomes = db.relationship("Outcome", secondary="course_outcomes", backref="course", lazy='dynamic')
     assignments = db.relationship("Assignment", secondary="course_assignments", backref="course")
 
+    def __repr__(self):
+        return self.name
+
 
 class Outcome(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -107,6 +113,9 @@ class Outcome(db.Model):
         backref="outcome",
         lazy="dynamic"
     )
+
+    def __repr__(self):
+        return self.name
 
     def __get_scores(self, user_id):
         return [
@@ -233,6 +242,9 @@ class Assignment(db.Model):
         "UserAssignment",
         backref="assignment",
     )
+
+    def __repr__(self):
+        return self.name
     
     def watch(self, outcome):
         if not self.is_watching(outcome):
@@ -270,6 +282,9 @@ class OutcomeAttempt(db.Model):
     score = db.Column(db.Integer)
     occurred = db.Column(db.DateTime)
 
+    def __repr__(self):
+        return "{} - {}".format(self.user, self.occurred)
+
 
 class UserAssignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -277,6 +292,9 @@ class UserAssignment(db.Model):
     assignment_id = db.Column(db.Integer, db.ForeignKey("assignment.canvas_id", onupdate="CASCADE", ondelete="CASCADE"))
     score = db.Column(db.Integer)
     occurred = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return "{} - {}".format(self.user, self.score)
 
 
 class UserPreferences(Manager, db.Model):
