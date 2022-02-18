@@ -4,6 +4,7 @@
     --hover-color: #f1e8e6;
     --warn-color: #f55951;
     --success-color: #00915b;
+    --tooltip-color: #f9f871;
     --black: #333;
     --white: #f8f8ff;
 
@@ -220,6 +221,7 @@ main {
     border-radius: 1.5rem;
     transition: all 200ms ease-in;
 }
+
 .btn--sync path {
     fill: var(--black);
 }
@@ -424,6 +426,7 @@ th {
     justify-content: center;
     gap: 1.2rem;
 }
+
 .scroller {
     overflow: auto;
 }
@@ -509,4 +512,46 @@ td:not(:first-child) {
     background-color: var(--warn-color);
     border-color: transparent;
     width: auto;
+}
+
+.tooltip {
+    position: relative;
+}
+
+.tooltip:before {
+    content: attr(title); /* here's the magic */
+    position: absolute;
+
+    /* vertically center */
+    top: -4rem;
+
+    /* move to right */
+    left: -100px; /* half the width of the tip */
+
+    /* basic styles */
+    width: 200px;
+    padding: 0.5rem;
+    border-radius: 2px;
+    background: var(--tooltip-color);
+    color: var(--black);
+    text-align: center;
+
+    display: none; /* hide by default */
+
+    box-shadow: var(--active-shadow);
+}
+
+.tooltip:hover:after {
+    border: solid;
+    border-color: var(--tooltip-color) transparent;
+    border-width: 6px 6px 0 6px;
+    top: -0.8rem;
+    content: '';
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+}
+
+.tooltip:hover:before {
+    display: inline;
 }
