@@ -55,7 +55,10 @@ class User(UserMixin, db.Model):
     )
 
     assignments = db.relationship(
-        "UserAssignment"
+        "UserAssignment",
+        backref="users",
+        uselist=True,
+        lazy="dynamic"
     )
 
     preferences = db.relationship(
@@ -221,10 +224,10 @@ class Assignment(db.Model):
         uselist=False
     )
 
-    # mastery = db.relationship(
-    #     "UserAssignment",
-    #     backref="assignment",
-    # )
+    student_attempts = db.relationship(
+        "UserAssignment",
+        backref="assignment",
+    )
     
     def watch(self, outcome):
         if not self.is_watching(outcome):
@@ -265,8 +268,8 @@ class OutcomeAttempt(db.Model):
 
 class UserAssignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE"))
-    assignment_id = db.Column(db.Integer, db.ForeignKey("assignment.id", onupdate="CASCADE", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.canvas_id", onupdate="CASCADE", ondelete="CASCADE"))
+    assignment_id = db.Column(db.Integer, db.ForeignKey("assignment.canvas_id", onupdate="CASCADE", ondelete="CASCADE"))
     score = db.Column(db.Integer)
     occurred = db.Column(db.DateTime)
 

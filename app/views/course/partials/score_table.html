@@ -16,7 +16,7 @@
                         title="Sync scores to Canvas"
                         class="btn--sync"
                         aria-role="button"
-                        hx-post="/courses/{{course.canvas_id}}/outcome/{{outcome.canvas_id}}/score"
+                        hx-put="/assignments/{{outcome.alignment.canvas_id}}/push"
                         hx-indicator="#toast"
                         fill="none"
                         viewBox="0 0 24 24"

@@ -71,7 +71,7 @@
         {% if course.outcomes|length > 0 %}
         <button
             class="btn btn-primary"
-            hx-post="/courses/{{course.canvas_id}}/scores"
+            hx-put="/courses/{{course.canvas_id}}/assignments/push"
             hx-indicator="#toast"
         >
             <svg

@@ -57,7 +57,6 @@ class CourseListAPI(MethodView):
         )
 
 
-
 class CourseAPI(MethodView):
     def get(self: None, course_id: int) -> Course:
         """ Get a single course
@@ -114,7 +113,6 @@ class CourseAPI(MethodView):
 
 
 
-
 class CourseAssignmentsAPI(MethodView):
     def get(self: None, course_id: int) -> List[Assignment]:
         """ Get assignments connected to a course by ID
@@ -133,12 +131,6 @@ class CourseAssignmentsAPI(MethodView):
             items=AssignmentSchema(many=True).dump(course.assignments),
             course_id=course_id
         )
-        # return render_template(
-        #     'shared/partials/sidebar.html',
-        #     position='right',
-        #     partial='assignments/partials/assignment_card.html',
-        #     items=AssignmentSchema(many=True).dump(course.assignments)
-        # )
 
 
 class CourseEnrollmentsAPI(MethodView):
@@ -172,7 +164,6 @@ class CourseEnrollmentsAPI(MethodView):
         return jsonify(UserSchema(many=True, only=['canvas_id', 'name', 'scores']).dump(students))
         
         
-
 class CourseOutcomesAPI(MethodView):
     def get(self: None, course_id: int) -> List[Outcome]:
         """ Retrieve a list of outcomes for a given course ID

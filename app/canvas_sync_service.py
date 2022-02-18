@@ -218,19 +218,6 @@ class CanvasSyncService:
         """
         assignment = self.canvas.get_course(course_id).get_assignment(assignment_id)
         return assignment
-
-    def post_assignment_scores(self: None, course_id: int, assignment) -> None:
-        """
-        Post assignment scores to Canvas.
-
-        Based on Outcome scores, send AssignmentAttempt scores to the Canvas gradebook.
-
-        Args:
-            course_id (int): Canvas course ID
-            assignment (List[AssignmentAttempt]): List of <AssignmentAttempt>
-        """
-        pass
-
     
     def get_enrollments(self: None, course_id: int) -> Course:
         """ Get all enrollments for a course. 
@@ -278,19 +265,33 @@ class CanvasSyncService:
 
         # Return the updated <Course> because it includes all information.
         return course
+    
+    def post_all_assignment_submissions(self: None, course: Course):
+        """ Post all assignment scores for a saved course
 
-    def post_assignment_submission(self: None, course_id: int, assignment_id: int, student_id: int, score: int):
+        Args:
+            course (Course): <Course>
+        """
+        # Loop over all assignments stored in the course
+        for local_assignment in course.assignments:
+            
+            # pass each local_assignment into post_assignment_submission
+            self.post_assignment_submission(local_assignment)
+
+    def post_assignment_submission(self: None, assignment: Assignment):
         """ Post a score for the student back to the course gradebook
 
         Args:
-            assignment (Assignment): Locally stored assignment
-            student_id (User.canvas_id): Student Canvas ID
+            assignment (Assignment): <Assignment>
 
         """
-        course = self.canvas.get_course(course_id)
-        assignment = course.get_assignment(assignment_id)
-        student_submission = assignment.get_submission(student_id)
+        course = self.canvas.get_course(assignment.course[0].canvas_id)
+        canvas_assignment = course.get_assignment(assignment.canvas_id)
 
-        app.logger.info('Posting {} for {}'.format(score, student_id))
-        response = student_submission.edit(submission={"posted_grade": 1})
+        for assignment_attempt in assignment.student_attempts:
+            student_submission = canvas_assignment.get_submission(assignment_attempt.user_id)
 
+            app.logger.info('Posting {} for {}'.format(assignment_attempt.score, student_submission.user_id))
+            response = student_submission.edit(submission={"posted_grade": assignment_attempt.score})
+
+            app.logger.info('Score submission finished')

@@ -3,6 +3,7 @@ from flask_login import current_user
 from app import app
 
 courses_bp = Blueprint('courses', __name__, template_folder='views')
+from controllers.assignments import AssignmentListAPI
 from controllers.courses import (
     CourseEnrollmentsAPI,
     CourseListAPI,
@@ -19,6 +20,7 @@ course_enrollments_view = CourseEnrollmentsAPI.as_view("course_enrollments_view"
 course_outcomes_view = CourseOutcomesAPI.as_view("course_outcomes_view")
 outcome_attempts_view = OutcomeAttemptsAPI.as_view("outcome_attempts_view")
 user_outcome_attempts_view = UserOutcomeAttemptAPI.as_view("user_outcome_attempts_view")
+assignments_view = AssignmentListAPI.as_view("assignments_view")
 
 courses_bp.add_url_rule("/courses", view_func=courses_view, methods=['GET', 'POST'])
 courses_bp.add_url_rule("/courses/<int:course_id>", view_func=course_view, methods=['GET', 'DELETE'])
@@ -36,86 +38,91 @@ courses_bp.add_url_rule(
     methods=['GET']
 )
 
-# TODO: Update the endpoint
-@courses_bp.route('/courses/<int:course_id>/scores', methods=['POST'])
-def sync_all_outcome_scores(course_id: int):
-    """ Post scores to aligned assignments for all outcomes in a course.
+# Sync all assignment scores for a given course
+courses_bp.add_url_rule("/courses/<int:course_id>/assignments/push", view_func=assignments_view, methods=['PUT'])
 
-    Args:
-        course_id (int): Course Canvas ID
-    """
-    from app.models import Course, User
-    from app.canvas_sync_service import CanvasSyncService
+# Two specific routes for syncing scores back up to Canvas. I decided
+# to do it this way becuase they're not part of the fetching (in CanvasSyncService)
+# or in the CRUD operations defined in the specific endpoint classes.
+# @courses_bp.route('/courses/<int:course_id>/scores', methods=['POST'])
+# def sync_all_outcome_scores(course_id: int):
+#     """ Post scores to aligned assignments for all outcomes in a course.
 
-    app.logger.info('Posting scores to Canvas for {}'.format(course_id))
+#     Args:
+#         course_id (int): Course Canvas ID
+#     """
+#     from app.models import Course, User
+#     from app.canvas_sync_service import CanvasSyncService
 
-    service = CanvasSyncService()
+#     app.logger.info('Posting scores to Canvas for {}'.format(course_id))
 
-    # Get the stored outcomes
-    course = Course.query.filter(Course.canvas_id == course_id).first()
-    if course is None:
-        abort(404)
+#     service = CanvasSyncService()
 
-    outcomes = course.outcomes.all()
+#     # Get the stored outcomes
+#     course = Course.query.filter(Course.canvas_id == course_id).first()
+#     if course is None:
+#         abort(404)
 
-    # TODO: Filter by UserType string name instead of ID
-    students = course.enrollments.filter(User.usertype_id == 3).all()
-    mastery_score = current_user.preferences.mastery_score
-    calculation_method = current_user.preferences.score_calulcation_method.name
+#     outcomes = course.outcomes.all()
+
+#     # TODO: Filter by UserType string name instead of ID
+#     students = course.enrollments.filter(User.usertype_id == 3).all()
+#     mastery_score = current_user.preferences.mastery_score
+#     calculation_method = current_user.preferences.score_calulcation_method.name
 
 
-    for outcome in outcomes:
-        if outcome.alignment is not None:
-            app.logger.info('Outcome {} is aligned to assignment {}'.format(outcome.name, outcome.alignment.name))
-            for student in students:
-                student_score = getattr(outcome, calculation_method)(student.canvas_id)
-                app.logger.info('{} has {} on {}'.format(student.name, student_score, outcome.name))
+#     for outcome in outcomes:
+#         if outcome.alignment is not None:
+#             app.logger.info('Outcome {} is aligned to assignment {}'.format(outcome.name, outcome.alignment.name))
+#             for student in students:
+#                 student_score = getattr(outcome, calculation_method)(student.canvas_id)
+#                 app.logger.info('{} has {} on {}'.format(student.name, student_score, outcome.name))
                 
-                if type(student_score) != str:
-                    if student_score >= mastery_score:
-                        request = service.post_assignment_submission(
-                            course.canvas_id, 
-                            outcome.alignment.canvas_id, 
-                            student.canvas_id, 
-                            1
-                        )
+#                 if type(student_score) != str:
+#                     if student_score >= mastery_score:
+#                         request = service.post_assignment_submission(
+#                             course.canvas_id, 
+#                             outcome.alignment.canvas_id, 
+#                             student.canvas_id, 
+#                             1
+#                         )
 
-    return jsonify({'message': 'Finished processing students.'})
+#     return jsonify({'message': 'Finished processing students.'})
 
-@courses_bp.route('/courses/<int:course_id>/outcome/<int:outcome_id>/score', methods=['POST'])
-def sync_single_outcome_score(course_id: int, outcome_id: int):
-    """ Update student scores for a single outcome stored.
+# @courses_bp.route('/courses/<int:course_id>/outcome/<int:outcome_id>/score', methods=['POST'])
+# def sync_single_outcome_score(course_id: int, outcome_id: int):
+#     """ Update student scores for a single outcome stored.
 
-    Args:
-        course_id (int): Canvas course ID
-        assignment_id (int): Canvas assignment ID
-    """
-    from app.models import Course, Outcome, User
-    from app.canvas_sync_service import CanvasSyncService
+#     Args:
+#         course_id (int): Canvas course ID
+#         assignment_id (int): Canvas assignment ID
+#     """
+#     from app.models import Course, Outcome, User
+#     from app.canvas_sync_service import CanvasSyncService
 
-    mastery_score = current_user.preferences.mastery_score
-    calculation_method = current_user.preferences.score_calculation_method.name
-    service = CanvasSyncService()
+#     mastery_score = current_user.preferences.mastery_score
+#     calculation_method = current_user.preferences.score_calculation_method.name
+#     service = CanvasSyncService()
     
-    course = Course.query.filter(Course.canvas_id == course_id).first()
+#     course = Course.query.filter(Course.canvas_id == course_id).first()
 
-    # TODO: Filter by UserType string name instead of ID
-    students = course.enrollments.filter(User.usertype_id == 3).all()
+#     # TODO: Filter by UserType string name instead of ID
+#     students = course.enrollments.filter(User.usertype_id == 3).all()
 
-    if course is None:
-        abort(404)
+#     if course is None:
+#         abort(404)
     
-    outcome = course.outcomes.filter(Outcome.canvas_id == outcome_id).first()
-    if outcome.alignment is not None:
-        for student in students:
-            student_score = getattr(outcome, calculation_method)(student.canvas_id)
+#     outcome = course.outcomes.filter(Outcome.canvas_id == outcome_id).first()
+#     if outcome.alignment is not None:
+#         for student in students:
+#             student_score = getattr(outcome, calculation_method)(student.canvas_id)
 
-            if type(student_score) != str:
-                if student_score >= mastery_score:
-                    request = service.post_assignment_submission(
-                        course.canvas_id, 
-                        outcome.alignment.canvas_id, 
-                        student.canvas_id, 
-                        1
-                    )
-    return jsonify({'message': 'Finished processing.'})
+#             if type(student_score) != str:
+#                 if student_score >= mastery_score:
+#                     request = service.post_assignment_submission(
+#                         course.canvas_id, 
+#                         outcome.alignment.canvas_id, 
+#                         student.canvas_id, 
+#                         1
+#                     )
+#     return jsonify({'message': 'Finished processing.'})
