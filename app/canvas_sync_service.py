@@ -27,9 +27,9 @@ class CanvasSyncService:
 
     # TODO: Set current user param on Sync object to cut down on passing IDs around
     # TODO: Initialize Canvas API tokens with the Auth module
-    def __init__(self: None) -> None:
+    def __init__(self: None, mode=None) -> None:
         # self.canvas = Canvas(Config.CANVAS_URI, Config.CANVAS_KEY)
-        self.canvas = CanvasAuthService().init_canvas()
+        self.canvas = CanvasAuthService(mode).init_canvas()
 
     def get_courses(self: None, enrollment_type: str='TeacherEnrollment', state: str='active') -> List[Course]:
         """ Fetch all courses from Canvas. Calls `canvasapi.Canvas.get_courses()`.

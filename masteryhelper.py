@@ -45,7 +45,7 @@ def sync():
     from app.canvas_sync_service import CanvasSyncService
     print('Starting sync...')
     courses = Course.query.all()
-    service = CanvasSyncService()
+    service = CanvasSyncService('server_only')
     for course in courses:
         print('Syncing {}'.format(course.name))
         outcome_ids = [outcome.canvas_id for outcome in course.outcomes.all()]
