@@ -1,5 +1,5 @@
-# This relies on a forked version of canvasapi
-# which has OutcomeResult classed into a PaginatedList!
+import logging
+from logging.handlers import RotatingFileHandler
 
 from app import app, db
 from app.models import (
@@ -42,13 +42,29 @@ def seed():
 def sync():
     """ Sync outcome attempts from Canvas for all courses.
     """
+    # Handle logging for this execution
+
+    file_handler = RotatingFileHandler('logs/nightly_sync.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s'
+    ))
+
+    # Define the log level in the appropriate environment
+    file_handler.setLevel('INFO')
+    app.logger.addHandler(file_handler)
+
+    app.logger.setLevel('INFO')
+    app.logger.info('Startup')
+
     from app.canvas_sync_service import CanvasSyncService
-    print('Starting sync...')
+    app.logger.info('Starting sync...')
     courses = Course.query.all()
     service = CanvasSyncService('server_only')
     for course in courses:
-        print('Syncing {}'.format(course.name))
+        app.logger.info('Starting {}'.format(course.name))
         outcome_ids = [outcome.canvas_id for outcome in course.outcomes.all()]
         result = service.get_outcome_attempts(course.canvas_id, outcome_ids)
-        print(result)
-    print('Done!')
+        app.logger.info(result)
+    app.logger.info('Finished')
+
+    app.logger.removeHandler(file_handler)
