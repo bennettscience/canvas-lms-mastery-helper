@@ -248,7 +248,7 @@ class CanvasSyncService:
                 user = User(
                     canvas_id=enrollment.user_id, 
                     name=enrollment.user['sortable_name'], 
-                    usertype_id=2,
+                    usertype_id=3,
                     email=None
                 )
                 db.session.add(user)
