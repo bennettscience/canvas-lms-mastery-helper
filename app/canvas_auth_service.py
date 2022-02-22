@@ -9,10 +9,29 @@ class CanvasAuthService:
     """ Handle authentication through Canvas OAuth. Fall back to scoped
     API token if the OAuth object isn't present (ie, during automated tasks). """
 
+    # Define application scopes to send with the authorization request
+    scope_list = [
+        "url:GET|/api/v1/courses",
+        "url:GET|/api/v1/courses/:id",
+        "url:GET|/api/v1/users/:user_id/courses",
+        "url:GET|/api/v1/courses/:course_id/assignments",
+        "url:GET|/api/v1/courses/:course_id/assignments/:id",
+        "url:GET|/api/v1/courses/:course_id/enrollments",
+        "url:GET|/api/v1/courses/:course_id/outcome_group_links",
+        "url:GET|/api/v1/courses/:course_id/outcome_results",
+        "url:GET|/api/v1/outcomes/:id",
+        "url:GET|/api/v1/courses/:course_id/assignments/:assignment_id/submissions",
+        "url:GET|/api/v1/courses/:course_id/assignments/:assignment_id/submissions/:user_id",
+        "url:PUT|/api/v1/courses/:course_id/assignments/:assignment_id/submissions/:user_id"
+    ]
+
+    scope = " ".join(scope_list)
+
     if app.config['CANVAS_OAUTH']:
         oauth = OAuth2Session(
-            app.config['CANVAS_OAUTH']['id'],
-            redirect_uri=app.config['CANVAS_OAUTH']['redirect_url']
+            client_id=app.config['CANVAS_OAUTH']['id'],
+            redirect_uri=app.config['CANVAS_OAUTH']['redirect_url'],
+            scope=scope
         )
 
     def init_canvas(self):
