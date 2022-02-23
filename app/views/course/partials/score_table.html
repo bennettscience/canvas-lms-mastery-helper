@@ -1,6 +1,8 @@
-<table id="course-roster">
+<table id="course-roster" class="sortable">
     <thead class="headers">
-        <th>Name</th>
+        <th>
+            <div class="th-inner-container">Name</div>
+        </th>
         {% for outcome in course.outcomes %}
         <th>
             <div class="th-inner-container">
@@ -41,3 +43,6 @@
         course=course)}} {% endfor %}
     </tbody>
 </table>
+<script type="text/javascript">
+    new Tablesort(document.querySelector(`#course-roster`));
+</script>

@@ -4,37 +4,40 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>LMG Helper </title>
+        <title>LMG Helper</title>
 
         <link rel="stylesheet" href="static/css/main.css" />
-         
     </head>
     <body>
-        <nav><a href="/" class="nav-item">Home</a>
-</nav>
+        <nav><a href="/" class="nav-item">Home</a></nav>
         <main>
-<section id="login">
-    <p>
-        You are currently logged out. Use the login button below to log into the
-        Mastery Helper.
-    </p>
-     
-    <a
-        role="button"
-        class="btn btn-primary"
-        style="color: var(--white); text-decoration: none; border-radius: 3px"
-        href="/auth/login"
-        >Login</a
-    >
-</section>
-</main>
+            <section id="login">
+                <p>
+                    You are currently logged out. Use the login button below to
+                    log into the Mastery Helper.
+                </p>
+
+                <a
+                    role="button"
+                    class="btn btn-primary"
+                    style="
+                        color: var(--white);
+                        text-decoration: none;
+                        border-radius: 3px;
+                    "
+                    href="/auth/login"
+                    >Login</a
+                >
+            </section>
+        </main>
         <div id="toast" class="item htmx-indicator">
-    <p>Loading...</p>
-</div>
+            <p>Loading...</p>
+        </div>
         <script type="module" src="static/js/main.js"></script>
         <script src="https://unpkg.com/htmx.org@1.6.1"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.4"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-         
+        <script src="static/js/modules/tablesort.js"></script>
+        <script src="static/js/modules/tablesort.number.js"></script>
     </body>
 </html>
