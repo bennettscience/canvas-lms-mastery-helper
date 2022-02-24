@@ -1,5 +1,4 @@
 from flask import Blueprint, abort, jsonify
-from app.models import Outcome
 
 outcomes_bp = Blueprint('outcomes', __name__)
 from controllers.outcomes import (
@@ -13,7 +12,7 @@ outcome_view = OutcomeAPI.as_view("outcome_view")
 alignment_view = AlignmentAPI.as_view("alignment_view")
 
 outcomes_bp.add_url_rule("/outcomes", view_func=outcomes_view, methods=['GET', 'POST'])
-outcomes_bp.add_url_rule("/outcomes/<outcome_id>", view_func=outcome_view, methods=['GET', 'PUT'])
+outcomes_bp.add_url_rule("/outcomes/<int:outcome_id>", view_func=outcome_view, methods=['GET', 'PUT'])
 
 # Update an alignment to an outcome for an assignment. Accepts:
 #  PUT -> create a new alignment on the item
