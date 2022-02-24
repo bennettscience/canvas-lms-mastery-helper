@@ -151,7 +151,7 @@ class CourseEnrollmentsAPI(MethodView):
         if course is None:
             abort(404)
         
-        students = course.enrollments.filter(User.usertype_id == 2).all()
+        students = course.enrollments.filter(User.usertype_id == 3).all()
 
         for user in students:
             user.scores = []
