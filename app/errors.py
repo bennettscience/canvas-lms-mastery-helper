@@ -1,4 +1,6 @@
 import json
+from flask import jsonify
+from marshmallow.exceptions import ValidationError
 from warnings import warn
 
 from app import app
@@ -9,6 +11,13 @@ def deprecation(message: str) -> str:
 class AlignmentExistsException(Exception):
     def __init__(self, description):
         super().__init__(description)
+
+
+@app.errorhandler(ValidationError)
+def marshmallow_error_handler(error):
+    app.logger.info('Caught validation error')
+    breakpoint()
+    return jsonify(error.messages), 422
 
 @app.errorhandler(401)
 def unauthorized(err):
@@ -59,25 +68,19 @@ def request_conflict(err):
             "description": err.description
         }
     )
-    response.content_type = "application/json"
-    return response
+    # response.content_type = "application/json"
+    return jsonify(response.errors), 409
 
 @app.errorhandler(422)
 @app.errorhandler(400)
 def handle_error(err):
-    response = err.get_response()
+    # Catch errors from webargs and Marshmallow
+    headers = err.data.get("headers", None)
     messages = err.data.get("messages", ["Invalid request."])
-    response.data = json.dumps(
-        {
-            "code": err.code,
-            "name": err.name,
-            "description": "Unprocessable request. See messages for details.",
-            "messages": messages['json']
-        }
-    )
-
-    response.content_type = "application/json"
-    return response
+    if headers:
+        return jsonify({"errors": messages}), err.code, headers
+    else:    
+        return jsonify({"errors": messages}), err.code
 
 @app.errorhandler(500)
 def internal_error(err):

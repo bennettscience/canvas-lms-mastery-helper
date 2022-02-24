@@ -1,18 +1,27 @@
 import json
 import unittest
+from flask_login.utils import login_user
+
+from tests.base import TestBase
 
 from app import app, db
-from app.models import Assignment, Outcome
+from app.enums import MasteryCalculation
+from app.models import Assignment, Course, Outcome, User, UserPreferences
 
-class TestAssignments(unittest.TestCase):
+class TestAssignments(TestBase):
+
     def setUp(self):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
+        app.config['FLASK_ENV'] = 'testing'
         db.create_all()
         self.client = app.test_client()
 
-        a1 = Assignment(canvas_id=123, name='Assignment 1')
+        assignment = Assignment(canvas_id=123, name='Assignment 1')
+        user = User(name="User", usertype_id=2, canvas_id=123)
+        prefs = UserPreferences(user_id=1, score_calculation_method=MasteryCalculation(1), mastery_score=3)
+        course = Course(name="Course 1", canvas_id=999)
 
-        db.session.add(a1)
+        db.session.add_all([assignment, course, user, prefs])
         db.session.commit()
     
     def tearDown(self):
@@ -20,45 +29,50 @@ class TestAssignments(unittest.TestCase):
         db.drop_all()
     
     def test_get_assignments(self):
+        self.login(1)
         resp = self.client.get('/assignments')
-        assignments = resp.json
 
-        self.assertEqual(resp.status_code, 200)
-        self.assertTrue(len(assignments) == 1)
+        self.assertEqual(resp.status_code, 405)
 
     def test_create_assignment(self):
-        headers = {"Content-Type": "application/json"}
+        self.login(1)
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {
             "canvas_id": 222,
-            "name": "Assignment 2"
+            "name": "Assignment 2",
+            "course_id": 999
         }
         resp = self.client.post(
             "/assignments",
-            data=json.dumps(payload),
+            data=payload,
             headers=headers
         )
 
         self.assertTrue(resp.status_code == 200)
-        self.assertEqual(resp.json['name'], 'Assignment 2')
-        self.assertEqual(resp.json['watching'], None)
+        self.assertEqual(resp.json['message'], 'Import successful')
 
     def test_assignment_conflict(self):
-        headers = {"Content-Type": "application/json"}
+        self.login(1)
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {
             "canvas_id": 123,
-            "name": "Assignment 2"
+            "name": "Assignment 2",
+            "course_id": 999
         }
         resp = self.client.post(
             "/assignments",
-            data=json.dumps(payload),
+            data=payload,
             headers=headers
         )
 
+        response_body = json.loads(resp.json)
+
         self.assertTrue(resp.status_code == 409)
-        self.assertEqual(resp.json['description'], 'Assignment already exists. Please select a different assignment.')
+        self.assertEqual(response_body['description'], 'Assignment already exists. Please select a different assignment.')
     
     def test_malformed_assignment(self):
-        headers = {"Content-Type": "application/json"}
+        self.login(1)
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {
             
         }
@@ -71,7 +85,7 @@ class TestAssignments(unittest.TestCase):
         self.assertTrue(resp.status_code == 422)
     
 
-class TestSingleAssignment(unittest.TestCase):
+class TestSingleAssignment(TestBase):
     def setUp(self):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
         db.create_all()
