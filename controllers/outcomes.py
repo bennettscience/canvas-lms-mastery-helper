@@ -6,7 +6,7 @@ from flask_login import current_user
 
 from typing import List
 
-from app import db
+from app import app, db
 from app.models import Course, Outcome, Manager, Assignment
 from app.schemas import CourseSchema, OutcomeSchema, OutcomeListSchema
 
@@ -18,6 +18,7 @@ class OutcomeListAPI(MethodView):
         Returns:
             List[Outcome]: List of <Outcome>
         """
+        app.logger.warning('Endpoint deprecated. Use "/courses/<int:course_id>/outcomes" insetead.')
         outcomes = Outcome.query.all()
         return jsonify(OutcomeListSchema(many=True, exclude=('alignment',)).dump(outcomes))
 
@@ -88,7 +89,13 @@ class OutcomeAPI(MethodView):
         Returns:
             Outcome: <Outcome> instance
         """
-        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
+        args = parser.parse(OutcomeSchema(), location="querystring")
+
+        if args and args['use_canvas_id']:
+            outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
+        else:
+            outcome = Outcome.query.filter(Outcome.id == outcome_id).first()
+
         if not outcome:
             abort(404)
         
@@ -101,7 +108,7 @@ class OutcomeAPI(MethodView):
 
 class AlignmentAPI(MethodView):
     def get(self: None, outcome_id: int, course_id: int):
-        """ Return an Outcome with Assignments available to link
+        """ Return an Outcome card with Assignments available to link
 
         Args:
             outcome_id (int): Outcome Canvas ID
@@ -115,9 +122,11 @@ class AlignmentAPI(MethodView):
         outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
         course = Course.query.filter(Course.canvas_id == course_id).first()
         if course is None:
+            app.logger.warning('Did you use the course Canvas ID?')
             abort(404)
 
         if outcome is None:
+            app.logger.warning('Did you use the outcome Canvas ID?')
             abort(404)
         
         assignments = course.assignments
