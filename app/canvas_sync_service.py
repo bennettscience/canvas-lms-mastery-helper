@@ -112,6 +112,14 @@ class CanvasSyncService:
         attempt has a unique ID already assigned. If it exists in the database, move on.
 
         This operations writes outcome attempts to persistent storage.
+        
+        Args:
+            course_id (int): Canvas course ID.
+            user_id (int): Canvas user ID.
+            outcome_id ([int], optional): Limit results to a single outcome result. Defaults to None.
+
+        Returns:
+            None
 
         {
             'outcome_results': [
@@ -135,13 +143,6 @@ class CanvasSyncService:
             ]
         }
 
-        Args:
-            course_id (int): Canvas course ID.
-            user_id (int): Canvas user ID.
-            outcome_id ([int], optional): Limit results to a single outcome result. Defaults to None.
-
-        Returns:
-            None
         """
         from datetime import datetime
         from app.models import Course, OutcomeAttempt
@@ -167,7 +168,9 @@ class CanvasSyncService:
 
             attempt_exists = OutcomeAttempt.query.filter(OutcomeAttempt.attempt_canvas_id == attempt.id).scalar()
             
-            if attempt_exists is None:
+            # Only store attempts with a score. This can happen when a teacher scores a rubric 
+            # and then removes that rubric score for some reason.
+            if attempt.score is not None and attempt_exists is None:
                 # Convert the datetime string into a Python DateTime object
                 dt = datetime.strptime(attempt.submitted_or_assessed_at[:-1], "%Y-%m-%dT%H:%M:%S")
                 attempts.append(
