@@ -48,15 +48,15 @@ def forbidden(err):
 @app.errorhandler(404)
 def page_not_found(err):
     response = err.get_response()
-    response.data = json.dumps(
+    response.errors = json.dumps(
         {
             "code": err.code,
             "name": err.name,
             "description": err.description,
         }
     )
-    response.content_type = "application/json"
-    return response
+    # response.content_type = "application/json"
+    return jsonify(response.errors), 404
 
 @app.errorhandler(409)
 def request_conflict(err):
