@@ -13,11 +13,18 @@ from app.schemas import AssignmentSchema, CourseSchema, CreateAssignmentSchema
 
 
 class AssignmentListAPI(MethodView):
+
+    # TODO: These aren't necessary for every operation. Can loading of these values be put off
+    # until they're needed by a function?
     def __init__(self):
         self.calculation_method = current_user.preferences.score_calculation_method.name
         self.mastery_score = current_user.preferences.mastery_score
     
     # only return assignments for the current course.
+    # This isn't necessary for anything in the application. Assignments linked to a course are returned 
+    # from CourseAssignmentsAPI now. 
+    # Syncing assignments from canvas happens through CanvasSyncService().
+    app.logger.warning('Endpoint deprecated. Will be removed in a future version. Use "/sync/assignments/<int:course_id>" instead.')
     def get(self: None, course_id: int) -> List[Assignment]:
         """ Get stored assignments
 
@@ -52,15 +59,13 @@ class AssignmentListAPI(MethodView):
             assignment.course.append(course)
             db.session.add(assignment)
             db.session.commit()
-
-            result = jsonify(AssignmentSchema().dump(assignment))
         else:
             abort(409, 'Assignment already exists. Please select a different assignment.')
         
         return jsonify({"message": "Import successful"}), 200
     
     def put(self: None, course_id: int) -> List[Assignment]:
-        """ Update students cores for all assignments stored in the course
+        """ Update student scores for all assignments stored in the course
 
         Args:
             course_id (int): Canvas course ID

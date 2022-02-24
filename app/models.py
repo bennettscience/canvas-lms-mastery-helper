@@ -258,6 +258,9 @@ class Assignment(db.Model):
         db.session.commit()
 
     def is_watching(self, outcome):
+        return self.watching is outcome
+    
+    def is_aligned(self):
         return self.watching is not None
 
 

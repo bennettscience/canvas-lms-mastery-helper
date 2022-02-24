@@ -80,6 +80,7 @@ class OutcomeListSchema(Schema):
 class OutcomeSchema(Schema):
     type = fields.Str(dump_default='outcome')
     id = fields.Int(dump_only=True)
+    use_canvas_id = fields.Bool(dump_default=False)
     name = fields.Str()
     canvas_id = fields.Int()
     alignment = fields.Nested(AssignmentSchema(exclude=("watching", "mastery")))
