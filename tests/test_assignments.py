@@ -1,6 +1,6 @@
 import json
 import unittest
-from flask_login.utils import login_user
+from app.errors import AlignmentExistsException
 
 from tests.base import TestBase
 
@@ -12,7 +12,6 @@ class TestAssignments(TestBase):
 
     def setUp(self):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
-        app.config['FLASK_ENV'] = 'testing'
         db.create_all()
         self.client = app.test_client()
 
@@ -91,9 +90,12 @@ class TestSingleAssignment(TestBase):
         db.create_all()
         self.client = app.test_client()
 
-        a1 = Assignment(canvas_id=123, name='Assignment 1')
+        assignment = Assignment(canvas_id=123, name='Assignment 1')
+        user = User(name="User", usertype_id=2, canvas_id=123)
+        prefs = UserPreferences(user_id=1, score_calculation_method=MasteryCalculation(1), mastery_score=3)
+        course = Course(name="Course 1", canvas_id=999)
 
-        db.session.add(a1)
+        db.session.add_all([assignment, user, prefs, course])
         db.session.commit()
     
     def tearDown(self):
@@ -101,26 +103,35 @@ class TestSingleAssignment(TestBase):
         db.drop_all()
 
     def test_get_assignment_by_id(self):
+        self.login(1)
         resp = self.client.get('/assignments/1')
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json['name'], 'Assignment 1')
     
     def test_get_assignment_by_canvas_id(self):
+        self.login(1)
         resp = self.client.get('/assignments/123?use_canvas_id=True')
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json['name'], 'Assignment 1')
     
     def test_get_missing_assignment(self):
+        self.login(1)
         resp = self.client.get('/assignments/999')
         self.assertEqual(resp.status_code, 404)
 
 
-class TestUpdateAssignment(unittest.TestCase):
+class TestAlignAssignment(unittest.TestCase):
+    """ Test the alignment mechanism on the <Assignment> model.
+        URL paths for this work are done against the Outcome.
+    """
     def setUp(self):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
         db.create_all()
         self.client = app.test_client()
 
         a1 = Assignment(canvas_id=123, name='Assignment 1')
-        o1 = Outcome(canvas_id=999, name='Outcome 1')
+        o1 = Outcome(canvas_id=123, name='Outcome 1')
+        o2 = Outcome(canvas_id=456, name='Outcome 2')
 
         db.session.add_all([a1, o1])
         db.session.commit()
@@ -129,46 +140,50 @@ class TestUpdateAssignment(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_align_assignment(self):
-        payload = {
-            "outcome_canvas_id": 999
-        }
-        headers = {"Content-Type": "application/json"}
-        resp = self.client.put('/assignments/1/alignment', data=json.dumps(payload), headers=headers)
+    def test_align_outcome(self):
+        assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
+        assignment.watch(outcome)
 
-        self.assertEqual(resp.status_code, 200)
+        self.assertIsInstance(assignment.watching, Outcome)
+        self.assertTrue(assignment.is_watching(outcome))
+        self.assertEqual(assignment.watching.name, 'Outcome 1')
     
-    def test_align_no_payload(self):
-        payload = {}
-        headers = {"Content-Type": "application/json"}
-        resp = self.client.put('/assignments/1/alignment', data=json.dumps(payload), headers=headers)
+    def test_unalign_outcome(self):
+        assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
+        assignment.watch(outcome)
+        
+        self.assertIsInstance(assignment.watching, Outcome)
+        self.assertTrue(assignment.is_watching(outcome))
 
-        self.assertEqual(resp.status_code, 422)
+        assignment.unwatch()
+
+        self.assertFalse(assignment.is_aligned())
     
-    def test_delete_alignment(self):
-        headers = {"Content-Type": "application/json"}
-        resp = self.client.delete('/assignments/1/alignment', headers=headers)
+    def test_assignment_not_aligned(self):
+        assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
 
-        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(assignment.is_watching(outcome))
+    
+    def test_outcome_already_aligned(self):
+        from app.errors import AlignmentExistsException
+        assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
+        assignment.watch(outcome)
 
-    def test_alignment_already_exists(self):
-        a = Assignment.query.get(1)
-        o = Outcome.query.get(1)
-        a.watch(o)
+        with self.assertRaises(AlignmentExistsException):
+            assignment.watch(outcome)
 
-        payload = {
-            "outcome_canvas_id": 999
-        }
-        headers = {"Content-Type": "application/json"}
-        resp = self.client.put('/assignments/1/alignment', data=json.dumps(payload), headers=headers)
+    def test_align_with_new_outcome(self):
+        assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
+        assignment.watch(outcome)
 
-        self.assertEqual(resp.status_code, 409)
+        self.assertTrue(assignment.is_watching(outcome))
 
-    def test_alignment_assignment_404(self):
-        payload = {
-            "outcome_canvas_id": 999
-        }
-        headers = {"Content-Type": "application/json"}
-        resp = self.client.put('/assignments/2/alignment', data=json.dumps(payload), headers=headers)
+        outcome2 = Outcome.query.filter(Outcome.canvas_id == 456).first()
+        assignment.watch(outcome2)
 
-        self.assertEqual(resp.status_code, 404)
+        self.assertTrue(assignment.is_watching(outcome2))

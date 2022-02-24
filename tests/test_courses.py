@@ -3,7 +3,7 @@ import unittest
 from app import app, db
 from app.models import Course 
 
-
+@unittest.skip('Needs refactor')
 class TestCourseListAPI(unittest.TestCase):
     def setUp(self):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
@@ -25,7 +25,7 @@ class TestCourseListAPI(unittest.TestCase):
         self.assertTrue(resp.status_code == 200)
         self.assertEqual(len(resp.json), 1)
 
-
+@unittest.skip('Needs refactor')
 class TestCourseAPI(unittest.TestCase):
     def setUp(self):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
