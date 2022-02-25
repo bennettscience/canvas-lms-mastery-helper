@@ -1,9 +1,6 @@
 import json
 import unittest
-
-from flask import template_rendered
-
-from tests.base import TestBase
+from tests.util import TestBase
 
 from app import app, db
 from app.models import Assignment, Course, Outcome
