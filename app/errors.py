@@ -8,7 +8,7 @@ from app import app
 def deprecation(message: str) -> str:
     warn(message, DeprecationWarning, stacklevel=2)
 
-class AlignmentExistsException(Exception):
+class DuplicateException(Exception):
     def __init__(self, description):
         super().__init__(description)
 
