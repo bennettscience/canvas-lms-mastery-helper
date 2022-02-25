@@ -47,11 +47,10 @@ class UserAssignment(Schema):
 
 
 class CreateAssignmentSchema(Schema):
-    id = fields.Int(dump_only=True)
     canvas_id = fields.Int(required=True)
     course_id = fields.Int(required=True)
     name = fields.Str(required=True)
-    watching = fields.Nested(lambda: OutcomeListSchema(only=('id', 'name',)), dump_only=True)
+    points_possible = fields.Int(requried=True)
 
 
 class AssignmentSchema(Schema):

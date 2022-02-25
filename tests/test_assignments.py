@@ -39,7 +39,8 @@ class TestAssignments(TestBase):
         payload = {
             "canvas_id": 222,
             "name": "Assignment 2",
-            "course_id": 999
+            "course_id": 999,
+            "points_possible": 1
         }
         resp = self.client.post(
             "/assignments",
@@ -56,7 +57,8 @@ class TestAssignments(TestBase):
         payload = {
             "canvas_id": 123,
             "name": "Assignment 2",
-            "course_id": 999
+            "course_id": 999,
+            "points_possible": 1
         }
         resp = self.client.post(
             "/assignments",

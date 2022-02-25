@@ -16,7 +16,6 @@ class DuplicateException(Exception):
 @app.errorhandler(ValidationError)
 def marshmallow_error_handler(error):
     app.logger.info('Caught validation error')
-    breakpoint()
     return jsonify(error.messages), 422
 
 @app.errorhandler(401)

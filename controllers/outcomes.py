@@ -29,6 +29,7 @@ class OutcomeListAPI(MethodView):
         Returns:
             Outcome: <Outcome> instance
         """
+        from app.models import User
         from app.canvas_sync_service import CanvasSyncService
         self.service = CanvasSyncService()
 
@@ -60,7 +61,7 @@ class OutcomeListAPI(MethodView):
         else:
             abort(409)
 
-        students = course.enrollments.all()
+        students = course.enrollments.filter(User.usertype_id == 3).all()
 
         for user in students:
             user.scores = []

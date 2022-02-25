@@ -229,6 +229,7 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     canvas_id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(255))
+    points_possible = db.Column(db.Float)
 
     # Handling watching the Outcome score
     watching = db.relationship(

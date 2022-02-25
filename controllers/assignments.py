@@ -50,11 +50,17 @@ class AssignmentListAPI(MethodView):
             Assignment: <Assignment> instance
         """
         from app.models import Course
-        args = parser.parse(CreateAssignmentSchema(), location="form")
+        required_args = {
+            "name": fields.Str(required=True),
+            "canvas_id": fields.Int(required=True),
+            "course_id": fields.Int(required=True),
+            "points_possible": fields.Float(required=True)
+        }
+        args = parser.parse(required_args, location="form")
         exists = Assignment.query.filter(Assignment.canvas_id == args['canvas_id']).scalar()
 
         if not exists:
-            assignment = Assignment(name=args['name'], canvas_id=args['canvas_id'])
+            assignment = Assignment(name=args['name'], canvas_id=args['canvas_id'], points_possible=args['points_possible'])
             course = Course.query.filter(Course.canvas_id == args['course_id']).first()
             assignment.course.append(course)
             db.session.add(assignment)
@@ -95,7 +101,7 @@ class AssignmentListAPI(MethodView):
                     
                     if type(student_score) != str:
                         if student_score >= self.mastery_score:
-                            score = 1
+                            score = assignment.points_possible
                         else:
                             score = 0
 
@@ -183,12 +189,14 @@ class AssignmentAPI(MethodView):
         if assignment.watching is not None:
             app.logger.info('Assignment {} is aligned to outcome {}'.format(assignment.name, assignment.watching.name))
             for student in students:
+
+                # Get the student's current score on the Outcome
                 student_score = getattr(assignment.watching, self.calculation_method)(student.canvas_id)
                 app.logger.info('{} has {} on {}'.format(student.name, student_score, assignment.watching.name))
                 
                 if type(student_score) != str:
                     if student_score >= self.mastery_score:
-                        score = 1
+                        score = assignment.points_possible
                     else:
                         score = 0
 
