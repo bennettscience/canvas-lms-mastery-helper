@@ -7,7 +7,7 @@ from webargs.flaskparser import parser
 from typing import List
 
 from app import app, db
-from app.errors import AlignmentExistsException
+from app.errors import DuplicateException
 from app.models import Assignment, Manager
 from app.schemas import AssignmentSchema, CourseSchema, CreateAssignmentSchema
 

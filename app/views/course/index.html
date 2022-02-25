@@ -1,17 +1,4 @@
-<div
-    id="course-details"
-    {#
-    _="
-        init
-            toast('Checking for new rubric submissions...')
-            then fetch `${location.protocol}//${location.host}/sync/courses/{{course.id}}/outcomes/results`
-            then set parsed to JSON.parse(result)
-            set error to parsed.error
-            then toast(parsed.message, error, 7000)
-        end
-    "
-    #}
->
+<div id="course-details">
     <h1>{{ course.name }}</h1>
     <div class="course-header">
         {% if course.outcomes|length == 0 or course.assignments|length == 0%}
@@ -56,19 +43,12 @@
         course_id=course.canvas_id)}} {%endfor%}
     </section>
     <section class="roster-actions">
-        <input
-            id="roster-search"
-            type="text"
-            placeholder="Search students..."
-            _="on keyup
-        if the event's key is 'Escape'
-            set my value to ''
-            trigger keyup
-        else
-            show <tr /> in .scroller when its textContent contains my value
-    "
-        />
-        {% if course.outcomes|length > 0 %}
+        <input id="roster-search" type="text" placeholder="Search students..."
+        _=`on keyup if the event's key is 'Escape' set my value to '' trigger
+        keyup else show
+        <tr />
+        in .scroller when its textContent contains my value` /> {% if
+        course.outcomes|length > 0 %}
         <button
             class="btn btn-primary"
             hx-put="/courses/{{course.canvas_id}}/assignments/push"
@@ -94,19 +74,5 @@
     </section>
 
     {{ render_partial('course/partials/score_table.html', students=students,
-    course=course) }} {#
-    <table>
-        <thead class="headers">
-            <th>Name</th>
-            {% for outcome in course.outcomes %}
-            <th>{{ outcome.name }}</th>
-            {% endfor %}
-        </thead>
-        <tbody class="scroller">
-            {% for student in students %}
-            {{render_partial('course/partials/student_entry.html',
-            student=student, course=course)}} {% endfor %}
-        </tbody>
-    </table>
-    #}
+    course=course) }}
 </div>

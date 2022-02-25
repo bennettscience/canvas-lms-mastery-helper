@@ -7,6 +7,7 @@ from flask_login import current_user
 from typing import List
 
 from app import app, db
+from app.errors import DuplicateException
 from app.models import Course, Outcome, Manager, Assignment
 from app.schemas import CourseSchema, OutcomeSchema, OutcomeListSchema
 
@@ -150,7 +151,6 @@ class AlignmentAPI(MethodView):
         Returns:
             Assignment: Updated <Assignment>
         """
-        from app.errors import AlignmentExistsException
         from app.schemas import OutcomeSchema
 
         # This aborts if the argument is missing, so no need for an if block
@@ -167,7 +167,7 @@ class AlignmentAPI(MethodView):
 
         try:
             assignment.watch(outcome)
-        except AlignmentExistsException as e:
+        except DuplicateException as e:
             abort(409, e.__str__())
         
         course_id = assignment.course[0].canvas_id

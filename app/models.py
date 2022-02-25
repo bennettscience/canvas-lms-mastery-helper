@@ -4,7 +4,7 @@ from sqlalchemy.orm import backref
 
 from app import db, lm
 from app.enums import MasteryCalculation
-from app.errors import AlignmentExistsException
+from app.errors import DuplicateException
 
 
 class Manager(object):
@@ -80,7 +80,7 @@ class User(UserMixin, db.Model):
             self.enrollments.append(course)
             db.session.commit()
         else:
-            return f"User is already enrolled in {course.name}"
+            raise DuplicateException('{} is already enrolled in {}'.format(self.name, course.name))
     
     def is_enrolled(self, course):
         return self.enrollments.filter(user_courses.c.course_id == course.id).count() > 0
@@ -251,7 +251,7 @@ class Assignment(db.Model):
             self.watching = outcome
             db.session.commit()
         else:
-            raise AlignmentExistsException(f"{self.name} is aleady aligned to Outcome {self.watching.name}.")
+            raise DuplicateException(f"{self.name} is aleady aligned to Outcome {self.watching.name}.")
         
     def unwatch(self):
         self.watching = None

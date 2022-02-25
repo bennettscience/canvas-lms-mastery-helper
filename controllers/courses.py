@@ -49,7 +49,7 @@ class CourseListAPI(MethodView):
             service.get_enrollments(course.canvas_id)
 
         else:
-            abort(409)
+            abort(409, "{} already exists.".format(exists.name))
         
         return render_template(
             'course/partials/course_card_new.html',

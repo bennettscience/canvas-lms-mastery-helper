@@ -1,8 +1,8 @@
 import json
 import unittest
-from app.errors import AlignmentExistsException
+from app.errors import DuplicateException
 
-from tests.base import TestBase
+from tests.util import TestBase
 
 from app import app, db
 from app.enums import MasteryCalculation
@@ -168,12 +168,11 @@ class TestAlignAssignment(unittest.TestCase):
         self.assertFalse(assignment.is_watching(outcome))
     
     def test_outcome_already_aligned(self):
-        from app.errors import AlignmentExistsException
         assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
         outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
         assignment.watch(outcome)
 
-        with self.assertRaises(AlignmentExistsException):
+        with self.assertRaises(DuplicateException):
             assignment.watch(outcome)
 
     def test_align_with_new_outcome(self):
