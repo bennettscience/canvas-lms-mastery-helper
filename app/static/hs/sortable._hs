@@ -1,0 +1,54 @@
+behavior Sortable
+
+    js
+        function sortArray(array, index, asc) {
+            let sorted;
+            if(asc) {
+                sorted = array.sort((a, b) => {
+                    valA = a.children[index].innerText.toUpperCase()
+                    valB = b.children[index].innerText.toUpperCase()
+
+                    return ( valA < valB ) ? -1 : ( valA > valB ) ? 1 : 0
+                })
+            } else {
+                sorted = array.sort((a, b) => {
+                    valA = a.children[index].innerText.toUpperCase()
+                    valB = b.children[index].innerText.toUpperCase()
+
+                    return ( valA > valB ) ? -1 : ( valA < valB ) ? 1 : 0
+                })
+            }
+            return sorted
+        }
+    end
+
+    on click from .columnheader
+        -- get all the headers and the index of the column
+        set headers to <th/> in me
+        set col to headers.indexOf(target.parentElement)
+        
+        -- get the table body and the rows as an array
+        set tbody to the first <tbody/> in me
+        set rowArray to (<tr/> in tbody) as Array
+        
+        -- if this is a first click on this header
+        -- clear the data-ascending attribute on any other header
+        if target.parentElement @aria-sort is null
+            remove @aria-sort from headers
+        end
+
+        -- sort the array depending on the ascending header
+        if target.parentElement @aria-sort is 'ascending'
+            set target.parentElement @aria-sort to ''
+            sortArray(rowArray, col, false)
+        else
+            set target.parentElement @aria-sort to 'ascending'
+            sortArray(rowArray, col, true)
+        end
+        
+        -- merge back into the tbody
+        for row in rowArray
+            tbody.append(row)
+        end
+    end  
+end
