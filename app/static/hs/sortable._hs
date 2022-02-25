@@ -35,6 +35,7 @@ behavior Sortable
         -- clear the data-ascending attribute on any other header
         if target.parentElement @aria-sort is null
             remove @aria-sort from headers
+            -- set target.parentElement @aria-sort to 'ascending'
         end
 
         -- sort the array depending on the ascending header

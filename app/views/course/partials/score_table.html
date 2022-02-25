@@ -1,7 +1,7 @@
 <table id="course-roster" _="install Sortable">
     <thead>
         <tr>
-            <th class="columnheader" role="columnheader" aria-sort="ascending">
+            <th class="columnheader" role="columnheader">
                 <div class="th-inner-container">Name</div>
             </th>
             {% for outcome in course.outcomes %}
@@ -31,7 +31,7 @@
             {% endfor %}
         </tr>
     </thead>
-    <tbody>
+    <tbody class="scroller">
         {% for student in students %}
         {{render_partial('course/partials/student_entry.html', student=student,
         course=course)}} {% endfor %}
