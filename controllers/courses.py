@@ -75,22 +75,42 @@ class CourseAPI(MethodView):
         if not course:
             abort(404, "Course not found. Check the course ID and try again.")
 
-        students = course.enrollments.filter(User.usertype_id == 3).all()
+        # process data for a single student
+        if current_user.usertype_id == 3:
+            template = "course/student_index.html"
+            
+            teacher = course.enrollments.filter(User.usertype_id == 2).first()
 
-        # Aggregate all student scores into the course object.
-        for user in students:
-            user.scores = []
-            for outcome in course.outcomes.all():
-                user_score = getattr(outcome, current_user.preferences.score_calculation_method.name)(user.canvas_id)
-                user.scores.append({
-                    "outcome_canvas_id": outcome.canvas_id,
-                    "score": user_score
-                })
+            outcomes = course.outcomes.all()
+
+            for outcome in outcomes:
+                user_score = getattr(outcome, teacher.preferences.score_calculation_method.name)(current_user.canvas_id)
+                outcome.score = user_score
+            
+            return render_template(
+                template,
+                course=CourseSchema().dump(course), outcomes=outcomes
+            )
+        else:
+            template = "course/teacher_index.html"
+
+            students = course.enrollments.filter(User.usertype_id == 3).all()
+
+            # Aggregate all student scores into the course object.
+            for user in students:
+                user.scores = []
+                for outcome in course.outcomes.all():
+                    user_score = getattr(outcome, current_user.preferences.score_calculation_method.name)(user.canvas_id)
+                    user.scores.append({
+                        "outcome_canvas_id": outcome.canvas_id,
+                        "score": user_score
+                    })
+                
         
-        return render_template(
-            "course/index.html", 
-            course=CourseSchema().dump(course), students=students
-        )
+            return render_template(
+                template, 
+                course=CourseSchema().dump(course), students=students
+            )
     
     def delete(self: None, course_canvas_id: int) -> List[Course]:
         """ Remove a locally-stored course.
@@ -106,7 +126,6 @@ class CourseAPI(MethodView):
         db.session.commit()
 
         return "Course deleted."
-
 
 
 class CourseAssignmentsAPI(MethodView):

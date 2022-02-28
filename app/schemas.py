@@ -72,6 +72,7 @@ class OutcomeListSchema(Schema):
     name = fields.Str()
     canvas_id = fields.Int()
     alignment = fields.Nested(AssignmentSchema(exclude=("watching", "mastery")))
+    score = fields.Float(dump_only=True)
 
 
 class OutcomeSchema(Schema):
@@ -80,6 +81,7 @@ class OutcomeSchema(Schema):
     name = fields.Str()
     canvas_id = fields.Int()
     alignment = fields.Nested(AssignmentSchema(exclude=("watching", "mastery")))
+    score = fields.Float(dump_only=True)
 
 
 class OutcomeAttemptSchema(Schema):
