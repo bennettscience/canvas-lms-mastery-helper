@@ -6,3 +6,4 @@ class MasteryCalculation(Enum):
     HIGHEST = 3
     HIGH_LAST_AVERAGE = 4
     MODE = 5
+    NONE = 6
