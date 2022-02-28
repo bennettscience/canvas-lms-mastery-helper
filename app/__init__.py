@@ -13,6 +13,19 @@ from config import Config
 
 import jinja_partials
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+sentry_sdk.init(
+    dsn="https://e90d4028dc554df5b85145ff9cb77681@o288929.ingest.sentry.io/6236113",
+    integrations=[FlaskIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=0.1
+)
+
 app = Flask(__name__, static_folder='static', template_folder='views')
 app.config.from_object(Config)
 db = SQLAlchemy(app, metadata=metadata)
