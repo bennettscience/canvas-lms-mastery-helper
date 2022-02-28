@@ -33,24 +33,37 @@ def logout():
 
 @auth_bp.route("/callback", methods=["GET"])
 def callback():
+    import os
+    from canvasapi import Canvas
     from app.models import UserPreferences
     token = CanvasAuthService().get_token()
     session['oauth_token'] = token
 
+    tmp_canvas_service = Canvas(os.environ.get('CANVAS_URI'), os.environ.get('CANVAS_KEY'))
+
     user_id = session['oauth_token']['user']['id']
     user_name = session['oauth_token']['user']['name']
+
+    split_name = user_name.split(' ')
 
     user = User.query.filter(User.canvas_id == user_id).first()
 
     if user is None:
 
+        # handle users with more than two names
+        if len(split_name) > 2:
+            split_name[:-1] = [' '.join(user_name[:-1])]
+        
+        # The name returned by the OAuth login is normal. Reverse for readability
+        split_name.reverse()
+       
         # The UserType ID field is seeded at startup, so setting an
         # integer directly is okay. 
         # TODO: Make this more reliable with enums?
         user = User(
             canvas_id=user_id,
-            name=user_name,
-            usertype_id=2,
+            name=', '.join(split_name),
+            usertype_id=3,
             token=session['oauth_token']['access_token'],
             expiration=session['oauth_token']['expires_at'],
             refresh_token=session['oauth_token']['refresh_token']
@@ -60,10 +73,28 @@ def callback():
         # The user has to be committed in order to get the ID for the preferences record.
         db.session.commit()
 
-        # Set default values for the score calculation method and score cutoff.
-        ups = UserPreferences(user_id=user.id, score_calculation_method=MasteryCalculation(2), mastery_score=3)
-        db.session.add(ups)
+        # Check the user's permissions and match. If they have a single TeacherEnrollment, then
+        # elevate them to Teacher status.
+        canvas_user_account = tmp_canvas_service.get_user(user_id)
 
+        # Store the sortable name instead
+        user.name = canvas_user_account.sortable_name
+
+        courses = canvas_user_account.get_courses(enrollment_state='active')
+
+        enrollment_types = set()
+
+        for course in courses:
+            enrollment_types.update([enrollment['type'] for enrollment in course.enrollments])
+        
+        if 'teacher' in enrollment_types:
+            user.usertype_id = 2
+            ups = UserPreferences(user_id=user.id, score_calculation_method=MasteryCalculation(2), mastery_score=3)
+        else:
+            ups = UserPreferences(user_id=user.id, score_calculation_method=MasteryCalculation(6), mastery_score=None)
+
+        # Set default values for the score calculation method and score cutoff.
+        db.session.add(ups)
         db.session.commit()
     else:
         if user.token != session['oauth_token']['access_token']:
