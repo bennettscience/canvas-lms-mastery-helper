@@ -1,0 +1,9 @@
+<div
+    class="item outcome"
+    hx-get="{{course_id}}/users/{{student_id}}/results/{{item.canvas_id}}"
+    hx-swap="afterend"
+    hx-target="#student-details"
+>
+    <h3>{{item.name}}</h3>
+    <p>{{item.score}}</p>
+</div>

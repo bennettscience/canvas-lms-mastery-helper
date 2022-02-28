@@ -21,9 +21,8 @@ this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
         >
             Add new course
         </button>
-        {% endif %}
         <h3>Your Enrollments</h3>
-        {%if position == 'right' %}
+        {% endif %} {%if position == 'right' %}
         <button class="btn-close" _="on click trigger closeModal">
             × close
         </button>
