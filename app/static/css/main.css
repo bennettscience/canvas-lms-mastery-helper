@@ -234,11 +234,13 @@ main {
 
 .btn-close {
     background-color: transparent;
-    border: none;
+    border: 1px solid;
+    border-color: transparent;
 }
 
 .btn-close:hover {
     cursor: pointer;
+    border-color: var(--black);
 }
 
 .hide {
