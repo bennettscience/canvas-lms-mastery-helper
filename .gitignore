@@ -13,3 +13,4 @@ wsgi.py
 app/client/*
 .vscode/
 logs/
+gunicorn.config.py
