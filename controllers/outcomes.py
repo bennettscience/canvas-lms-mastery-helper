@@ -57,7 +57,7 @@ class OutcomeListAPI(MethodView):
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()
-                return jsonify({"messages": "Cannot import an outcome which isn't assessed in this course. Add the Outcome to your canvas course and try again."}), 422
+                return jsonify({"messages": e}), 422
         else:
             abort(409)
 
