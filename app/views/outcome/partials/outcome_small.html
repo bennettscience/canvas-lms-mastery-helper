@@ -4,7 +4,7 @@
     hx-trigger="click"
     hx-indicator="#toast"
     _="
-        on htmx:afterRequest toast('Import successful') end 
+        on htmx:afterRequest toast(result) end 
         on htmx:afterSwap remove me end
     "
 >
