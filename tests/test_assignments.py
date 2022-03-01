@@ -2,7 +2,7 @@ import json
 import unittest
 from app.errors import DuplicateException
 
-from tests.util import TestBase
+from tests.util import TestBase, captured_templates
 
 from app import app, db
 from app.enums import MasteryCalculation
@@ -122,7 +122,7 @@ class TestSingleAssignment(TestBase):
         self.assertEqual(resp.status_code, 404)
 
 
-class TestAlignAssignment(unittest.TestCase):
+class TestAlignAssignmentModel(unittest.TestCase):
     """ Test the alignment mechanism on the <Assignment> model.
         URL paths for this work are done against the Outcome.
     """
@@ -188,3 +188,92 @@ class TestAlignAssignment(unittest.TestCase):
         assignment.watch(outcome2)
 
         self.assertTrue(assignment.is_watching(outcome2))
+
+
+class TestAlignAssignmentAPI(TestBase):
+    def setUp(self):
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
+        db.create_all()
+        self.client = app.test_client()
+
+        course = Course(canvas_id=123, name='Course 1')
+        a1 = Assignment(canvas_id=123, name='Assignment 1')
+        o1 = Outcome(canvas_id=123, name='Outcome 1')
+        o2 = Outcome(canvas_id=456, name='Outcome 2')
+
+        db.session.add_all([course, a1, o1, o2])
+
+        course.assignments.append(a1)
+
+        db.session.commit()
+    
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+    
+    def test_get_alignment_card(self):
+        with captured_templates(app) as templates:
+            resp = self.client.get('/courses/123/outcomes/123/edit')
+            self.assertTrue(resp.status_code == 200)
+            self.assertTrue(len(templates), 1)
+
+            template = templates[0]
+
+            self.assertEqual(template['template_name'], 'outcome/partials/outcome_alignment_card.html')
+            self.assertEqual(len(template['context']['assignments']), 1)
+    
+    def test_align_assignment_to_outcome(self):
+        with captured_templates(app) as templates:
+            data = {
+                'assignment_id': 123
+            }
+            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+
+            resp = self.client.put('/courses/123/outcomes/123/edit',
+                data=data,
+                headers=headers
+            )
+            self.assertTrue(resp.status_code == 200)
+            self.assertTrue(len(templates), 1)
+
+            template = templates[0]
+
+            self.assertEqual(template['template_name'], 'outcome/partials/outcome_card.html')
+            self.assertTrue(template['context']['item']['alignment']['canvas_id'] == 123)
+
+    def test_remove_alignment_from_outcome(self):
+        # Set up the alignment
+        assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
+
+        assignment.watch(outcome)
+
+        with captured_templates(app) as templates:
+            resp = self.client.delete('/courses/123/outcomes/123/edit')
+
+            self.assertTrue(resp.status_code == 200)
+            template = templates[0]
+
+            self.assertEqual(template['template_name'], 'outcome/partials/outcome_card.html')
+            self.assertTrue(template['context']['item']['alignment'] == None)
+        
+    def test_align_same_assignment(self):
+        assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
+
+        assignment.watch(outcome)
+
+        self.assertTrue(assignment.is_watching(outcome))
+
+        data = {
+            'assignment_id': 123
+        }
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        
+        # Try to align the same assignment with the API
+        resp = self.client.put('/courses/123/outcomes/123/edit',
+            data=data,
+            headers=headers
+        )
+        self.assertEqual(resp.status_code, 409)
+

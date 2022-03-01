@@ -49,6 +49,20 @@ class TestOutcomes(TestBase):
     def test_get_missing_outcome(self):
         resp = self.client.get('/outcomes/999')
         self.assertEqual(resp.status_code, 404)
+    
+    @unittest.skip
+    def test_post_outcome(self):
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        data = {
+            'canvas_id': 456,
+            'course_id': 999,
+            'name': 'Outcome 2'
+        }
+        resp = self.client.post('/outcomes',
+            data=data,
+            headers=headers
+        )
+        self.assertTrue(resp.status_code == 200)
 
 class TestOutcomeAlignments(TestBase):
     
