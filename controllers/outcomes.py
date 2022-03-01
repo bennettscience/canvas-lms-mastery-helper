@@ -38,7 +38,7 @@ class OutcomeListAPI(MethodView):
             'canvas_id': fields.Int(), 
             'name': fields.Str()
         }
-        args = parser.parse(required_args, request, location="form")
+        args = parser.parse(required_args, location="form")
         outcome = Outcome.query.filter(Outcome.canvas_id == args['canvas_id']).first()
         
         if not outcome:

@@ -167,10 +167,11 @@ class CanvasSyncService:
         for attempt in results:
 
             attempt_exists = OutcomeAttempt.query.filter(OutcomeAttempt.attempt_canvas_id == attempt.id).scalar()
-            
+            user_exists = User.query.filter(User.canvas_id == attempt.links['user']).first()
+
             # Only store attempts with a score. This can happen when a teacher scores a rubric 
             # and then removes that rubric score for some reason.
-            if attempt.score is not None and attempt_exists is None:
+            if attempt.score is not None and attempt_exists is None and user_exists is not None:
                 # Convert the datetime string into a Python DateTime object
                 dt = datetime.strptime(attempt.submitted_or_assessed_at[:-1], "%Y-%m-%dT%H:%M:%S")
                 attempts.append(
@@ -187,12 +188,12 @@ class CanvasSyncService:
         if len(attempts) > 0:
             db.session.add_all(attempts)
             canvas_course.updated_at = datetime.now()
+            db.session.commit()
             
             result = f"Stored {len(attempts)} new attempts."
         else: 
             result = "There were no new Outcome attempts."
         
-        db.session.commit()
         return result
 
     def get_assignments(self: None, course_id: int) -> List[Assignment]:
