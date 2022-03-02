@@ -135,7 +135,7 @@ class Outcome(db.Model):
         from statistics import fmean
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
-            return 'No attempts'
+            return None
         else:
             return round(fmean(scores), 1)
     
@@ -158,7 +158,7 @@ class Outcome(db.Model):
         from statistics import fmean
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
-            return 'No attempts'
+            return None
         elif len(scores) == 1:
             # Handle a single attempt, return as a float for aesthetics.
             return float(scores[0])
@@ -178,7 +178,7 @@ class Outcome(db.Model):
         """
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
-            return 'No attempts'
+            return None
         else:
             return max(scores)
 
@@ -201,7 +201,7 @@ class Outcome(db.Model):
         """
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
-            return 'No attempts'
+            return None
         else:
             return round((max(scores) + scores[-1]) / 2, 1)
     
@@ -220,7 +220,7 @@ class Outcome(db.Model):
         from statistics import mode
         scores = self.__get_scores(user_id)
         if len(scores) == 0:
-            return 'No attempts'
+            return None
         else:
             return mode(scores)
 
