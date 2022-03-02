@@ -12,7 +12,6 @@ class TestBase(unittest.TestCase):
     def auto_login(user_name):
         user = User.query.filter(User.name == user_name).first()
         login_user(user, remember=True)
-        print("{} logged in".format(user.name))
         return "ok"
 
     def login(self, user_name):
