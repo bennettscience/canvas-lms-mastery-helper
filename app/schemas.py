@@ -30,7 +30,6 @@ class OutcomeScore(Schema):
 class CourseSchema(Schema):
     type = fields.Str(dump_default='course')
     id = fields.Int(dump_only=True)
-    use_canvas_id = fields.Bool(dump_default=False)
     canvas_id = fields.Int()
     name = fields.Str()
     outcomes = fields.List(fields.Nested("OutcomeListSchema"), dump_only=True)
@@ -55,7 +54,6 @@ class CreateAssignmentSchema(Schema):
 
 class AssignmentSchema(Schema):
     type = fields.Str(dump_default='assignment')
-    use_canvas_id = fields.Bool(dump_default=False)
     id = fields.Int(dump_only=True)
     canvas_id = fields.Int()
     name = fields.Str()
@@ -79,7 +77,6 @@ class OutcomeListSchema(Schema):
 class OutcomeSchema(Schema):
     type = fields.Str(dump_default='outcome')
     id = fields.Int(dump_only=True)
-    use_canvas_id = fields.Bool(dump_default=False)
     name = fields.Str()
     canvas_id = fields.Int()
     alignment = fields.Nested(AssignmentSchema(exclude=("watching", "mastery")))
