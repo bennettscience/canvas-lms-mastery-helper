@@ -34,26 +34,26 @@ class OutcomeListAPI(MethodView):
         self.service = CanvasSyncService()
 
         required_args = {
+            'outcome_id': fields.Int(), 
             'course_id': fields.Int(), 
-            'canvas_id': fields.Int(), 
             'name': fields.Str()
         }
         args = parser.parse(required_args, location="form")
-        outcome = Outcome.query.filter(Outcome.canvas_id == args['canvas_id']).first()
+        target_outcome = Outcome.query.filter(Outcome.canvas_id == args['outcome_id']).first()
         
-        if not outcome:
-            outcome = Outcome(name=args['name'], canvas_id=args['canvas_id'])
-            db.session.add(outcome)
+        if not target_outcome:
+            target_outcome = Outcome(name=args['name'], canvas_id=args['outcome_id'])
+            db.session.add(target_outcome)
         
          # All outcomes are attached to a course, so do that before returning.
         course = Course.query.filter(Course.canvas_id == args['course_id']).first()
-        outcome_is_imported = course.outcomes.filter(Outcome.canvas_id == outcome.id).scalar()
+        outcome_is_imported = course.outcomes.filter(Outcome.canvas_id == target_outcome.id).scalar()
         
         if outcome_is_imported is None:
-            course.outcomes.append(outcome)
+            course.outcomes.append(target_outcome)
 
             try:
-                self.service.get_outcome_attempts(args['course_id'], [args['canvas_id']])
+                self.service.get_outcome_attempts(args['course_id'], [args['outcome_id']])
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()
@@ -72,12 +72,15 @@ class OutcomeListAPI(MethodView):
                     "score": user_score
                 })
         
+        has_alignment = any(o.alignment for o in course.outcomes.all())
+        
         return render_template(
             'outcome/partials/outcome_new_alignment.html',
             course_id=args['course_id'],
             course=CourseSchema().dump(course),
             students=students,
-            item=OutcomeSchema().dump(outcome)
+            item=OutcomeSchema().dump(target_outcome),
+            has_alignment=has_alignment
         )
             
 
@@ -149,29 +152,47 @@ class AlignmentAPI(MethodView):
         Returns:
             Assignment: Updated <Assignment>
         """
+        from app.models import User
         from app.schemas import OutcomeSchema
 
-        args = parser.parse({"assignment_canvas_id": fields.Str()}, location='form')
+        args = parser.parse({"assignment_canvas_id": fields.Int()}, location='form')
 
         assignment = Assignment.query.filter(Assignment.canvas_id == args['assignment_canvas_id']).first()
-        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
+        target_outcome = Outcome.query.filter_by(canvas_id=outcome_canvas_id).first()
 
         if not assignment:
             abort(404, f"No assignment with ID {args['assignment_canvas_id']} found.")
         
-        if not outcome:
+        if not target_outcome:
             abort(404, f"No outcome with ID {outcome_canvas_id} found.")
 
+        course = target_outcome.course[0]
+        students = course.enrollments.filter(User.usertype_id == 3).all()
+
         try:
-            assignment.watch(outcome)
+            assignment.watch(target_outcome)
+            # TODO: move into it's own util function
+            for user in students:
+                user.scores = []
+                for outcome in course.outcomes.all():
+                    user_score = getattr(outcome, current_user.preferences.score_calculation_method.name)(user.canvas_id)
+                    user.scores.append({
+                        "outcome_canvas_id": outcome.canvas_id,
+                        "score": user_score
+                    })
         except DuplicateException as e:
             abort(409, e.__str__())
 
+        has_alignment = any(o.alignment for o in course.outcomes.all())    
+
         # Return an Assignment object as an Assignment Card
         return render_template(
-            'outcome/partials/outcome_card.html',
-            item=OutcomeSchema().dump(outcome),
-            course_id=course_canvas_id
+            'outcome/partials/outcome_change_alignment.html',
+            course_id=course_canvas_id,
+            course=CourseSchema().dump(course),
+            students=students,
+            item=OutcomeSchema().dump(target_outcome),
+            has_alignment=has_alignment
         )
 
     def delete(self: None, course_canvas_id: int, outcome_canvas_id: int) -> Outcome:
@@ -183,13 +204,32 @@ class AlignmentAPI(MethodView):
         Returns:
             Assignment: Updated Assignment
         """
-        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
-        if not outcome:
+        from app.models import User
+        target_outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
+        if not target_outcome:
             abort(404, f"No outcome with ID {outcome_canvas_id} found.")
 
-        outcome.alignment.unwatch()
+        target_outcome.alignment.unwatch()
+        
+        course = target_outcome.course[0]
+        students = course.enrollments.filter(User.usertype_id == 3).all()
+        
+        for user in students:
+            user.scores = []
+            for outcome in course.outcomes.all():
+                user_score = getattr(outcome, current_user.preferences.score_calculation_method.name)(user.canvas_id)
+                user.scores.append({
+                    "outcome_canvas_id": outcome.canvas_id,
+                    "score": user_score
+                })
+        
+        has_alignment = any(o.alignment for o in course.outcomes.all())
 
         return render_template(
-            'outcome/partials/outcome_card.html',
-            item=OutcomeSchema().dump(outcome),
-            course_id=course_canvas_id)
+            'outcome/partials/outcome_change_alignment.html',
+            course_id=course_canvas_id,
+            course=CourseSchema().dump(course),
+            students=students,
+            item=OutcomeSchema().dump(target_outcome),
+            has_alignment=has_alignment
+        )

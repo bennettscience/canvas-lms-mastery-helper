@@ -37,7 +37,6 @@ class User(UserMixin, db.Model):
     canvas_id = db.Column(db.Integer, unique=True)
     usertype_id = db.Column(db.Integer, db.ForeignKey("user_type.id"))
     name = db.Column(db.String(255))
-    email = db.Column(db.String(255))
 
     # Used for OAuth
     token = db.Column(db.String(255))

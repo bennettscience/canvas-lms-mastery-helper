@@ -2,7 +2,7 @@
 <div hx-swap-oob="beforeend:#left-sidebar-inner">
     <div
         class="item course-item"
-        hx-get="/courses/{{ item.id }}"
+        hx-get="/courses/{{ item.canvas_id }}"
         hx-trigger="click"
         hx-target="#course-details"
         hx-indicator="#toast"

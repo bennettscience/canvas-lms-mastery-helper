@@ -7,6 +7,7 @@
             {% for outcome in course.outcomes %}
             <th class="columnheader" role="columnheader">
                 <div class="th-inner-container">
+                    {% if outcome.alignment %}
                     <svg
                         title="Sync scores to Canvas"
                         class="btn--sync"
@@ -25,7 +26,7 @@
                             fill="#0D0D0D"
                         ></path>
                     </svg>
-                    {{ outcome.name }}
+                    {% endif %} {{ outcome.name }}
                 </div>
             </th>
             {% endfor %}

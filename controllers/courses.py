@@ -36,11 +36,15 @@ class CourseListAPI(MethodView):
         """
         from app.canvas_sync_service import CanvasSyncService
 
-        args = parser.parse({"canvas_id": fields.Int(), "name": fields.Str()}, location="form")
+        args = parser.parse({"course_id": fields.Int(), "name": fields.Str()}, location="form")
         exists = Course.query.filter(Course.canvas_id == args['canvas_id']).scalar()
         
         if not exists:
-            course = Manager().create(Course, args)
+            data = {
+                "canvas_id": args['course_id'],
+                "name": args['name']
+            }
+            course = Manager().create(Course, data)
 
             # Add the requester to the course by default.
             current_user.enroll(course)
@@ -108,10 +112,14 @@ class CourseAPI(MethodView):
                         "score": user_score
                     })
                 
-        
+            # Check that the outcomes returned in the course have an alignment. If none do,
+            # disable the "post grades" button.
+            has_alignment = any(o.alignment for o in course.outcomes.all())
             return render_template(
                 template, 
-                course=CourseSchema().dump(course), students=students
+                course=CourseSchema().dump(course), 
+                students=students,
+                has_alignment=has_alignment
             )
     
     @restricted()

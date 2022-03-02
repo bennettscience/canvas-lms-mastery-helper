@@ -14,11 +14,8 @@
     <form
         hx-put="{{course_id}}/outcomes/{{outcome.canvas_id}}/edit"
         hx-trigger="submit"
-        {#
-        hx-ext="json-enc"
-        #}
     >
-        <select id="assignment-id" name="assignment_id">
+        <select id="assignment-id" name="assignment_canvas_id">
             <option value="">---</option>
             {% for assignment in assignments %}
             <option value="{{ assignment.canvas_id }}"

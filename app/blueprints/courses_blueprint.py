@@ -28,12 +28,12 @@ courses_bp.add_url_rule("/courses/<int:course_canvas_id>/enrollments", view_func
 courses_bp.add_url_rule("/courses/<int:course_canvas_id>/assignments", view_func=course_assignments_view, methods=['GET'])
 courses_bp.add_url_rule("/courses/<int:course_canvas_id>/outcomes", view_func=course_outcomes_view, methods=['GET'])
 courses_bp.add_url_rule(
-    "/courses/<int:course_canvas_id>/outcomes/<int:outcome_id>", 
+    "/courses/<int:course_canvas_id>/outcomes/<int:outcome_canvas_id>", 
     view_func=outcome_attempts_view, 
     methods=['GET']
 )
 courses_bp.add_url_rule(
-    "/courses/<int:course_canvas_id>/users/<int:user_id>/results/<int:outcome_id>",
+    "/courses/<int:course_canvas_id>/users/<int:user_canvas_id>/results/<int:outcome_canvas_id>",
     view_func=user_outcome_attempts_view,
     methods=['GET']
 )

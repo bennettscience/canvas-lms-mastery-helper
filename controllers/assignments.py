@@ -52,15 +52,15 @@ class AssignmentListAPI(MethodView):
         from app.models import Course
         required_args = {
             "name": fields.Str(required=True),
-            "canvas_id": fields.Int(required=True),
+            "assignment_canvas_id": fields.Int(required=True),
             "course_id": fields.Int(required=True),
             "points_possible": fields.Float(required=True)
         }
         args = parser.parse(required_args, location="form")
-        exists = Assignment.query.filter(Assignment.canvas_id == args['canvas_id']).scalar()
+        exists = Assignment.query.filter(Assignment.canvas_id == args['assignment_canvas_id']).scalar()
 
         if not exists:
-            assignment = Assignment(name=args['name'], canvas_id=args['canvas_id'], points_possible=args['points_possible'])
+            assignment = Assignment(name=args['name'], canvas_id=args['assignment_canvas_id'], points_possible=args['points_possible'])
             course = Course.query.filter(Course.canvas_id == args['course_id']).first()
             assignment.course.append(course)
             db.session.add(assignment)

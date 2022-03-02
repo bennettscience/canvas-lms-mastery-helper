@@ -54,9 +54,17 @@
         />
         {% if course.outcomes|length > 0 %}
         <button
-            class="btn btn-primary"
+            class="btn btn-primary tooltip"
             hx-put="/courses/{{course.canvas_id}}/assignments/push"
             hx-indicator="#toast"
+            {%
+            if
+            not
+            has_alignment
+            %}
+            disabled
+            data-tooltip="Align at least one assignment to post grades."
+            {%endif%}
         >
             <svg
                 class="left"

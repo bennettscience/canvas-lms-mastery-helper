@@ -179,6 +179,10 @@ main {
     margin-right: 25px;
 }
 
+.btn:disabled {
+    cursor: not-allowed;
+}
+
 .btn:hover {
     opacity: 0.85;
 }
@@ -521,7 +525,7 @@ td:not(:first-child) {
 }
 
 .tooltip:before {
-    content: attr(title); /* here's the magic */
+    content: attr(data-tooltip); /* here's the magic */
     position: absolute;
 
     /* vertically center */
