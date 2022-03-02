@@ -21,13 +21,14 @@ class TestCourseListAPI(TestBase):
         self.client = app.test_client()
 
         course = Course(canvas_id=123, name="Course 1")
-        user = User(name="User", usertype_id=2, canvas_id=123)
+        teacher = User(name="Teacher", usertype_id=2, canvas_id=123)
+        student = User(name="Student", usertype_id=3, canvas_id=456)
         prefs = UserPreferences(user_id=1, score_calculation_method=MasteryCalculation(1), mastery_score=3)
 
-        db.session.add_all([user, prefs, course])
+        db.session.add_all([teacher, student, prefs, course])
         
         # Make sure the user has at least one enrollment
-        user.enroll(course)
+        teacher.enroll(course)
         db.session.commit()
 
     def tearDown(self):
@@ -36,7 +37,7 @@ class TestCourseListAPI(TestBase):
     
     # 404 if the local db ID is used
     def test_get_course_list(self):
-        self.login("User")
+        self.login("Teacher")
 
         with captured_templates(app) as templates:
             resp = self.client.get('/courses')
@@ -58,7 +59,7 @@ class TestCourseListAPI(TestBase):
              function on it's own, comment out those lines in the post function. \
         ")
     def test_create_new_course(self):
-        self.login("User")
+        self.login("Teacher")
         payload = {
             "canvas_id": 456,
             "name": "Course 2"
@@ -78,7 +79,7 @@ class TestCourseListAPI(TestBase):
     
     def test_create_duplicate_course(self):
         from app.errors import DuplicateException
-        self.login("User")
+        self.login("Teacher")
         payload = {
             "canvas_id": 123,
             "name": "Course 2"
@@ -104,7 +105,7 @@ class TestCourseAPI(TestBase):
         teacher = User(name="Teacher", usertype_id=2, canvas_id=123)
         student = User(name='Student', usertype_id=3, canvas_id=456)
         outcome = Outcome(name="Outcome 1", canvas_id=123)
-        assignment = Assignment(name="Assignmetn 1", canvas_id=123)
+        assignment = Assignment(name="Assignment 1", canvas_id=123)
 
         db.session.add_all([assignment, course, outcome, student, teacher])
         db.session.commit()
@@ -162,7 +163,6 @@ class TestCourseAPI(TestBase):
 
             self.assertTrue('course/student_index.html' in templates_rendered)
             self.assertTrue('outcome/student/outcome_card.html' in templates_rendered)
-            
     
     # 404 if the local db ID is used
     def test_get_single_course_by_local_id(self):
@@ -177,4 +177,157 @@ class TestCourseAPI(TestBase):
 
         self.assertTrue(resp.status_code == 404)
 
+    def test_delete_as_teacher(self):
+        self.login("Teacher")
+        resp = self.client.delete('/courses/123')
+        self.assertTrue(resp.status_code == 200)
+    
+    def test_delete_as_student(self):
+        self.login("Student")
+        resp = self.client.delete('/courses/123')
+        self.assertTrue(resp.status_code == 401)
 
+    def test_delete_as_anon(self):
+        resp = self.client.delete('/courses/123')
+        self.assertTrue(resp.status_code == 302)
+
+
+class TestCourseAssignments(TestBase):
+    def setUp(self):
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
+        db.create_all()
+        self.client = app.test_client()
+
+        # Create a full course with associations for users, assignments, and outcomes
+        course = Course(canvas_id=123, name="Course 1")
+        teacher = User(name="Teacher", usertype_id=2, canvas_id=123)
+        student = User(name='Student', usertype_id=3, canvas_id=456)
+        assignment = Assignment(name="Assignment 1", canvas_id=123)
+
+        db.session.add_all([assignment, course, student, teacher])
+        db.session.commit()
+        
+        prefs = UserPreferences(user_id=teacher.id, score_calculation_method=MasteryCalculation(1), mastery_score=3)
+
+        teacher.enroll(course)
+        student.enroll(course)
+        course.assignments.append(assignment)
+
+        db.session.add(prefs)
+        db.session.commit()
+        
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_course_assignments_as_teacher(self):
+        self.login("Teacher")
+
+        with captured_templates(app) as templates:
+            resp = self.client.get('/courses/123/assignments')
+            self.assertTrue(resp.status_code == 200)
+            self.assertTrue(len(templates) == 1)
+    
+    def test_get_course_assignments_as_student(self):
+        self.login("Student")
+
+        with captured_templates(app) as templates:
+            resp = self.client.get('/courses/123/assignments')
+            self.assertTrue(resp.status_code == 401)
+    
+    def test_get_course_assignments_as_anon(self):
+
+        with captured_templates(app) as templates:
+            resp = self.client.get('/courses/123/assignments')
+            self.assertTrue(resp.status_code == 302)
+
+class TestCouresOutcomes(TestBase):
+    def setUp(self):
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
+        db.create_all()
+        self.client = app.test_client()
+
+        # Create a full course with associations for users, assignments, and outcomes
+        course = Course(canvas_id=123, name="Course 1")
+        teacher = User(name="Teacher", usertype_id=2, canvas_id=123)
+        student = User(name='Student', usertype_id=3, canvas_id=456)
+        outcome = Outcome(name="Outcome 1", canvas_id=123)
+
+        db.session.add_all([outcome, course, student, teacher])
+        
+        teacher.enroll(course)
+        student.enroll(course)
+        course.outcomes.append(outcome)
+
+        db.session.commit()
+        
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_course_outcomes_as_teacher(self):
+        self.login("Teacher")
+
+        with captured_templates(app) as templates:
+            resp = self.client.get('/courses/123/outcomes')
+            self.assertTrue(resp.status_code == 200)
+            self.assertTrue(len(resp.json) == 1)
+    
+    def test_get_course_outcomes_as_student(self):
+        self.login("Student")
+
+        with captured_templates(app) as templates:
+            resp = self.client.get('/courses/123/outcomes')
+            self.assertTrue(resp.status_code == 401)
+    
+    def test_get_course_outcomes_as_anon(self):
+
+        with captured_templates(app) as templates:
+            resp = self.client.get('/courses/123/outcomes')
+            self.assertTrue(resp.status_code == 302)
+
+
+class TestCourseEnrollments(TestBase):
+    def setUp(self):
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
+        db.create_all()
+        self.client = app.test_client()
+
+        # Create a full course with associations for users, assignments, and outcomes
+        course = Course(canvas_id=123, name="Course 1")
+        teacher = User(name="Teacher", usertype_id=2, canvas_id=123)
+        student = User(name='Student', usertype_id=3, canvas_id=456)
+
+        db.session.add_all([course, student, teacher])
+        db.session.commit()
+
+        teacher.enroll(course)
+        student.enroll(course)
+
+        db.session.commit()
+        
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+    
+    def test_get_enrollments_as_teacher(self):
+        self.login("Teacher")
+
+        resp = self.client.get('/courses/123/enrollments')
+        self.assertTrue(resp.status_code == 200)
+        self.assertEqual(len(resp.json), 1)
+    
+    def test_get_enrollments_as_student(self):
+        self.login("Student")
+
+        resp = self.client.get('/courses/123/enrollments')
+        self.assertTrue(resp.status_code == 401)
+
+    
+    def test_get_enrollments_as_anon(self):
+        resp = self.client.get('/courses/123/enrollments')
+        self.assertTrue(resp.status_code == 302)
+
+            

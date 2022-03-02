@@ -8,6 +8,7 @@ from webargs.flaskparser import parser
 from app import db
 from app.models import Assignment, Course, Manager, Outcome
 from app.schemas import CourseSchema, OutcomeListSchema
+from app.util import restricted
 
 
 class CourseListAPI(MethodView):
@@ -26,6 +27,7 @@ class CourseListAPI(MethodView):
             items=CourseSchema(many=True).dump(courses)
         )
 
+    @restricted()
     def post(self: None) -> Course:
         """ Add a course record to the database
 
@@ -112,6 +114,7 @@ class CourseAPI(MethodView):
                 course=CourseSchema().dump(course), students=students
             )
     
+    @restricted()
     def delete(self: None, course_canvas_id: int) -> List[Course]:
         """ Remove a locally-stored course.
 
@@ -125,10 +128,11 @@ class CourseAPI(MethodView):
         db.session.delete(course)
         db.session.commit()
 
-        return "Course deleted."
+        return "Course deleted.", 200
 
 
 class CourseAssignmentsAPI(MethodView):
+    @restricted()
     def get(self: None, course_canvas_id: int) -> List[Assignment]:
         """ Get assignments connected to a course by ID
 
@@ -149,6 +153,7 @@ class CourseAssignmentsAPI(MethodView):
 
 
 class CourseEnrollmentsAPI(MethodView):
+    @restricted()
     def get(self: None, course_canvas_id: int) -> Course:
         """
 
@@ -180,6 +185,7 @@ class CourseEnrollmentsAPI(MethodView):
         
         
 class CourseOutcomesAPI(MethodView):
+    @restricted()
     def get(self: None, course_canvas_id: int) -> List[Outcome]:
         """ Retrieve a list of outcomes for a given course ID
 
