@@ -82,7 +82,7 @@ class OutcomeListAPI(MethodView):
             
 
 class OutcomeAPI(MethodView):
-    def get(self: None, outcome_id: int) -> Outcome:
+    def get(self: None, outcome_canvas_id: int) -> Outcome:
         """ Get a single stored outcome
 
         Args:
@@ -93,13 +93,10 @@ class OutcomeAPI(MethodView):
         """
         args = parser.parse(OutcomeSchema(), location="querystring")
 
-        if args and args['use_canvas_id']:
-            outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
-        else:
-            outcome = Outcome.query.filter(Outcome.id == outcome_id).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
 
         if not outcome:
-            abort(404)
+            abort(404, 'Outcome not found. Check the outcome ID and try again.')
         
         return render_template(
             "outcome/partials/outcome_card.html",
@@ -109,7 +106,7 @@ class OutcomeAPI(MethodView):
 
 
 class AlignmentAPI(MethodView):
-    def get(self: None, outcome_id: int, course_id: int):
+    def get(self: None, outcome_canvas_id: int, course_canvas_id: int):
         """ Return an Outcome card with Assignments available to link
 
         Args:
@@ -121,8 +118,8 @@ class AlignmentAPI(MethodView):
         """
         from app.schemas import OutcomeSchema
 
-        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
-        course = Course.query.filter(Course.canvas_id == course_id).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
+        course = Course.query.filter(Course.canvas_id == course_canvas_id).first()
         if course is None:
             app.logger.warning('Did you use the course Canvas ID?')
             abort(404)
@@ -140,47 +137,44 @@ class AlignmentAPI(MethodView):
             course_id=course.canvas_id
         )
 
-    def put(self: None, course_id: int, outcome_id: int):
+    def put(self: None, course_canvas_id: int, outcome_canvas_id: int):
         """ Align an outcome to an assignment.
 
         The payload should include a valid Canvas ID for the 
         assignment to align
 
         Args:
-            assignment_id (int): Assignment ID
+            assignment_canvas_id (int): Assignment ID
 
         Returns:
             Assignment: Updated <Assignment>
         """
         from app.schemas import OutcomeSchema
 
-        # This aborts if the argument is missing, so no need for an if block
-        args = parser.parse({"assignment_id": fields.Str()}, location='form')
+        args = parser.parse({"assignment_canvas_id": fields.Str()}, location='form')
 
-        assignment = Assignment.query.filter(Assignment.canvas_id == args['assignment_id']).first()
-        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
+        assignment = Assignment.query.filter(Assignment.canvas_id == args['assignment_canvas_id']).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
 
         if not assignment:
-            abort(404, f"No assignment with ID {args['assignment_id']} found.")
+            abort(404, f"No assignment with ID {args['assignment_canvas_id']} found.")
         
         if not outcome:
-            abort(404, f"No outcome with ID {outcome_id} found.")
+            abort(404, f"No outcome with ID {outcome_canvas_id} found.")
 
         try:
             assignment.watch(outcome)
         except DuplicateException as e:
             abort(409, e.__str__())
-        
-        course_id = assignment.course[0].canvas_id
 
         # Return an Assignment object as an Assignment Card
         return render_template(
             'outcome/partials/outcome_card.html',
             item=OutcomeSchema().dump(outcome),
-            course_id=course_id
+            course_id=course_canvas_id
         )
 
-    def delete(self: None, course_id: int, outcome_id: int) -> Outcome:
+    def delete(self: None, course_canvas_id: int, outcome_canvas_id: int) -> Outcome:
         """ Remove an Outcome alignment from an assignment
 
         Args:
@@ -189,13 +183,13 @@ class AlignmentAPI(MethodView):
         Returns:
             Assignment: Updated Assignment
         """
-        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_id).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
         if not outcome:
-            abort(404, f"No outcome with ID {outcome_id} found.")
+            abort(404, f"No outcome with ID {outcome_canvas_id} found.")
 
         outcome.alignment.unwatch()
 
         return render_template(
             'outcome/partials/outcome_card.html',
             item=OutcomeSchema().dump(outcome),
-            course_id=course_id)
+            course_id=course_canvas_id)

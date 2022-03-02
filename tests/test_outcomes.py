@@ -33,19 +33,12 @@ class TestOutcomes(TestBase):
         self.assertIsInstance(resp.json, list)
         self.assertEqual(len(resp.json), 1)
 
-    # TODO: check the template actually rendered
-    # https://stackoverflow.com/questions/23987564/test-flask-render-template-context/24914680#24914680
-    def test_get_single_outcome(self):
+    def test_get_single_outcome_404(self):
         resp = self.client.get('/outcomes/1')
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Outcome 1', resp.data)
-    
-    def test_get_outcome_404(self):
-        resp = self.client.get('/outcomes/123')
         self.assertEqual(resp.status_code, 404)
     
     def test_get_single_outcome_by_canvas_id(self):
-        resp = self.client.get('/outcomes/123?use_canvas_id=True')
+        resp = self.client.get('/outcomes/123')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Outcome 1', resp.data)
         self.assertIn(b'Set up alignment', resp.data)
@@ -98,7 +91,7 @@ class TestOutcomeAlignments(TestBase):
     def test_align_assignment_to_outcome(self):
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         payload = {
-            'assignment_id': '123'
+            'assignment_canvas_id': '123'
         }
         resp = self.client.put(
             'courses/123/outcomes/123/edit',
@@ -110,7 +103,7 @@ class TestOutcomeAlignments(TestBase):
     def test_align_missing_assignment(self):
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         payload = {
-            'assignment_id': '999'
+            'assignment_canvas_id': '999'
         }
         resp = self.client.put(
             'courses/123/outcomes/123/edit',
@@ -124,7 +117,7 @@ class TestOutcomeAlignments(TestBase):
     def test_align_missing_course(self):
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         payload = {
-            'assignment_id': '123'
+            'assignment_canvas_id': '123'
         }
         resp = self.client.put(
             'courses/123/outcomes/999/edit',

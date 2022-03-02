@@ -15,7 +15,7 @@ class TestAssignments(TestBase):
         db.create_all()
         self.client = app.test_client()
 
-        assignment = Assignment(canvas_id=123, name='Assignment 1')
+        assignment = Assignment(canvas_id=123, name='Assignment 1', points_possible=10)
         user = User(name="User", usertype_id=2, canvas_id=123)
         prefs = UserPreferences(user_id=1, score_calculation_method=MasteryCalculation(1), mastery_score=3)
         course = Course(name="Course 1", canvas_id=999)
@@ -27,12 +27,14 @@ class TestAssignments(TestBase):
         db.session.remove()
         db.drop_all()
     
+    # GET not allowed on this route
     def test_get_assignments(self):
         self.login(1)
         resp = self.client.get('/assignments')
 
         self.assertEqual(resp.status_code, 405)
 
+    # Make a new assignment in the DB
     def test_create_assignment(self):
         self.login(1)
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -51,6 +53,7 @@ class TestAssignments(TestBase):
         self.assertTrue(resp.status_code == 200)
         self.assertEqual(resp.json['message'], 'Import successful')
 
+    # Error if the assignment already exists
     def test_assignment_conflict(self):
         self.login(1)
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -71,6 +74,7 @@ class TestAssignments(TestBase):
         self.assertTrue(resp.status_code == 409)
         self.assertEqual(response_body['description'], 'Assignment already exists. Please select a different assignment.')
     
+    # Bad post data
     def test_malformed_assignment(self):
         self.login(1)
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -104,15 +108,15 @@ class TestSingleAssignment(TestBase):
         db.session.remove()
         db.drop_all()
 
-    def test_get_assignment_by_id(self):
+    # 404 if the local db ID is used
+    def test_get_assignment_by_local_id(self):
         self.login(1)
         resp = self.client.get('/assignments/1')
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json['name'], 'Assignment 1')
+        self.assertEqual(resp.status_code, 404)
     
     def test_get_assignment_by_canvas_id(self):
         self.login(1)
-        resp = self.client.get('/assignments/123?use_canvas_id=True')
+        resp = self.client.get('/assignments/123')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json['name'], 'Assignment 1')
     
@@ -225,7 +229,7 @@ class TestAlignAssignmentAPI(TestBase):
     def test_align_assignment_to_outcome(self):
         with captured_templates(app) as templates:
             data = {
-                'assignment_id': 123
+                'assignment_canvas_id': 123
             }
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
@@ -266,7 +270,7 @@ class TestAlignAssignmentAPI(TestBase):
         self.assertTrue(assignment.is_watching(outcome))
 
         data = {
-            'assignment_id': 123
+            'assignment_canvas_id': 123
         }
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         

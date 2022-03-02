@@ -17,8 +17,8 @@ class UserListAPI(MethodView):
 
 
 class UserAPI(MethodView):
-    def get(self: None, user_id: int) -> User:
-        user = User.query.get(user_id)
+    def get(self: None, user_canvas_id: int) -> User:
+        user = User.query.filter(User.canvas_id == user_canvas_id).first()
         if not user:
             abort(404)
         
@@ -29,9 +29,9 @@ class UserAPI(MethodView):
 
 
 class UserPrefsAPI(MethodView):
-    def get(self: None, user_id: int) -> User:
+    def get(self: None, user_canvas_id: int) -> User:
         from app.enums import MasteryCalculation
-        user = User.query.get(user_id)
+        user = User.query.filter(User.canvas_id == user_canvas_id).first()
         if user is None:
             abort(404)
         
@@ -43,8 +43,8 @@ class UserPrefsAPI(MethodView):
             opts=options
         )
 
-    def put(self: None, user_id: int) -> User:
-        user = User.query.get(user_id)
+    def put(self: None, user_canvas_id: int) -> User:
+        user = User.query.filter(User.canvas_id == user_canvas_id).first()
         if user is None:
             abort(404)
         
@@ -59,8 +59,8 @@ class UserPrefsAPI(MethodView):
 
 
 class UserCourseAPI(MethodView):
-    def get(self: None, user_id: int) -> List[Course]:
-        user = User.query.get(user_id)
+    def get(self: None, user_canvas_id: int) -> List[Course]:
+        user = User.query.filter(User.canvas_id == user_canvas_id).first()
         if user is None:
             abort (404)
         

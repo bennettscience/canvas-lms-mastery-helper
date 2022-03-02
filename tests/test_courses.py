@@ -34,9 +34,9 @@ class TestCourseListAPI(TestBase):
         db.session.remove()
         db.drop_all()
     
+    # 404 if the local db ID is used
     def test_get_course_list(self):
         self.login(1)
-        # resp = self.client.get('/courses')
 
         with captured_templates(app) as templates:
             resp = self.client.get('/courses')
@@ -51,9 +51,6 @@ class TestCourseListAPI(TestBase):
             templates_rendered = [template['template_name'] for template in templates]
             self.assertIn('course/partials/course_card.html', templates_rendered)
             self.assertIn('shared/partials/sidebar.html', templates_rendered)
-
-            # TODO: Check for items in template list
-            # TODO: Are these loaded in reverse order (recursive)?
     
     @unittest.skip(
         "This needs a refactor. The POST endpoint inits a new CanvasSync \
@@ -127,7 +124,7 @@ class TestCourseAPI(TestBase):
         self.login(1)
 
         with captured_templates(app) as templates:
-            resp = self.client.get('/courses/1')
+            resp = self.client.get('/courses/123')
             self.assertTrue(resp.status_code == 200)
 
             # A full course renders:
@@ -144,11 +141,12 @@ class TestCourseAPI(TestBase):
             self.assertTrue('course/partials/student_entry.html' in templates_rendered)
             self.assertTrue('outcome/partials/outcome_card.html' in templates_rendered)
     
+    # 404 if the local db ID is used
     def test_get_single_course_by_canvas_id(self):
         self.login(1)
-        resp = self.client.get('/courses/123?use_canvas_id=True')
+        resp = self.client.get('/courses/1')
 
-        self.assertTrue(resp.status_code == 200)
+        self.assertTrue(resp.status_code == 404)
 
     def test_get_missing_course(self):
         self.login(1)

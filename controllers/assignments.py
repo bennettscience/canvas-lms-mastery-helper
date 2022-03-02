@@ -143,7 +143,7 @@ class AssignmentAPI(MethodView):
         self.calculation_method = current_user.preferences.score_calculation_method.name
         self.mastery_score = current_user.preferences.mastery_score
     
-    def get(self: None, assignment_id: int) -> Assignment:
+    def get(self: None, assignment_canvas_id: int) -> Assignment:
         """ Get a single assignment
 
         Args:
@@ -152,19 +152,14 @@ class AssignmentAPI(MethodView):
         Returns:
             Assignment: <Assignment> instance
         """
-        args = parser.parse(AssignmentSchema(), location="querystring")
-
-        if args and args['use_canvas_id']:
-            assignment = Assignment.query.filter(Assignment.canvas_id == assignment_id).first()
-        else:
-            assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+        assignment = Assignment.query.filter(Assignment.canvas_id == assignment_canvas_id).first()
         
         if not assignment:
-            abort(404)
+            abort(404, 'Assignment not found. Check the Assignment ID and try again.')
         
         return AssignmentSchema().dump(assignment)
 
-    def put(self: None, assignment_id: int) -> Assignment:
+    def put(self: None, assignment_canvas_id: int) -> Assignment:
         """ Update scores for a single assignment
 
         Args:
@@ -178,7 +173,7 @@ class AssignmentAPI(MethodView):
         from app.canvas_sync_service import CanvasSyncService
 
         service = CanvasSyncService()
-        assignment = Assignment.query.filter(Assignment.canvas_id == assignment_id).first()
+        assignment = Assignment.query.filter(Assignment.canvas_id == assignment_canvas_id).first()
         if assignment is None:
             abort(404)
         

@@ -58,7 +58,7 @@ class CourseListAPI(MethodView):
 
 
 class CourseAPI(MethodView):
-    def get(self: None, course_id: int) -> Course:
+    def get(self: None, course_canvas_id: int) -> Course:
         """ Get a single course
 
         Args:
@@ -69,15 +69,11 @@ class CourseAPI(MethodView):
             Course: Instance of <Course>
         """
         from app.models import User
-        args = parser.parse(CourseSchema(), location="querystring")
 
-        if args and args['use_canvas_id']:
-            course = Course.query.filter(Course.canvas_id == course_id).first()
-        else:
-            course = Course.query.filter(Course.id == course_id).first()
+        course = Course.query.filter(Course.canvas_id == course_canvas_id).first()
         
         if not course:
-            abort(404)
+            abort(404, "Course not found. Check the course ID and try again.")
 
         students = course.enrollments.filter(User.usertype_id == 3).all()
 
@@ -96,7 +92,7 @@ class CourseAPI(MethodView):
             course=CourseSchema().dump(course), students=students
         )
     
-    def delete(self: None, course_id: int) -> List[Course]:
+    def delete(self: None, course_canvas_id: int) -> List[Course]:
         """ Remove a locally-stored course.
 
         Args:
@@ -105,7 +101,7 @@ class CourseAPI(MethodView):
         Returns:
             List[Course]: List of enrollments for the user.
         """
-        course = Course.query.filter(Course.canvas_id == course_id).first()
+        course = Course.query.filter(Course.canvas_id == course_canvas_id).first()
         db.session.delete(course)
         db.session.commit()
 
@@ -114,7 +110,7 @@ class CourseAPI(MethodView):
 
 
 class CourseAssignmentsAPI(MethodView):
-    def get(self: None, course_id: int) -> List[Assignment]:
+    def get(self: None, course_canvas_id: int) -> List[Assignment]:
         """ Get assignments connected to a course by ID
 
         Args:
@@ -125,16 +121,16 @@ class CourseAssignmentsAPI(MethodView):
         """
         from app.schemas import AssignmentSchema
 
-        course = Course.query.filter(Course.canvas_id == course_id).first()
+        course = Course.query.filter(Course.canvas_id == course_canvas_id).first()
         return render_template(
             'assignment/partials/assignment_select.html',
             items=AssignmentSchema(many=True).dump(course.assignments),
-            course_id=course_id
+            course_id=course_canvas_id
         )
 
 
 class CourseEnrollmentsAPI(MethodView):
-    def get(self: None, course_id: int) -> Course:
+    def get(self: None, course_canvas_id: int) -> Course:
         """
 
         Args:
@@ -147,7 +143,7 @@ class CourseEnrollmentsAPI(MethodView):
         from app.models import User
         from app.schemas import UserSchema
 
-        course = Course.query.filter(Course.canvas_id == course_id).first()
+        course = Course.query.filter(Course.canvas_id == course_canvas_id).first()
         if course is None:
             abort(404)
         
@@ -165,7 +161,7 @@ class CourseEnrollmentsAPI(MethodView):
         
         
 class CourseOutcomesAPI(MethodView):
-    def get(self: None, course_id: int) -> List[Outcome]:
+    def get(self: None, course_canvas_id: int) -> List[Outcome]:
         """ Retrieve a list of outcomes for a given course ID
 
         Args:
@@ -175,7 +171,7 @@ class CourseOutcomesAPI(MethodView):
             List[Outcome]: List of Outcomes
         """
         from app.schemas import OutcomeSchema
-        course = Course.query.filter(Course.canvas_id == course_id).first()
+        course = Course.query.filter(Course.canvas_id == course_canvas_id).first()
 
         if course is None:
             abort(404)

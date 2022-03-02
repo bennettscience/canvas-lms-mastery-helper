@@ -23,17 +23,17 @@ user_outcome_attempts_view = UserOutcomeAttemptAPI.as_view("user_outcome_attempt
 assignments_view = AssignmentListAPI.as_view("assignments_view")
 
 courses_bp.add_url_rule("/courses", view_func=courses_view, methods=['GET', 'POST'])
-courses_bp.add_url_rule("/courses/<int:course_id>", view_func=course_view, methods=['GET', 'DELETE'])
-courses_bp.add_url_rule("/courses/<int:course_id>/enrollments", view_func=course_enrollments_view, methods=['GET'])
-courses_bp.add_url_rule("/courses/<int:course_id>/assignments", view_func=course_assignments_view, methods=['GET'])
-courses_bp.add_url_rule("/courses/<int:course_id>/outcomes", view_func=course_outcomes_view, methods=['GET'])
+courses_bp.add_url_rule("/courses/<int:course_canvas_id>", view_func=course_view, methods=['GET', 'DELETE'])
+courses_bp.add_url_rule("/courses/<int:course_canvas_id>/enrollments", view_func=course_enrollments_view, methods=['GET'])
+courses_bp.add_url_rule("/courses/<int:course_canvas_id>/assignments", view_func=course_assignments_view, methods=['GET'])
+courses_bp.add_url_rule("/courses/<int:course_canvas_id>/outcomes", view_func=course_outcomes_view, methods=['GET'])
 courses_bp.add_url_rule(
-    "/courses/<int:course_id>/outcomes/<int:outcome_id>", 
+    "/courses/<int:course_canvas_id>/outcomes/<int:outcome_id>", 
     view_func=outcome_attempts_view, 
     methods=['GET']
 )
 courses_bp.add_url_rule(
-    "/courses/<int:course_id>/users/<int:user_id>/results/<int:outcome_id>",
+    "/courses/<int:course_canvas_id>/users/<int:user_id>/results/<int:outcome_id>",
     view_func=user_outcome_attempts_view,
     methods=['GET']
 )
