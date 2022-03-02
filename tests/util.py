@@ -8,14 +8,15 @@ from app import app
 from app.models import User
 
 class TestBase(unittest.TestCase):
-    @app.route('/auto_login/<int:user_id>')
-    def auto_login(user_id):
-        user = User.query.filter_by(id=user_id).first()
+    @app.route('/auto_login/<user_name>')
+    def auto_login(user_name):
+        user = User.query.filter(User.name == user_name).first()
         login_user(user, remember=True)
+        print("{} logged in".format(user.name))
         return "ok"
 
-    def login(self, user_id):
-        response = self.client.get(f"/auto_login/{user_id}")
+    def login(self, user_name):
+        response = self.client.get(f"/auto_login/{user_name}")
 
 
 @contextmanager
