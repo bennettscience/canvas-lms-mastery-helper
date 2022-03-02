@@ -29,14 +29,14 @@ class TestAssignments(TestBase):
     
     # GET not allowed on this route
     def test_get_assignments(self):
-        self.login(1)
+        self.login("User")
         resp = self.client.get('/assignments')
 
         self.assertEqual(resp.status_code, 405)
 
     # Make a new assignment in the DB
     def test_create_assignment(self):
-        self.login(1)
+        self.login("User")
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {
             "canvas_id": 222,
@@ -55,7 +55,7 @@ class TestAssignments(TestBase):
 
     # Error if the assignment already exists
     def test_assignment_conflict(self):
-        self.login(1)
+        self.login("User")
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {
             "canvas_id": 123,
@@ -76,7 +76,7 @@ class TestAssignments(TestBase):
     
     # Bad post data
     def test_malformed_assignment(self):
-        self.login(1)
+        self.login("User")
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {
             
@@ -110,18 +110,18 @@ class TestSingleAssignment(TestBase):
 
     # 404 if the local db ID is used
     def test_get_assignment_by_local_id(self):
-        self.login(1)
+        self.login("User")
         resp = self.client.get('/assignments/1')
         self.assertEqual(resp.status_code, 404)
     
     def test_get_assignment_by_canvas_id(self):
-        self.login(1)
+        self.login("User")
         resp = self.client.get('/assignments/123')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json['name'], 'Assignment 1')
     
     def test_get_missing_assignment(self):
-        self.login(1)
+        self.login("User")
         resp = self.client.get('/assignments/999')
         self.assertEqual(resp.status_code, 404)
 
