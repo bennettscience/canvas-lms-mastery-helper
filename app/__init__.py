@@ -3,6 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask, send_from_directory, render_template, jsonify
 from flask_admin import Admin
+from flask_admin.menu import MenuLink
 from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
@@ -68,11 +69,13 @@ from app.blueprints.users_blueprint import users_bp
 from app.blueprints.auth_blueprint import auth_bp
 
 # Register admin pages
+# TODO: Better admin pages
 admin.add_view(ModelView(Assignment, db.session))
 admin.add_view(ModelView(Course, db.session))
 admin.add_view(ModelView(Outcome, db.session))
 admin.add_view(UserView(User, db.session))
 admin.add_view(ModelView(UserType, db.session))
+admin.add_link(MenuLink(name='Back', url='/'))
 
 # Register routes
 app.register_blueprint(sync_bp)
