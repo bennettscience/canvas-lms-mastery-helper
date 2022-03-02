@@ -40,6 +40,10 @@ class TestOutcomes(TestBase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Outcome 1', resp.data)
     
+    def test_get_outcome_404(self):
+        resp = self.client.get('/outcomes/123')
+        self.assertEqual(resp.status_code, 404)
+    
     def test_get_single_outcome_by_canvas_id(self):
         resp = self.client.get('/outcomes/123?use_canvas_id=True')
         self.assertEqual(resp.status_code, 200)

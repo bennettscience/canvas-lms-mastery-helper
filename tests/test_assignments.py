@@ -256,7 +256,7 @@ class TestAlignAssignmentAPI(TestBase):
 
             self.assertEqual(template['template_name'], 'outcome/partials/outcome_card.html')
             self.assertTrue(template['context']['item']['alignment'] == None)
-        
+
     def test_align_same_assignment(self):
         assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
         outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
