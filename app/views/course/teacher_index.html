@@ -22,7 +22,6 @@
                 hx-get="/sync/outcomes/{{course.canvas_id}}"
                 hx-target="main"
                 hx-swap="beforeend"
-                hx-indicator="#toast"
             >
                 + Outcome
             </button>
@@ -31,7 +30,6 @@
                 hx-get="/sync/assignments/{{course.canvas_id}}"
                 hx-target="main"
                 hx-swap="beforeend"
-                hx-indicator="#toast"
             >
                 + Assignment
             </button>
@@ -42,21 +40,25 @@
         {{render_partial('outcome/partials/outcome_card.html', item=outcome,
         course_id=course.canvas_id)}} {%endfor%}
     </section>
+
     <section class="roster-actions">
         <input
             id="roster-search"
             type="text"
             placeholder="Search students..."
-            _="on keyup if the event's key is 'Escape' set my value to '' trigger
-        keyup else show
-        <tr />
-        in .scroller when its textContent contains my value"
+            _="on keyup 
+                if the event's key is 'Escape' 
+                    set my value to ' ' 
+                    trigger keyup 
+                else show <tr /> in .scroller when its textContent contains my value
+                "
         />
         {% if course.outcomes|length > 0 %}
         <button
             class="btn btn-primary tooltip"
             hx-put="/courses/{{course.canvas_id}}/assignments/push"
-            hx-indicator="#toast"
+            hx-swap="none"
+            _="on htmx:afterRequest(detail) wait 1s then toast(detail, 5000)"
             {%
             if
             not
@@ -84,7 +86,8 @@
         </button>
         {% endif %}
     </section>
-
-    {{ render_partial('course/partials/score_table.html', students=students,
-    course=course) }}
+    <section id="scores">
+        {{ render_partial('course/partials/score_table.html', students=students,
+        course=course) }}
+    </section>
 </div>

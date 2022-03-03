@@ -21,29 +21,29 @@ function formatDate(target, strDate) {
     return new Intl.DateTimeFormat('en', formats[target]).format(date)
 }
 
-function showToast(msg, err = false, timeout = 3000) {
-    const toast = document.querySelector(`#toast`)
+function showToast(msg, timeout = 3000, err = false) {
+    const toast = document.querySelector(`#toast p`)
 
     // Handle message objects from hyperscript
     // For non-template returns, the backend will also return JSON with
     // the `message` key with details for the user.
     if(typeof msg === 'object') {
-        
-        // Convert the message to a JSON object
+        // HTMX returns strings, so convert it to an object
         let obj = JSON.parse(msg.xhr.responseText)
         msg = obj.message
     }
-    toast.innerHTML = msg;
+
+    toast.innerText = msg;
     if(err) {
-        toast.classList.add('error')
+        toast.parentNode.classList.add('error')
     }
-    toast.classList.add('htmx-request');
+    toast.parentNode.classList.add('htmx-request');
     setTimeout(() => {
-        toast.classList.remove('htmx-request')
+        toast.parentNode.classList.remove('htmx-request')
+        toast.innerText = 'Loading...'
         if(err) {
-            toast.classList.remove('error')
+            toast.parentNode.classList.remove('error')
         }
-        toast.innerHTML = "Loading"
     }, timeout)
 }
 
@@ -51,6 +51,10 @@ function showToast(msg, err = false, timeout = 3000) {
 document.addEventListener('htmx:responseError', (evt) => {
     showToast(evt.detail.xhr.responseText, true)
 })
+
+// document.addEventListener('htmx:beforeSend', (evt) => {
+//     showToast('Loading...')
+// })
 
 // For debugging requests
 // document.addEventListener('htmx:beforeSend', function(evt) {

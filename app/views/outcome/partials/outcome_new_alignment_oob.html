@@ -21,7 +21,9 @@
     <thead>
         <tr>
             <th class="columnheader" role="columnheader">
-                <div class="th-inner-container">Name</div>
+                <div class="th-inner-container">
+                    <span class="sort-trigger">Name</span>
+                </div>
             </th>
             {% for outcome in course.outcomes %}
             <th class="columnheader" role="columnheader">
@@ -32,7 +34,8 @@
                         class="btn--sync"
                         aria-role="button"
                         hx-put="/assignments/{{outcome.alignment.canvas_id}}/push"
-                        hx-indicator="#toast"
+                        hx-swap="none"
+                        _="on htmx:afterRequest(detail) wait 1s then toast(detail)"
                         fill="none"
                         viewBox="0 0 24 24"
                         height="24"
@@ -45,7 +48,9 @@
                             fill="#0D0D0D"
                         ></path>
                     </svg>
-                    {% endif %} {{ outcome.name }}
+                    {% endif %}<span class="sort-trigger"
+                        >{{ outcome.name }}</span
+                    >
                 </div>
             </th>
             {% endfor %}

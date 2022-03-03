@@ -1,5 +1,5 @@
 <a href="{{ url_for('home_bp.index') }}" class="nav-item">Home</a>
-{% if not current_user.is_anonymous %} {% if is_admin %}
+{% if not current_user.is_anonymous and session['_fresh'] %} {% if is_admin %}
 <a href="{{ url_for('admin.index') }}" class="nav-item">Admin</a>
 {% endif %} {% if not current_user.is_anonymous and current_user.usertype_id < 3
 %}

@@ -22,10 +22,13 @@ behavior Sortable
         }
     end
 
-    on click from .columnheader
+    on click from .sort-trigger
         -- get all the headers and the index of the column
         set headers to <th/> in me
-        set col to headers.indexOf(target.parentElement)
+        set parent to target.parentElement.parentElement
+        -- the target is nested twice, so we have to jump back up to 
+        -- the correct parent element to get the column index.
+        set col to headers.indexOf(parent)
         
         -- get the table body and the rows as an array
         set tbody to the first <tbody/> in me
@@ -33,17 +36,17 @@ behavior Sortable
         
         -- if this is a first click on this header
         -- clear the data-ascending attribute on any other header
-        if target.parentElement @aria-sort is null
+        if parent @aria-sort is null
             remove @aria-sort from headers
             -- set target.parentElement @aria-sort to 'ascending'
         end
 
         -- sort the array depending on the ascending header
-        if target.parentElement @aria-sort is 'ascending'
-            set target.parentElement @aria-sort to ''
+        if parent @aria-sort is 'ascending'
+            set parent @aria-sort to ''
             sortArray(rowArray, col, false)
         else
-            set target.parentElement @aria-sort to 'ascending'
+            set parent @aria-sort to 'ascending'
             sortArray(rowArray, col, true)
         end
         
