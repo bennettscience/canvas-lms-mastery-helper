@@ -39,7 +39,7 @@ class TestAssignments(TestBase):
         self.login("User")
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {
-            "canvas_id": 222,
+            "assignment_canvas_id": 222,
             "name": "Assignment 2",
             "course_id": 999,
             "points_possible": 1
@@ -58,7 +58,7 @@ class TestAssignments(TestBase):
         self.login("User")
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         payload = {
-            "canvas_id": 123,
+            "assignment_canvas_id": 123,
             "name": "Assignment 2",
             "course_id": 999,
             "points_possible": 1
@@ -139,7 +139,7 @@ class TestAlignAssignmentModel(unittest.TestCase):
         o1 = Outcome(canvas_id=123, name='Outcome 1')
         o2 = Outcome(canvas_id=456, name='Outcome 2')
 
-        db.session.add_all([a1, o1])
+        db.session.add_all([a1, o1, o2])
         db.session.commit()
     
     def tearDown(self):
@@ -173,7 +173,7 @@ class TestAlignAssignmentModel(unittest.TestCase):
 
         self.assertFalse(assignment.is_watching(outcome))
     
-    def test_outcome_already_aligned(self):
+    def test_assignment_already_aligned_to_outcome(self):
         assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
         outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
         assignment.watch(outcome)
@@ -192,6 +192,8 @@ class TestAlignAssignmentModel(unittest.TestCase):
         assignment.watch(outcome2)
 
         self.assertTrue(assignment.is_watching(outcome2))
+        self.assertEqual(outcome2.alignment, assignment)
+        self.assertTrue(outcome.alignment is None)
 
 
 class TestAlignAssignmentAPI(TestBase):
@@ -202,12 +204,14 @@ class TestAlignAssignmentAPI(TestBase):
 
         course = Course(canvas_id=123, name='Course 1')
         a1 = Assignment(canvas_id=123, name='Assignment 1')
+        a2 = Assignment(canvas_id=456, name='Assignment 2')
         o1 = Outcome(canvas_id=123, name='Outcome 1')
         o2 = Outcome(canvas_id=456, name='Outcome 2')
 
-        db.session.add_all([course, a1, o1, o2])
+        db.session.add_all([course, a1, a2, o1, o2])
 
         course.assignments.append(a1)
+        course.outcomes.extend([o1, o2])
 
         db.session.commit()
     
@@ -223,7 +227,7 @@ class TestAlignAssignmentAPI(TestBase):
 
             template = templates[0]
 
-            self.assertEqual(template['template_name'], 'outcome/partials/outcome_alignment_card.html')
+            self.assertEqual(template['template_name'], 'outcome/partials/outcome_alignment_form.html')
             self.assertEqual(len(template['context']['assignments']), 1)
     
     def test_align_assignment_to_outcome(self):
@@ -238,12 +242,24 @@ class TestAlignAssignmentAPI(TestBase):
                 headers=headers
             )
             self.assertTrue(resp.status_code == 200)
-            self.assertTrue(len(templates), 1)
+            
+            # A successful response returns at least two templates:
+            # `outcome/partials/alignment_change_oob.html` -> handles the DOM swap
+            # `outcome/partials/outcome_card.html` -> The actual outcome card element
+            self.assertTrue(len(templates) >= 2)
 
-            template = templates[0]
+            templates_rendered = [template['template_name'] for template in templates]
 
-            self.assertEqual(template['template_name'], 'outcome/partials/outcome_card.html')
-            self.assertTrue(template['context']['item']['alignment']['canvas_id'] == 123)
+            self.assertTrue('outcome/partials/alignment_change_oob.html' in templates_rendered)
+            self.assertTrue('outcome/partials/outcome_card.html' in templates_rendered)
+
+            # the wrapper template is always last in the array, so get that one to check context
+            # for partials rendered
+            template = templates[-1]
+
+            # The actual outcome is rendered in a partial _inside_ the OOB swap template
+            self.assertEqual(template['template_name'], 'outcome/partials/alignment_change_oob.html')
+            self.assertTrue(len(template['context']['items']) == 2)
 
     def test_remove_alignment_from_outcome(self):
         # Set up the alignment
@@ -256,10 +272,64 @@ class TestAlignAssignmentAPI(TestBase):
             resp = self.client.delete('/courses/123/outcomes/123/edit')
 
             self.assertTrue(resp.status_code == 200)
-            template = templates[0]
 
-            self.assertEqual(template['template_name'], 'outcome/partials/outcome_card.html')
-            self.assertTrue(template['context']['item']['alignment'] == None)
+            self.assertTrue(len(templates) >= 2)
+
+            templates_rendered = [template['template_name'] for template in templates]
+
+            self.assertTrue('outcome/partials/alignment_change_oob.html' in templates_rendered)
+            self.assertTrue('outcome/partials/outcome_card.html' in templates_rendered)
+
+            # the wrapper template is always last in the array, so get that one to check context
+            # for partials rendered
+            template = templates[-1]
+
+            # The actual outcome is rendered in a partial _inside_ the OOB swap template
+            self.assertEqual(template['template_name'], 'outcome/partials/alignment_change_oob.html')
+            self.assertTrue(len(template['context']['items']) == 2)
+            self.assertEqual(template['context']['items'][0]['alignment'], None)
+    
+    def test_add_already_aligned_outcome_to_new_assignment(self):
+        # This tests that an assignment already aligned to an outcome is moved
+        # to the _new_ alignment and returns TWO outcome cards in the template.
+        # This is not the same as a conflict test because that only prevents
+        # aligning the _same_ assignment to an outcome.
+        assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == 123).first()
+
+        assignment.watch(outcome)
+
+        self.assertTrue(assignment.is_watching(outcome))
+
+        data = {
+            "assignment_canvas_id": 456,
+        }
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+        with captured_templates(app) as templates:
+            resp = self.client.put('/courses/123/outcomes/123/edit',
+                data=data,
+                headers=headers
+            )
+
+            self.assertTrue(resp.status_code == 200)
+            self.assertTrue(len(templates) >= 2)
+
+            templates_rendered = [template['template_name'] for template in templates]
+
+            self.assertTrue('outcome/partials/alignment_change_oob.html' in templates_rendered)
+            self.assertTrue('outcome/partials/outcome_card.html' in templates_rendered)
+
+            # the wrapper template is always last in the array, so get that one to check context
+            # for partials rendered
+            template = templates[-1]
+
+            # The actual outcome is rendered in a partial _inside_ the OOB swap template
+            self.assertEqual(template['template_name'], 'outcome/partials/alignment_change_oob.html')
+            self.assertTrue(template['context']['items'][0]['alignment']['name'] == 'Assignment 2')
+            self.assertTrue(template['context']['items'][1]['alignment'] ==  None)
+
+    
 
     def test_align_same_assignment(self):
         assignment = Assignment.query.filter(Assignment.canvas_id == 123).first()

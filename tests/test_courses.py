@@ -78,7 +78,6 @@ class TestCourseListAPI(TestBase):
 
     
     def test_create_duplicate_course(self):
-        from app.errors import DuplicateException
         self.login("Teacher")
         payload = {
             "canvas_id": 123,

@@ -56,7 +56,7 @@ class TestUserListAPI(unittest.TestCase):
         db.create_all()
         self.client = app.test_client()
 
-        user = User(canvas_id=41015, usertype_id=1, name="Teacher", email="teacher@example.com")
+        user = User(canvas_id=41015, usertype_id=1, name="Teacher")
         db.session.add(user)
         db.session.commit()
 
@@ -77,7 +77,7 @@ class TestSingleUserAPI(unittest.TestCase):
         db.create_all()
         self.client = app.test_client()
 
-        user = User(canvas_id=123, usertype_id=1, name="Teacher", email="teacher@example.com")
+        user = User(canvas_id=123, usertype_id=1, name="Teacher")
         
         db.session.add(user)
         db.session.commit()
@@ -106,7 +106,7 @@ class TestUserCourseAPI(unittest.TestCase):
         db.create_all()
         self.client = app.test_client()
 
-        user = User(canvas_id=123, usertype_id=1, name="Teacher", email="teacher@example.com")
+        user = User(canvas_id=123, usertype_id=1, name="Teacher")
         course = Course(canvas_id=123, name="Test Course")
         
         db.session.add_all([user, course])
