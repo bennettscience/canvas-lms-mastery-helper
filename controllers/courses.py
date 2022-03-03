@@ -36,7 +36,7 @@ class CourseListAPI(MethodView):
         """
         from app.canvas_sync_service import CanvasSyncService
 
-        args = parser.parse({"course_id": fields.Int(), "name": fields.Str()}, location="form")
+        args = parser.parse({"canvas_id": fields.Int(), "name": fields.Str()}, location="form")
         exists = Course.query.filter(Course.canvas_id == args['canvas_id']).scalar()
         
         if not exists:
