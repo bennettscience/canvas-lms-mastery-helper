@@ -134,7 +134,7 @@ class AlignmentAPI(MethodView):
         assignments = course.assignments
 
         return render_template(
-            'outcome/partials/outcome_alignment_card.html',
+            'outcome/partials/outcome_alignment_form.html',
             outcome=OutcomeSchema().dump(outcome),
             assignments=assignments,
             course_id=course.canvas_id
@@ -187,11 +187,11 @@ class AlignmentAPI(MethodView):
 
         # Return an Assignment object as an Assignment Card
         return render_template(
-            'outcome/partials/outcome_change_alignment.html',
+            'outcome/partials/alignment_change_oob.html',
             course_id=course_canvas_id,
             course=CourseSchema().dump(course),
             students=students,
-            item=OutcomeSchema().dump(target_outcome),
+            items=OutcomeSchema(many=True).dump(course.outcomes.all()),
             has_alignment=has_alignment
         )
 
@@ -226,10 +226,10 @@ class AlignmentAPI(MethodView):
         has_alignment = any(o.alignment for o in course.outcomes.all())
 
         return render_template(
-            'outcome/partials/outcome_change_alignment.html',
+            'outcome/partials/alignment_change_oob.html',
             course_id=course_canvas_id,
             course=CourseSchema().dump(course),
             students=students,
-            item=OutcomeSchema().dump(target_outcome),
+            items=OutcomeSchema(many=True).dump(course.outcomes.all()),
             has_alignment=has_alignment
         )
