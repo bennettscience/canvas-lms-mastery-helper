@@ -99,11 +99,13 @@ class AssignmentListAPI(MethodView):
                     student_score = getattr(assignment.watching, self.calculation_method)(student.canvas_id)
                     app.logger.info('{} has {} on {}'.format(student.name, student_score, assignment.watching.name))
                     
-                    if type(student_score) != str:
+                    if student_score is not None:
                         if student_score >= self.mastery_score:
                             score = assignment.points_possible
                         else:
                             score = 0
+                    else:
+                        score = 0
 
                     # Find the current assignment record for the student
                     user_assignment = UserAssignment.query.filter_by(
@@ -189,11 +191,13 @@ class AssignmentAPI(MethodView):
                 student_score = getattr(assignment.watching, self.calculation_method)(student.canvas_id)
                 app.logger.info('{} has {} on {}'.format(student.name, student_score, assignment.watching.name))
                 
-                if type(student_score) != str:
+                if student_score is not None:
                     if student_score >= self.mastery_score:
                         score = assignment.points_possible
                     else:
                         score = 0
+                else:
+                    score = 0
 
                 # Find the current assignment record for the student
                 user_assignment = UserAssignment.query.filter_by(
@@ -220,5 +224,5 @@ class AssignmentAPI(MethodView):
         # relationships and properties to build the Canvas API object
         service.post_assignment_submission(assignment)
         
-        return jsonify({'message': 'Success'})
+        return jsonify({'message': 'Posted scores for {}'.format(assignment.watching)})
 
