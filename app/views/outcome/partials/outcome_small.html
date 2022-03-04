@@ -2,11 +2,7 @@
     class="item item--small"
     hx-post="/outcomes"
     hx-trigger="click"
-    hx-indicator="#toast"
     _="
-        on htmx:afterRequest if detail.successful 
-            toast('Import successful.') 
-        end 
         on htmx:afterSwap remove me end
     "
 >

@@ -1,7 +1,6 @@
 import sparkline from "./modules/sparkline.js"
 
 function drawSparkline(el, data) {
-    console.log(`chart requested!`)
     sparkline(el, data)
 }
 
@@ -79,3 +78,4 @@ document.addEventListener('htmx:responseError', (evt) => {
 window.sparkline = drawSparkline;
 window.formatDate = formatDate;
 window.toast = showToast;
+window.cancelToast = cancelToast;
