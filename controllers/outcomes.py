@@ -75,7 +75,7 @@ class OutcomeListAPI(MethodView):
         has_alignment = any(o.alignment for o in course.outcomes.all())
         
         return render_template(
-            'outcome/partials/outcome_new_alignment.html',
+            'outcome/partials/outcome_new_alignment_oob.html',
             course_id=args['course_id'],
             course=CourseSchema().dump(course),
             students=students,
