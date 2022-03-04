@@ -80,7 +80,7 @@ class TestCourseListAPI(TestBase):
     def test_create_duplicate_course(self):
         self.login("Teacher")
         payload = {
-            "canvas_id": 123,
+            "course_id": 123,
             "name": "Course 2"
         }
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
