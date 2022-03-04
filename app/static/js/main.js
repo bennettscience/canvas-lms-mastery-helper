@@ -21,9 +21,8 @@ function formatDate(target, strDate) {
     return new Intl.DateTimeFormat('en', formats[target]).format(date)
 }
 
-function showToast(msg, timeout = 3000, err = false) {
-    const toast = document.querySelector(`#toast p`)
-
+function showToast(msg = 'Loading...', timeout = 5000, err = false) {
+    const toast = document.querySelector(`#toast`)
     // Handle message objects from hyperscript
     // For non-template returns, the backend will also return JSON with
     // the `message` key with details for the user.
@@ -33,19 +32,31 @@ function showToast(msg, timeout = 3000, err = false) {
         msg = obj.message
     }
 
-    toast.innerText = msg;
+    toast.children[0].innerText = msg;
     if(err) {
-        toast.parentNode.classList.add('error')
+        toast.classList.add('error')
     }
-    toast.parentNode.classList.add('htmx-request');
+    toast.classList.add('show');
     setTimeout(() => {
-        toast.parentNode.classList.remove('htmx-request')
-        toast.innerText = 'Loading...'
+        toast.classList.remove('show')
+        toast.children[0].innerText = 'Loading...'
         if(err) {
-            toast.parentNode.classList.remove('error')
+            toast.classList.remove('error')
         }
     }, timeout)
 }
+
+function cancelToast() {
+    const toast = document.querySelector(`#toast`)
+    toast.classList.remove('show');
+    toast.children[0].innerText = 'Loading...'
+    clearTimeout()
+}
+
+// Listen for toast messaging from the server
+htmx.on('showToast', evt => {
+    showToast(evt.detail.value)
+})
 
 // Handle errors from the server
 document.addEventListener('htmx:responseError', (evt) => {
