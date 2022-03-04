@@ -33,7 +33,6 @@ db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
 ma = Marshmallow(app)
 lm = LoginManager(app)
-admin = Admin(app, name='masteryhelper', template_mode='bootstrap3')
 
 jinja_partials.register_extensions(app)
 
@@ -59,7 +58,7 @@ if not app.debug:
 
 from app import app, db
 from app.models import Assignment, Course, Outcome, User, UserType
-from app.admin_models import UserView
+from app.admin_models import AuthorizedAdminView, UserView, AdminView
 from app.blueprints.home_blueprint import home_bp
 from app.blueprints.sync_blueprint import sync_bp
 from app.blueprints.courses_blueprint import courses_bp
@@ -68,9 +67,11 @@ from app.blueprints.outcomes_blueprint import outcomes_bp
 from app.blueprints.users_blueprint import users_bp
 from app.blueprints.auth_blueprint import auth_bp
 
+admin = Admin(app, name='masteryhelper', template_mode='bootstrap3', index_view=AuthorizedAdminView())
+
 # Register admin pages
 # TODO: Better admin pages
-admin.add_view(ModelView(Assignment, db.session))
+admin.add_view(AdminView(Assignment, db.session))
 admin.add_view(ModelView(Course, db.session))
 admin.add_view(ModelView(Outcome, db.session))
 admin.add_view(UserView(User, db.session))
