@@ -54,6 +54,7 @@ function cancelToast() {
 
 // Listen for toast messaging from the server
 htmx.on('showToast', evt => {
+    console.log('got a toast')
     showToast(evt.detail.value)
 })
 

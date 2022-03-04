@@ -232,8 +232,6 @@ main {
 
 .btn--sync:hover {
     cursor: pointer;
-    background-color: var(--hover-color);
-    border-color: var(--secondary-color);
 }
 
 .btn-close {
@@ -617,4 +615,18 @@ th[aria-sort]:not(.no-sort) > .th-inner-container:after {
 th[role='columnheader']:not(.no-sort) > .th-inner-container:hover:after {
     visibility: visible;
     opacity: 1;
+}
+
+.sync {
+    display: inline;
+    box-sizing: border-box;
+    border-radius: 0;
+    margin-bottom: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+}
+
+svg path {
+    fill: var(--black);
 }

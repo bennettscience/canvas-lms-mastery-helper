@@ -22,6 +22,7 @@
                 hx-get="/sync/outcomes/{{course.canvas_id}}"
                 hx-target="main"
                 hx-swap="beforeend"
+                hx-indicator="#toast"
             >
                 + Outcome
             </button>
@@ -30,6 +31,7 @@
                 hx-get="/sync/assignments/{{course.canvas_id}}"
                 hx-target="main"
                 hx-swap="beforeend"
+                hx-indicator="#toast"
             >
                 + Assignment
             </button>
