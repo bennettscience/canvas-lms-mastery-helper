@@ -380,7 +380,6 @@ nav {
     position: sticky;
     top: 0;
     height: 55px;
-    background-color: var(--white);
     display: flex;
     flex-direction: row;
     align-items: center;
