@@ -1,5 +1,6 @@
+import json
 from typing import List
-from flask import jsonify, abort, render_template, session
+from flask import jsonify, abort, make_response, render_template, session
 from flask_login import current_user
 from flask.views import MethodView
 
@@ -70,11 +71,15 @@ class SyncOutcomesAPI(MethodView):
             "partial": "outcome/partials/outcome_small.html",
             "title": "Import outcome..."
         }
-        return render_template(
+        
+        response = make_response(render_template(
             'shared/partials/sidebar.html',
             position="right",
             **content
-        )
+        ))
+        response.headers.set('HX-Trigger', json.dumps({'showToast': "Found {} outcomes".format(len(outcomes))}))
+        
+        return response
         # return jsonify(OutcomeSchema(many=True).dump(outcomes))
 
 
