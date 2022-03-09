@@ -128,6 +128,7 @@ class TestCourseAPI(TestBase):
         self.login("Teacher")
         
         with captured_templates(app) as templates:
+            # Get a course from the URL directly, NOT via HTMX
             resp = self.client.get('/courses/123')
             self.assertTrue(resp.status_code == 200)
 
@@ -140,7 +141,35 @@ class TestCourseAPI(TestBase):
             
             templates_rendered = [template['template_name'] for template in templates]
 
-            self.assertTrue('course/teacher_index.html' in templates_rendered)
+            self.assertTrue('course/teacher_index_full.html' in templates_rendered)
+            self.assertTrue('course/partials/score_table.html' in templates_rendered)
+            self.assertTrue('course/partials/student_entry.html' in templates_rendered)
+            self.assertTrue('outcome/partials/outcome_card.html' in templates_rendered)
+    
+    def test_get_single_course_htmx_only_as_teacher(self):
+        self.login("Teacher")
+        
+        with captured_templates(app) as templates:
+            # Set the HX-Request header to get a partial template
+            headers = {
+                'HX-Request': True
+            }
+            resp = self.client.get(
+                '/courses/123',
+                headers=headers
+            )
+            self.assertTrue(resp.status_code == 200)
+
+            # A full course renders:
+            #  course/teacher_index.html
+            #  outcome/partials/outcome_card.html for aligned outcomes
+            #  course/partials/score_table.html for the roster
+            #  course/partials/student_entry.html for each student
+            self.assertTrue(len(templates) == 4)
+            
+            templates_rendered = [template['template_name'] for template in templates]
+
+            self.assertTrue('course/teacher_index_htmx.html' in templates_rendered)
             self.assertTrue('course/partials/score_table.html' in templates_rendered)
             self.assertTrue('course/partials/student_entry.html' in templates_rendered)
             self.assertTrue('outcome/partials/outcome_card.html' in templates_rendered)
