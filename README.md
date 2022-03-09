@@ -44,4 +44,9 @@ instructional decisions. There are several benefits provided by using this tool:
 
 ## Installation
 
-Instructions for deploying on a Linux VPS are on INSTALL.md.
+Instructions for deploying on a Linux VPS are on [INSTALL.md](INSTALL.md).
+
+## Contributing
+
+If you're interested in contributing, clone the repo and then install all
+dependencies with `poetry install` or `pip install -r requirements-dev.txt`.

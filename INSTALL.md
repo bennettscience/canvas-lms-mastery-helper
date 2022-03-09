@@ -1,23 +1,29 @@
-### Server requirements
+# Installation
 
--   Web host (Apache/Nginx)
+This is a web application, meaning you'll need a web server (local or
+cloud-based) in order to run your own installation. The steps below will help
+you get your own copy configured on most Linux-based servers.
+
+## Requirements
+
+-   Web server (Apache/Nginx)
 -   Python 3.8+
 -   MySQL or MariaDB
 -   git
 
-### Installation procedure
+## A note on security
 
 You should take standard steps to secure your web server. That process is
 outside the scope of this section, but
 [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-18-04)
 has a good starter guide for setting up Apache on a Ubuntu server.
 
-### Set up SQL
+### SQL
 
 You'll need a SQL database to store data from Canvas. This is preconfigured for
 MySQL (MariaDB) but any SQL schema should work.
 
-### Source
+## Source
 
 -   Log into your host and navigate to your web root directory
 -   Clone this repository
@@ -34,9 +40,9 @@ flask db upgrade
 flask seed
 ```
 
-### Canvas Keys
+## Canvas Keys
 
-#### Developer Key
+### Developer Key
 
 Users will authenticate via Canvas' OAuth endpoints, which provisions
 authorization tokens for the session. You will need to create a Developer Key in
@@ -51,7 +57,7 @@ your Canvas Admin settings to allow access.
     - Client Credentials Audience
         - _Canvas_
 
-#### Scoping
+### Scoping
 
 Enforcing scopes is always a good idea. Enable the following:
 
@@ -77,13 +83,13 @@ Enforcing scopes is always a good idea. Enable the following:
 
 When you create they key, copy the **Client ID** and **Client Secret**.
 
-#### Optional: Standalone Access Token
+### Optional: Standalone Access Token
 
 If you want to set up a cron job to pull in Outcome Results nightly from Canvas,
 you'll need to set up an Access Token for a user with admin permissions. Create
 the token with the same authorization scopes. Save the key that is generated.
 
-### .env Configuration
+## .env Configuration
 
 In your server, run `cp .flaskenv.sample .flaskenv` to generate your environment
 file. Then, edit the following fields:
@@ -96,13 +102,13 @@ CANVAS_OAUTH_APP_SECRET='your-developer-key-secret'
 CANVAS_OAUTH_CALLBACK_URI='https://your-domain.com/auth/callback'
 ```
 
-#### Notes
+### Notes
 
 -   Your `CANVAS_OAUTH_CALLBACK_URI` must match the callback URI you used in the
     Developer Key settings.
 -   The `CANVAS_OAUTH_CALLBACK_URI` must use SSL.
 
-### gunicorn configuration
+## gunicorn configuration
 
 Gunicorn is a [WSGI server](https://wsgi.readthedocs.io/en/latest/what.html)
 which handles communication from your HTTP server to Python. It has it's own

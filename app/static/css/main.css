@@ -377,21 +377,48 @@ main {
 
 nav {
     box-sizing: border-box;
+    height: 80px;
     position: sticky;
-    top: 0;
-    height: 55px;
+    top: -16px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: right;
     z-index: 1;
     padding-right: 25px;
+    background-color: #fff;
+    -webkit-backface-visibility: hidden;
+}
+
+nav::before,
+nav::after {
+    content: '';
+    display: block;
+    height: 16px;
+    position: sticky;
+    -webkit-position: sticky;
+}
+
+nav::before {
+    top: 48px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+        rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+    z-index: 1;
+}
+
+nav::after {
+    background: linear-gradient(#fff, rgba(255, 255, 255, 0.3));
+    top: 0;
+    z-index: 2;
 }
 
 .nav-item {
     display: block;
     padding: 0 10px;
 }
+
+/* Nav shadow on <main> scroll */
+/* https://stijndewitt.com/2018/06/12/pure-css-drop-shadow-on-scroll/ */
 
 table {
     table-layout: fixed;
