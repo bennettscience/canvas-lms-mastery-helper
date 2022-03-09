@@ -451,16 +451,20 @@ table {
     border-collapse: collapse;
     padding: 0.75rem;
 }
-.headers {
+/* .headers {
     position: sticky;
     top: 55px;
-}
+} */
 thead th:first-child {
     width: 25%;
 }
 th {
     padding: 15px 0 20px 0;
-    background-color: #fff;
+    background-color: var(--secondary-color);
+
+    /* Keep the table headers visible under the site navigation */
+    position: sticky;
+    top: 64px;
 }
 .th-inner-container {
     display: flex;
@@ -473,9 +477,10 @@ th {
 .scroller {
     overflow: auto;
 }
+
 td {
     padding: 5px 2.5px;
-    border: 1px solid transparent;
+    border: 1px transparent;
 }
 td:not(:first-child) {
     text-align: center;
