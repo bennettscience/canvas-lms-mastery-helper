@@ -376,18 +376,31 @@ main {
 }
 
 nav {
-    box-sizing: border-box;
     height: 80px;
     position: sticky;
     top: -16px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: right;
+    display: block;
     z-index: 1;
-    padding-right: 25px;
-    background-color: #fff;
     -webkit-backface-visibility: hidden;
+}
+
+nav > #nav-inner {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 64px;
+    background-color: #fff;
+    position: sticky;
+    -webkit-position: sticky;
+    top: 0px;
+    /* compensate for shadow with negative margin */
+    margin-top: -16px;
+    /* content should fall over shadow and cover */
+    z-index: 3;
+}
+
+nav > #nav-inner:last-child {
+    padding-right: 25px;
 }
 
 nav::before,
@@ -401,8 +414,8 @@ nav::after {
 
 nav::before {
     top: 48px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
-        rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 5px,
+        rgba(0, 0, 0, 0.04) 0px 0px 10px 5px;
     z-index: 1;
 }
 
