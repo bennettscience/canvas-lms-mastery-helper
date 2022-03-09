@@ -21,7 +21,8 @@ has a good starter guide for setting up Apache on a Ubuntu server.
 ### SQL
 
 You'll need a SQL database to store data from Canvas. This is preconfigured for
-MySQL (MariaDB) but any SQL schema should work.
+MySQL (MariaDB) but any SQL schema should work. Set up your database and note
+your username and password.
 
 ## Source
 
@@ -33,7 +34,23 @@ It is recommended that you use a virtual environment to manage your
 dependencies. After creating your environment, you can install dependencies
 using `poetry install` or `pip install -f requirements.txt`.
 
-Once your dependencies are installed, you can set up your database:
+## Config
+
+The repo comes with a sample config file. Make a copy with
+`cp config.sample.py config.py`. You'll need to set up your database using the
+credentials you created earlier.
+
+By default, the application will run with a SQLite database, which works fine
+for single users. But, if you want to make it available to more than one person,
+you'll need to change your database engine.
+
+Set your database credntials in the `SQLALCHEMY_DATABASE_URI` key and save the
+file. SQLAlchemy
+[has comprehensive docs](https://flask-sqlalchemy.palletsprojects.com/en/2.x/config/)
+on configuration options.
+
+Once your dependencies are installed and your config is updated, you can set up
+your database:
 
 ```bash
 flask db upgrade
@@ -137,4 +154,35 @@ umask = 0o007
 accesslog = '-' # Set access log location. Needs an absolute path
 errorlog = '-' # Set error log location. Needs an absolute path
 loglevel = 'debug' # Decrease log level in prod. Defaults to 'error'
+```
+
+## Apache configuration
+
+Apache can be used as a reverse proxy to route traffic from the Internet to your
+gunicorn application server. There are a number of detailed examples on the
+Internet, including the
+[official Apache documentation](https://httpd.apache.org/docs/2.4/howto/reverse_proxy.html).
+Here is a sample `VirtualHost` entry showing the basics.
+
+_Note that this needs to be modified slightly to allow HTTPS access._
+
+```text
+<VirtualHost *:80>
+    ServerName www.mydomain.com
+    DocumentRoot /your/install/directory
+
+    Alias /static "/your/install/directory/app/static"
+    <Directory /your/install/directoryt>
+        Allow from all
+        Require all granted
+    </Directory>
+
+    # Do not proxy requests to /static
+    ProxyPass /static !
+
+    # Route everything else to gunicorn.
+    # Make sure to update your URL to match your gunicorn bound address
+    ProxyPass / http://127.0.0.1:8080
+    ProxyPassReverse / http://127.0.0.1:8080
+</VirtualHost>
 ```
