@@ -3,10 +3,16 @@ Refactor to name inner container? #} {# Several params are passed in to make
 this dynamic: 1. HTTP method 2. app endpoint 3. Sidebar position - left or right
 4. Hidden: bool #}
 <section
+    {% if position == 'right' %}
     _="on closeModal
         add .hide to me
         then wait 1s
-        then remove me"
+        then remove me
+        end
+        "
+    {% else %}
+    _="on htmx:load call checkActivePage()"
+    {% endif %}
     id="{{position}}-sidebar"
     class="sidebar sidebar--{{ position }} {{'hide' if hide}}"
 >

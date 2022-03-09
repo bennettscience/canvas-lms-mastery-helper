@@ -58,6 +58,22 @@ htmx.on('showToast', evt => {
     showToast(evt.detail.value)
 })
 
+
+// TODO: Doesn't run after hard refresh?
+function checkActivePage() {
+    let path = window.location.pathname;
+    if (path.split('/').length > 2) {
+        let id = path.split('/')[2];
+        console.log(id)
+
+        let el = document.querySelector(`#course-${id}`)
+        if(el) {
+            el.classList.add('active')
+        }
+    }
+    return
+}
+
 // Handle errors from the server
 document.addEventListener('htmx:responseError', (evt) => {
     showToast(evt.detail.xhr.responseText, true)
@@ -80,3 +96,4 @@ window.sparkline = drawSparkline;
 window.formatDate = formatDate;
 window.toast = showToast;
 window.cancelToast = cancelToast;
+window.checkActivePage = checkActivePage;

@@ -1,9 +1,10 @@
 <div
+    id="course-{{item.canvas_id}}"
     class="item course-item"
     hx-get="/courses/{{ item.canvas_id }}"
     hx-trigger="click"
     hx-target="#course-detail"
-    hx-swap="outerHTML"
+    hx-swap="innerHTML"
     hx-indicator="#toast"
     hx-push-url="true"
     _="on click 

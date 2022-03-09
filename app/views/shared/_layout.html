@@ -16,8 +16,8 @@
         <nav>{% include 'shared/partials/nav.html' %}</nav>
         <main>
             <section
-                hx-target="main"
-                hx-swap="beforeend"
+                hx-target="this"
+                hx-swap="outerHTML"
                 hx-get="/courses"
                 hx-trigger="load"
             ></section>

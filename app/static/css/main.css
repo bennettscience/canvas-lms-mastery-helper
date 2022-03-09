@@ -442,7 +442,7 @@ nav::after {
 table {
     table-layout: fixed;
     width: 100%;
-    border-collapse: separate;
+    border-collapse: collapse;
     overflow-x: scroll;
 }
 
@@ -457,10 +457,7 @@ table {
     border-collapse: collapse;
     padding: 0.75rem;
 }
-/* .headers {
-    position: sticky;
-    top: 55px;
-} */
+
 thead th:first-child {
     width: 25%;
 }
