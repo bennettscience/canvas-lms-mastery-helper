@@ -6,16 +6,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{% block title %}ECS Mastery Helper{%endblock%}</title>
 
-        <link rel="stylesheet" href="static/css/main.css" />
+        <link
+            rel="stylesheet"
+            href="{{url_for('static', filename='css/main.css')}}"
+        />
         {% block additional_css %} {%endblock%}
     </head>
     <body>
         <nav>{% include 'shared/partials/nav.html' %}</nav>
-        <main>{% block main_content %} {% endblock %}</main>
+        <main>
+            <section
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-get="/courses"
+                hx-trigger="load"
+            ></section>
+            <section id="course-detail">
+                {% block main_content %} {% endblock %}
+            </section>
+        </main>
         {% include 'shared/partials/toast.html' %}
-        <script type="module" src="static/js/main.js"></script>
+        <script
+            type="module"
+            src="{{ url_for('static', filename='js/main.js') }}"
+        ></script>
         <script src="https://unpkg.com/htmx.org@1.7.0"></script>
-        <script type="text/hyperscript" src="static/hs/sortable._hs"></script>
+        <script
+            type="text/hyperscript"
+            src="{{url_for('static', filename='hs/sortable._hs') }}"
+        ></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.5"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         {% block additional_js %} {% endblock %}

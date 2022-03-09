@@ -98,7 +98,10 @@ class CourseAPI(MethodView):
                 course=CourseSchema().dump(course), outcomes=outcomes
             )
         else:
-            template = "course/teacher_index.html"
+            if request.headers.get('HX-Request'):
+                template = "course/teacher_index_htmx.html"
+            else:
+                template = "course/teacher_index_full.html"
 
             students = course.enrollments.filter(User.usertype_id == 3).all()
 

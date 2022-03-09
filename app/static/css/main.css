@@ -159,6 +159,12 @@ main {
     background-color: var(--secondary-color);
 }
 
+.sidebar--left a {
+    display: block;
+    text-decoration: none;
+    color: var(--black);
+}
+
 .sidebar--right {
     right: 0;
     transition: right 350ms ease-in;
