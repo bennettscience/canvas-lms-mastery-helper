@@ -5,16 +5,29 @@
         <button
             class="btn"
             hx-get="{{course_id}}/outcomes/{{item.canvas_id}}/edit"
-            hx-target="this"
+            hx-target="closest .outcome"
             hx-swap="outerHTML"
         >
             Set up alignment
         </button>
         <button
             class="btn"
+            hx-trigger="confirmed"
             hx-delete="/outcomes/{{item.canvas_id}}"
-            hx-target="this"
-            _="on htmx:afterRequest send delete to the closest .item"
+            _='on click
+                call Swal.fire({
+                    title:"Are you sure?",
+                    text: "This will remove the outcome and any stored attempts for all students in the course.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, delete the outcome",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#f55951",
+                    cancelButtonColor: "#361d32"
+                })
+                if result.isConfirmed trigger confirmed
+                end
+                on htmx:afterRequest(detail) if detail.xhr.status is 200 trigger delete'
         >
             Delete
         </button>
