@@ -1,4 +1,4 @@
-from flask import abort, jsonify, request, render_template
+from flask import abort, jsonify, request, render_template, make_response
 from flask.views import MethodView
 from webargs import fields
 from webargs.flaskparser import parser
@@ -94,8 +94,6 @@ class OutcomeAPI(MethodView):
         Returns:
             Outcome: <Outcome> instance
         """
-        args = parser.parse(OutcomeSchema(), location="querystring")
-
         outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
 
         if not outcome:
@@ -106,6 +104,30 @@ class OutcomeAPI(MethodView):
             item=outcome,
             course_id=outcome.course[0].canvas_id
         )
+    
+    def delete(self: None, outcome_canvas_id: int) -> str:
+        """ Delete a single stored outcome
+
+        Args:
+            outcome_canvas_id (int): outcome Canvas ID
+
+        Returns:
+            str: result message
+        """
+        import json
+        from app.models import User
+        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
+
+        if outcome is None:
+            abort(404)
+        
+        db.session.delete(outcome)
+        db.session.commit()
+
+        
+        response = make_response(jsonify({'message': 'ok'}))
+        response.headers.set('HX-Trigger', json.dumps({'showToast': "Deleted {}".format(outcome.name)})) 
+        return response
 
 
 class AlignmentAPI(MethodView):

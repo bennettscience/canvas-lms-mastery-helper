@@ -32,20 +32,6 @@ class TestOutcomes(TestBase):
         self.assertEqual(resp.status_code, 200)
         self.assertIsInstance(resp.json, list)
         self.assertEqual(len(resp.json), 1)
-
-    def test_get_single_outcome_404(self):
-        resp = self.client.get('/outcomes/1')
-        self.assertEqual(resp.status_code, 404)
-    
-    def test_get_single_outcome_by_canvas_id(self):
-        resp = self.client.get('/outcomes/123')
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'Outcome 1', resp.data)
-        self.assertIn(b'Set up alignment', resp.data)
-
-    def test_get_missing_outcome(self):
-        resp = self.client.get('/outcomes/999')
-        self.assertEqual(resp.status_code, 404)
     
     @unittest.skip
     def test_post_outcome(self):
@@ -60,6 +46,55 @@ class TestOutcomes(TestBase):
             headers=headers
         )
         self.assertTrue(resp.status_code == 200)
+
+
+class TestSingleOutcome(TestBase):
+    def setUp(self):
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
+        db.create_all()
+        self.client = app.test_client()
+
+        assignment = Assignment(canvas_id=123, name='Assignment 1')
+        outcome = Outcome(canvas_id=123, name='Outcome 1')
+        course = Course(name="Course 1", canvas_id=999)
+
+        db.session.add_all([assignment, course, outcome])
+
+        course.outcomes.append(outcome)
+
+        db.session.commit()
+    
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        
+    def test_get_single_outcome_404(self):
+        resp = self.client.get('/outcomes/1')
+        self.assertEqual(resp.status_code, 404)
+    
+    def test_get_single_outcome_by_canvas_id(self):
+        resp = self.client.get('/outcomes/123')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'Outcome 1', resp.data)
+        self.assertIn(b'Set up alignment', resp.data)
+
+    def test_get_missing_outcome(self):
+        resp = self.client.get('/outcomes/999')
+        self.assertEqual(resp.status_code, 404)
+
+    def test_delete_outcome(self):
+        # Add an enrollment to run the test
+        from app.models import User
+        user = User(name='Student', usertype_id=3)
+        db.session.add(user)
+
+        course = Course.query.filter(Course.canvas_id == 999).first()
+        user.enroll(course)
+        db.session.commit()
+
+        
+        resp = self.client.delete('/outcomes/123')
+        self.assertEqual(resp.status_code, 200)
 
 class TestOutcomeAlignments(TestBase):
     

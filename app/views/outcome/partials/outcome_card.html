@@ -1,13 +1,23 @@
-<div
-    hx-get="{{course_id}}/outcomes/{{item.canvas_id}}/edit"
-    hx-target="this"
-    hx-swap="outerHTML"
-    class="item outcome"
->
+<div class="item outcome" _="on delete remove me">
     <h3>{{item.name}}</h3>
     <div>
         {% if not item.alignment %}
-        <button>Set up alignment</button>
+        <button
+            class="btn"
+            hx-get="{{course_id}}/outcomes/{{item.canvas_id}}/edit"
+            hx-target="this"
+            hx-swap="outerHTML"
+        >
+            Set up alignment
+        </button>
+        <button
+            class="btn"
+            hx-delete="/outcomes/{{item.canvas_id}}"
+            hx-target="this"
+            _="on htmx:afterRequest send delete to the closest .item"
+        >
+            Delete
+        </button>
         {% else %}
         <p>Watching {{ item.alignment.name }}</p>
         {% endif %}
