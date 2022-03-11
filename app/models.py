@@ -54,8 +54,9 @@ class User(UserMixin, db.Model):
     
     assessments = db.relationship(
         "OutcomeAttempt",
-        backref="user",
-        lazy='dynamic'
+        backref=backref("user", cascade='all,delete,delete-orphan', single_parent=True),
+        lazy='dynamic',
+        passive_deletes=True
     )
 
     assignments = db.relationship(
@@ -109,8 +110,9 @@ class Outcome(db.Model):
 
     attempts = db.relationship(
         "OutcomeAttempt",
-        backref="outcome",
-        lazy="dynamic"
+        backref=backref("outcome", cascade='all,delete,delete-orphan', single_parent=True),
+        lazy="dynamic",
+        passive_deletes=True
     )
 
     def __repr__(self):
@@ -278,8 +280,8 @@ class Log(db.Model):
 
 class OutcomeAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_canvas_id = db.Column(db.Integer, db.ForeignKey("user.canvas_id", onupdate="CASCADE", ondelete="CASCADE"))
-    outcome_canvas_id = db.Column(db.Integer, db.ForeignKey("outcome.canvas_id", onupdate="CASCADE", ondelete="CASCADE"))
+    user_canvas_id = db.Column(db.Integer, db.ForeignKey("user.canvas_id", ondelete='CASCADE', onupdate='CASCADE' ))
+    outcome_canvas_id = db.Column(db.Integer, db.ForeignKey("outcome.canvas_id", ondelete='CASCADE', onupdate='CASCADE'))
     attempt_canvas_id = db.Column(db.Integer, unique=True, nullable=False)
     success = db.Column(db.Boolean)
     score = db.Column(db.Integer)
