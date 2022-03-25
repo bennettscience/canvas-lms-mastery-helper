@@ -96,7 +96,7 @@ class Course(db.Model, Manager):
     name = db.Column(db.String(255))
     updated_at = db.Column(db.DateTime)
 
-    outcomes = db.relationship("Outcome", cascade='all,delete', secondary="course_outcomes", backref="course", lazy='dynamic')
+    outcomes = db.relationship("Outcome", secondary="course_outcomes", backref="course", lazy='dynamic')
     assignments = db.relationship("Assignment", cascade='all,delete', secondary="course_assignments", backref="course")
 
     def __repr__(self):
