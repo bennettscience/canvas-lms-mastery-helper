@@ -30,12 +30,12 @@ courses_bp.add_url_rule("/courses/<int:course_canvas_id>/outcomes", view_func=co
 courses_bp.add_url_rule(
     "/courses/<int:course_canvas_id>/outcomes/<int:outcome_canvas_id>", 
     view_func=outcome_attempts_view, 
-    methods=['GET']
+    methods=['GET', 'DELETE']
 )
 courses_bp.add_url_rule(
     "/courses/<int:course_canvas_id>/users/<int:user_canvas_id>/results/<int:outcome_canvas_id>",
     view_func=user_outcome_attempts_view,
-    methods=['GET']
+    methods=['GET',]
 )
 
 # Sync all assignment scores for a given course

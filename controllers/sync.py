@@ -54,13 +54,20 @@ class SyncOutcomesAPI(MethodView):
         Returns:
             list: Outcomes represented as JSON
         """
-        from app.models import Outcome as Outcome
+        from app.models import Course
+
+
+        course = Course.query.filter(Course.canvas_id == course_id).first()
 
         # We don't want to duplicate Outcomes already stored in the database, so
         # this filters those out before returning the list. The Outcomes fetched
         # are specific to the course.
         fetched_outcomes = self.service.get_outcomes(course_id)
-        stored_outcomes = [outcome.canvas_id for outcome in Outcome.query.all()]
+
+        # Filter out items that are not already associated with a course. The course
+        # relationship is required because other courses might be using the same outcome 
+        # from Canvas.
+        stored_outcomes = [outcome.canvas_id for outcome in course.outcomes.all()]
 
         outcomes = [outcome for outcome in fetched_outcomes if outcome['id'] not in stored_outcomes]
 

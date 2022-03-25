@@ -1,4 +1,4 @@
-from flask import abort, jsonify, request, render_template
+from flask import abort, jsonify, make_response, request, render_template
 from flask.views import MethodView
 from webargs import fields
 from webargs.flaskparser import parser
@@ -35,6 +35,38 @@ class OutcomeAttemptsAPI(MethodView):
         ]
         
         return jsonify(scores)
+    
+    def delete(self: None, course_canvas_id: int, outcome_canvas_id: int) -> str:
+        """ Delete a single stored outcome in a course
+
+        This does not remove the outcome from the <Outcome> table because other courses
+        may rely on the same outcome. This removes the course assocication stored, which
+        effectively removes it from the course.
+
+        Student attempts are kept.
+
+        Args:
+            outcome_canvas_id (int): outcome Canvas ID
+
+        Returns:
+            str: result message
+        """
+        import json
+        course = Course.query.filter(Course.canvas_id == course_canvas_id).first()
+        outcome = Outcome.query.filter(Outcome.canvas_id == outcome_canvas_id).first()
+
+        if course is None:
+            abort(404)
+        
+        if outcome is None:
+            abort(404)
+        
+        course.outcomes.remove(outcome)
+        db.session.commit()
+
+        response = make_response(jsonify({'message': 'ok'}))
+        response.headers.set('HX-Trigger', json.dumps({'showToast': "Removed {} from the course.".format(outcome.name)})) 
+        return response
 
 
 class UserOutcomeAttemptAPI(MethodView):

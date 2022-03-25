@@ -13,7 +13,7 @@
         <button
             class="btn"
             hx-trigger="confirmed"
-            hx-delete="/outcomes/{{item.canvas_id}}"
+            hx-delete="{{course_id}}/outcomes/{{item.canvas_id}}"
             _='on click
                 call Swal.fire({
                     title:"Are you sure?",
