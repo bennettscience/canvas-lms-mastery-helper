@@ -93,7 +93,7 @@ class TestSingleOutcome(TestBase):
         db.session.commit()
 
         
-        resp = self.client.delete('/outcomes/123')
+        resp = self.client.delete('courses/999/outcomes/123')
         self.assertEqual(resp.status_code, 200)
 
 class TestOutcomeAlignments(TestBase):
