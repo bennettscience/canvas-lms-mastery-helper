@@ -65,8 +65,8 @@ class OutcomeAttemptsAPI(MethodView):
         db.session.commit()
 
         response = make_response(jsonify({'message': 'ok'}))
-        # response.headers.set('HX-Trigger', json.dumps({'showToast': "Removed {} from the course.".format(outcome.name)}))
-        response.headers.set('HX-Redirect', '/courses/{}'.format(course_canvas_id))
+        response.headers.set('HX-Trigger', json.dumps({'showToast': "Removed {} from the course.".format(outcome.name)}))
+        response.headers.set('HX-Refresh', 'true')
         return response
 
 
