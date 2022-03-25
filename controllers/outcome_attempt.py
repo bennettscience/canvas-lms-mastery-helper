@@ -1,4 +1,4 @@
-from flask import abort, jsonify, make_response, request, render_template
+from flask import abort, jsonify, make_response, request, render_template, redirect, url_for
 from flask.views import MethodView
 from webargs import fields
 from webargs.flaskparser import parser
@@ -65,7 +65,8 @@ class OutcomeAttemptsAPI(MethodView):
         db.session.commit()
 
         response = make_response(jsonify({'message': 'ok'}))
-        response.headers.set('HX-Trigger', json.dumps({'showToast': "Removed {} from the course.".format(outcome.name)})) 
+        # response.headers.set('HX-Trigger', json.dumps({'showToast': "Removed {} from the course.".format(outcome.name)}))
+        response.headers.set('HX-Redirect', '/courses/{}'.format(course_canvas_id))
         return response
 
 
