@@ -588,21 +588,18 @@ td:not(:first-child) {
     width: auto;
 }
 
-.tooltip {
+/* .tooltip {
     position: relative;
 }
 
 .tooltip:before {
-    content: attr(data-tooltip); /* here's the magic */
+    content: attr(data-tooltip);
     position: absolute;
 
-    /* vertically center */
     top: -4rem;
+    left: -100px;
 
-    /* move to right */
-    left: -100px; /* half the width of the tip */
 
-    /* basic styles */
     width: 200px;
     padding: 0.5rem;
     border-radius: 2px;
@@ -610,7 +607,7 @@ td:not(:first-child) {
     color: var(--black);
     text-align: center;
 
-    display: none; /* hide by default */
+    display: none;
 
     box-shadow: var(--active-shadow);
 }
@@ -628,7 +625,7 @@ td:not(:first-child) {
 
 .tooltip:hover:before {
     display: inline;
-}
+} */
 
 /* Table sorting */
 th[role='columnheader']:not(.no-sort) {
