@@ -41,32 +41,29 @@ class CanvasAuthService:
         if self.mode == 'server_only':
             return Canvas(app.config['CANVAS_URI'], app.config['CANVAS_KEY'])
         else:
-            # breakpoint()
-            if app.config['CANVAS_OAUTH'] and not session['_fresh']:
+            expire = session['oauth_token']['expires_at']
 
-                expire = session['oauth_token']['expires_at']
+            # The current token has expired, so get a new one from the OAuth endpoint
+            if time.time() > expire:
+                client_id = app.config['CANVAS_OAUTH']['id']
+                refresh_url = app.config['CANVAS_OAUTH']['token_url']
 
-                # The current token has expired, so get a new one from the OAuth endpoint
-                if time.time() > expire:
-                    client_id = app.config['CANVAS_OAUTH']['id']
-                    refresh_url = app.config['CANVAS_OAUTH']['token_url']
+                params = {
+                    "client_id": client_id,
+                    "client_secret": app.config['CANVAS_OAUTH']['secret'],
+                    "refresh_token": session['oauth_token']['refresh_token']
+                }
 
-                    params = {
-                        "client_id": client_id,
-                        "client_secret": app.config['CANVAS_OAUTH']['secret'],
-                        "refresh_token": session['oauth_token']['refresh_token']
-                    }
+                # Don't use the self property because you can go right
+                # to the token endpoint without logging back in.
+                oauth_refresh = OAuth2Session(client_id, token=session['oauth_token'])
 
-                    # Don't use the self property because you can go right
-                    # to the token endpoint without logging back in.
-                    oauth_refresh = OAuth2Session(client_id, token=session['oauth_token'])
+                # Set the current session token to the new value
+                session['oauth_token'] = oauth_refresh.refresh_token(refresh_url, **params)
 
-                    # Set the current session token to the new value
-                    session['oauth_token'] = oauth_refresh.refresh_token(refresh_url, **params)
-
-                # canvaspi throws an error if you include the /api/v1 suffix. Pass in
-                # a short URL to instantiate.
-            return Canvas(app.config['CANVAS_OAUTH']['base_url_short'], session['oauth_token']['access_token'])
+            # canvaspi throws an error if you include the /api/v1 suffix. Pass in
+            # a short URL to instantiate.
+        return Canvas(app.config['CANVAS_OAUTH']['base_url_short'], session['oauth_token']['access_token'])
 
     def login(self):
         return self.oauth.authorization_url(app.config['CANVAS_OAUTH']['authorization_url'])
