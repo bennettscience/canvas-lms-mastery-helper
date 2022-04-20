@@ -3,15 +3,15 @@ from flask_login import current_user
 from app import app
 
 courses_bp = Blueprint('courses', __name__, template_folder='views')
-from controllers.assignments import AssignmentListAPI
-from controllers.courses import (
+from app.controllers.assignments import AssignmentListAPI
+from app.controllers.courses import (
     CourseEnrollmentsAPI,
     CourseListAPI,
     CourseAPI,
     CourseAssignmentsAPI,
     CourseOutcomesAPI
 )
-from controllers.outcome_attempt import OutcomeAttemptsAPI, UserOutcomeAttemptAPI
+from app.controllers.outcome_attempt import OutcomeAttemptsAPI, UserOutcomeAttemptAPI
 
 courses_view = CourseListAPI.as_view("course_list_view")
 course_view = CourseAPI.as_view("course_view")

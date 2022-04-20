@@ -2,7 +2,7 @@ from canvasapi import canvas
 from flask import Blueprint, abort, jsonify
 
 sync_bp = Blueprint('canvas_sync', __name__, url_prefix="/sync")
-from controllers.sync import (
+from app.controllers.sync import (
     SyncAssignmentsAPI,
     SyncOutcomeAttemptsAPI,
     SyncOutcomesAPI,

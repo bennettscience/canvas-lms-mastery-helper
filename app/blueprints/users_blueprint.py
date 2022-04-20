@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, jsonify
 
 users_bp = Blueprint('users', __name__)
-from controllers.users import (
+from app.controllers.users import (
     UserListAPI,
     UserAPI,
     UserPrefsAPI,

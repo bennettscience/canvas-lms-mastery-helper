@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, jsonify
 
 assignments_bp = Blueprint('assignments', __name__)
-from controllers.assignments import (
+from app.controllers.assignments import (
     AssignmentAPI,
     AssignmentListAPI,
 )

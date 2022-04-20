@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, jsonify
 
 outcomes_bp = Blueprint('outcomes', __name__)
-from controllers.outcomes import (
+from app.controllers.outcomes import (
     OutcomeAPI,
     OutcomeListAPI,
     AlignmentAPI
