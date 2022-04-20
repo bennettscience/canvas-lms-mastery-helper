@@ -29,6 +29,7 @@ class OutcomeListAPI(MethodView):
         Returns:
             Outcome: <Outcome> instance
         """
+        import json
         from app.models import User
         from app.canvas_sync_service import CanvasSyncService
         self.service = CanvasSyncService()
@@ -73,15 +74,19 @@ class OutcomeListAPI(MethodView):
                 })
         
         has_alignment = any(o.alignment for o in course.outcomes.all())
-        
-        return render_template(
+
+        response = make_response(render_template(
             'outcome/partials/outcome_new_alignment_oob.html',
             course_id=args['course_id'],
             course=CourseSchema().dump(course),
             students=students,
             item=OutcomeSchema().dump(target_outcome),
             has_alignment=has_alignment
-        )
+        ))
+        response.headers.set('HX-Trigger', json.dumps({'showToast': "Imported {} to the course.".format(outcome.name)}))
+
+        
+        return response
             
 
 class OutcomeAPI(MethodView):
