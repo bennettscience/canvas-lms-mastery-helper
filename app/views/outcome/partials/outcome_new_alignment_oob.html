@@ -2,7 +2,18 @@
     <div class="item outcome" _="on delete remove me">
         <h3>{{item.name}}</h3>
         <div>
-            {% if not item.alignment %}
+            {% if item.alignment %}
+            <p>Watching {{ item.alignment.name }}</p>
+            <button
+                class="btn"
+                hx-get="{{course_id}}/outcomes/{{item.canvas_id}}/edit"
+                hx-target="closest .outcome"
+                hx-swap="outerHTML"
+            >
+                Edit alignment
+            </button>
+
+            {%else%}
             <button
                 class="btn"
                 hx-get="{{course_id}}/outcomes/{{item.canvas_id}}/edit"
@@ -32,12 +43,9 @@
             >
                 Delete
             </button>
-            {% else %}
-            <p>Watching {{ item.alignment.name }}</p>
             {% endif %}
         </div>
     </div>
-</div>
 
     <table hx-swap-oob="true" id="course-roster" _="install Sortable">
         <thead>

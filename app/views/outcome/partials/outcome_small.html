@@ -3,10 +3,6 @@
     hx-post="/outcomes"
     hx-trigger="click"
     hx-indicator="#toast"
-    _="on htmx:afterRequest(detail)
-    toast(detail)
-    remove me
-    "
 >
     <input type="hidden" name="outcome_id" value="{{item.id}}" />
     <input type="hidden" name="course_id" value="{{course_canvas_id}}" />
