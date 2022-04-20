@@ -181,7 +181,7 @@ main {
 .btn {
     padding: 0.75rem 0.5rem;
     cursor: pointer;
-    margin-right: 25px;
+    /* margin-right: 25px; */
 }
 
 .btn:disabled {
@@ -536,13 +536,13 @@ td:not(:first-child) {
 }
 
 #toast {
-    position: absolute;
+    position: fixed;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     opacity: 0;
-    bottom: -5rem;
+    top: 90%;
     right: 1.5rem;
     min-width: 250px;
     margin: 0;
@@ -555,7 +555,6 @@ td:not(:first-child) {
     color: var(--white);
 }
 #toast.show {
-    bottom: 1.5rem;
     opacity: 1;
 }
 #toast-message {

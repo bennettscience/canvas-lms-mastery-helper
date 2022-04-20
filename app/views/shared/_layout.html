@@ -26,8 +26,8 @@
             <section id="course-detail">
                 {% block main_content %} {% endblock %}
             </section>
+            {% include 'shared/partials/toast.html' %}
         </main>
-        {% include 'shared/partials/toast.html' %}
         <script
             type="module"
             src="{{ url_for('static', filename='js/main.js') }}"
