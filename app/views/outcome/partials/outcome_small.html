@@ -2,8 +2,10 @@
     class="item item--small"
     hx-post="/outcomes"
     hx-trigger="click"
-    _="
-        on htmx:afterSwap remove me end
+    hx-indicator="#toast"
+    _="on htmx:afterRequest(detail)
+    toast(detail)
+    remove me
     "
 >
     <input type="hidden" name="outcome_id" value="{{item.id}}" />
