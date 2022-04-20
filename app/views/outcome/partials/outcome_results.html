@@ -4,12 +4,18 @@
         on closeModal
             remove me 
         end
-        init call sparkline(document.querySelector('.sparkline'), {{ scores_only }}) end
     "
 >
     <td colspan="{{colspan}}">
         <div class="details">
-            <h3>{{outcome.name}}</h3>
+            <h3
+                _="on load 
+                set :myChart to .sparkline in the closest parent <div/>
+                then call sparkline(:myChart[0], {{ scores_only }}) end
+            "
+            >
+                {{outcome.name}}
+            </h3>
             <div class="attempts">
                 {% for attempt in scores %}
                 <span class="item attempt">

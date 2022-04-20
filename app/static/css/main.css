@@ -528,8 +528,8 @@ td:not(:first-child) {
     grid-area: chart;
 }
 .sparkline {
-    stroke: #000;
-    fill: rgba(0, 0, 0, 0.15);
+    fill: var(--hover-color);
+    stroke: var(--black);
 }
 
 .selected {
@@ -675,6 +675,6 @@ th[role='columnheader']:not(.no-sort) > .th-inner-container:hover:after {
     box-shadow: none;
 }
 
-svg path {
+/* svg path {
     fill: var(--black);
-}
+} */
