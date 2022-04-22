@@ -12,12 +12,11 @@
             remove .active from <div /> 
             then add .active to me"
     >
-        <div class="course-item-inner">
+        <div
+            class="course-item-inner"
+            title="{{item.outcomes|length}} outcome{%if item.outcomes|length == 0 or item.outcomes|length > 1%}s{%endif%} set up"
+        >
             <p>{{ item.name }}</p>
-            <span
-                title="{{item.outcomes|length}} alignment{%if item.outcomes|length == 0 or item.outcomes|length > 1%}s{%endif%}"
-                >{{item.outcomes|length}}</span
-            >
         </div>
     </div>
 </div>

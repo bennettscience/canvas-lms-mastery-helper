@@ -573,12 +573,7 @@ td:not(:first-child) {
 .htmx-indicator {
     transition: none;
 }
-#toast .htmx-request .htmx-indicator {
-    bottom: 1.5rem;
-    opacity: 1;
-}
 #toast.htmx-request.htmx-indicator {
-    bottom: 1.5rem;
     opacity: 1;
 }
 
