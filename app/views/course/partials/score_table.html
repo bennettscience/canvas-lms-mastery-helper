@@ -6,21 +6,18 @@
                     <p _="on click toggle .show on the next <div/>">Name</p>
                     <div class="outcome-actions">
                         <span class="sort-trigger">Sort A-Z</span>
+                        {% if has_alignment%}
                         <span
                             hx-put="/courses/{{course.canvas_id}}/assignments/push"
                             hx-swap="none"
-                            _="on htmx:afterRequest(detail) wait 1s then toast(detail, 5000)"
-                            {%
-                            if
-                            not
-                            has_alignment
-                            %}
-                            disabled
-                            data-tooltip="Align at least one assignment to post grades."
-                            {%endif%}
+                            _="on click set my innerHTML to `<img src='{{url_for("static", filename="img/bars.svg")}}' />`
+                                on htmx:afterRequest(detail)
+                                    set my innerHTML to 'Post all grades'
+                                    then toast(detail, 5000)"
                         >
                             Post all grades
                         </span>
+                            {%endif%}
                     </div>
                 </div>
             </th>
