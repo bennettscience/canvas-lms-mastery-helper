@@ -58,7 +58,7 @@
 </section>
 <section id="scores">
     {{ render_partial('course/partials/score_table.html', students=students,
-    course=course) }}
+    course=course, has_alignment=has_alignment) }}
 </section>
 
 {% endblock %}
