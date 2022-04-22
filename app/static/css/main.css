@@ -103,7 +103,7 @@ button:focus {
     border-color: #666;
 }
 
-img,
+/* img,
 video {
     display: block;
     box-sizing: border-box;
@@ -111,7 +111,7 @@ video {
     padding: 1.5rem;
     border: 1px solid var(--secondary-color);
     box-shadow: var(--active-shadow-small);
-}
+} */
 
 main {
     text-align: left;
@@ -457,24 +457,75 @@ table {
     border-collapse: collapse;
     padding: 0.75rem;
 }
-
 thead th:first-child {
     width: 25%;
 }
 th {
-    padding: 15px 0 20px 0;
     background-color: var(--secondary-color);
-
     /* Keep the table headers visible under the site navigation */
     position: sticky;
     top: 64px;
 }
+
+th:hover {
+    text-decoration: underline
+}
+
 .th-inner-container {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 1.2rem;
+}
+
+th[data-aligned='True']:after {
+    content: '';
+    border: solid;
+    border-color: transparent var(--primary-color) transparent transparent;
+    border-width: 0 10px 10px 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.th-inner-container .outcome-actions {
+    color: var(--black);
+    width: 150px;
+    opacity: 0;
+    transition: all 150ms ease-in-out;
+    position: absolute;
+    top: 100%;
+    background-color:rgba(255, 255, 255, 1);
+    border: 2px solid var(--primary-color);
+    border-radius: 3px;
+    box-shadow: var(--active-shadow)
+}
+
+.th-inner-container .outcome-actions:before {
+    border: solid;
+    border-color: var(--primary-color) transparent;
+    border-width: 0 6px 6px 6px;
+    content: '';
+    left: 50%;
+    top: -0.5rem;
+    transform: translateX(-50%);
+    position: absolute;
+}
+
+.th-inner-container .outcome-actions.show {
+    height: auto;
+    opacity: 1;
+}
+
+.th-inner-container .outcome-actions span {
+    display: block;
+    padding: 1rem;
+}
+
+.th-inner-container .outcome-actions span:hover {
+    cursor: pointer;
+    background-color: var(--secondary-color);
 }
 
 .scroller {
@@ -627,7 +678,7 @@ th[role='columnheader']:not(.no-sort) {
     cursor: pointer;
 }
 
-th[role='columnheader']:not(.no-sort) > .th-inner-container:after {
+/* th[role='columnheader']:not(.no-sort) > .th-inner-container:after {
     content: '';
     border-width: 4px 4px 0;
     border-style: solid;
@@ -653,7 +704,7 @@ th[aria-sort]:not(.no-sort) > .th-inner-container:after {
 th[role='columnheader']:not(.no-sort) > .th-inner-container:hover:after {
     visibility: visible;
     opacity: 1;
-}
+} */
 
 .sync {
     display: inline;

@@ -25,7 +25,7 @@ behavior Sortable
     on click from .sort-trigger
         -- get all the headers and the index of the column
         set headers to <th/> in me
-        set parent to target.parentElement.parentElement
+        set parent to target.parentElement.parentElement.parentElement
         -- the target is nested twice, so we have to jump back up to 
         -- the correct parent element to get the column index.
         set col to headers.indexOf(parent)
@@ -45,9 +45,11 @@ behavior Sortable
         if parent @aria-sort is 'ascending'
             set parent @aria-sort to ''
             sortArray(rowArray, col, false)
+            put 'Sort A-Z' into .sort-trigger
         else
             set parent @aria-sort to 'ascending'
             sortArray(rowArray, col, true)
+            put 'Sort Z-A' into .sort-trigger
         end
         
         -- merge back into the tbody

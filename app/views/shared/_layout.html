@@ -12,7 +12,7 @@
         />
         {% block additional_css %} {%endblock%}
     </head>
-    <body>
+    <body _="on keyup[key is 'Escape'] remove .show from <div/>">
         <nav>{% include 'shared/partials/nav.html' %}</nav>
         <main>
             {% if not current_user.is_anonymous %}

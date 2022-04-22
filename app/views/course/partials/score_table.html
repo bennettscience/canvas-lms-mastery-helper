@@ -3,34 +3,58 @@
         <tr>
             <th class="columnheader" role="columnheader">
                 <div class="th-inner-container">
-                    <span class="sort-trigger">Name</span>
+                    <p _="on click toggle .show on the next <div/>">Name</p>
+                    <div class="outcome-actions">
+                        <span class="sort-trigger">Sort A-Z</span>
+                        <span
+                            hx-put="/courses/{{course.canvas_id}}/assignments/push"
+                            hx-swap="none"
+                            _="on htmx:afterRequest(detail) wait 1s then toast(detail, 5000)"
+                            {%
+                            if
+                            not
+                            has_alignment
+                            %}
+                            disabled
+                            data-tooltip="Align at least one assignment to post grades."
+                            {%endif%}
+                        >
+                            Post all grades
+                        </span>
+                    </div>
                 </div>
             </th>
             {% for outcome in course.outcomes %}
-            <th class="columnheader" role="columnheader">
+            <th class="columnheader" role="columnheader" data-aligned="{{outcome.alignment is not none}}">
                 <div class="th-inner-container">
-                    {% if outcome.alignment %}
-                    <img
-                        src="/static/img/sync.svg"
-                        class="sync btn--sync"
-                        title="Sync scores to Canvas"
-                        aria-role="button"
-                        hx-put="/assignments/{{outcome.alignment.canvas_id}}/push"
-                        hx-swap="none"
-                        _="
-                            on click set @src to '/static/img/bars.svg'
-                            on htmx:afterRequest(detail)
-                                set @src to '/static/img/sync.svg'
-                                then toast(detail, 5000)
-                        "
-                    />
-                    {#
-                    <img
-                        src="{{ url_for('static', filename='img/bars.svg')}}"
-                        class="htmx-indicator sync"
-                    />
-                    #} {% endif %}
-                    <span class="sort-trigger">{{ outcome.name }}</span>
+                    <span _="on click 
+                                set :menu to the next <div/>
+                                if :menu.classList includes 'show' 
+                                    remove .show from :menu
+                                otherwise 
+                                    remove .show from <div/>
+                                    log 'not showing'
+                                    toggle .show on :menu
+                                end"
+                        >{{ outcome.name }}</span
+                    >
+                    <div class="outcome-actions">
+                        <span class="sort-trigger">Sort A-Z</span>
+                        {% if outcome.alignment %}
+                        <span
+                            hx-put="/assignments/{{outcome.alignment.canvas_id}}/push"
+                            hx-swap="none"
+                            _="
+                                on click set my innerHTML to `<img src='{{url_for("static", filename="img/bars.svg")}}' />`
+                                on htmx:afterRequest(detail)
+                                    set my innerHTML to 'Post grades to Canvas'
+                                    then toast(detail, 5000)
+                            "
+                        >
+                            Post grades to Canvas
+                        </span>
+                        {% endif %}
+                    </div>
                 </div>
             </th>
             {% endfor %}
