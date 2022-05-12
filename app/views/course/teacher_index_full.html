@@ -11,14 +11,14 @@
         </button>
         <div class="course-actions" _="on click toggle .show on me">
             <span
-                hx-get="/sync/outcomes/{{course.canvas_id}}"
+                hx-get="/sync/assignments/{{course.canvas_id}}"
                 hx-target="main"
                 hx-swap="beforeend"
                 hx-indicator="#toast"
                 >Import Assignment</span
             >
             <span
-                hx-get="/sync/assignments/{{course.canvas_id}}"
+                hx-get="/sync/outcomes/{{course.canvas_id}}"
                 hx-target="main"
                 hx-swap="beforeend"
                 hx-indicator="#toast"
@@ -26,42 +26,6 @@
             >
         </div>
     </div>
-    {# {% if course.outcomes|length == 0 or course.assignments|length == 0%}
-    <section class="messages">
-        {% if course.outcomes|length == 0 %}
-        <p>
-            No outcomes imported. Use the <b>+ Outcome</b> button to get
-            started.
-        </p>
-        {% endif %} {% if course.assignments|length == 0 %}
-        <p>
-            No assignments imported. Use the <b>+ Assignment</b> button to get
-            started.
-        </p>
-        {% endif %}
-    </section>
-    {%endif%}
-    <div class="actions">
-        <button
-            class="btn"
-            hx-get="/sync/outcomes/{{course.canvas_id}}"
-            hx-target="main"
-            hx-swap="beforeend"
-            hx-indicator="#toast"
-        >
-            + Outcome
-        </button>
-        <button
-            class="btn"
-            hx-get="/sync/assignments/{{course.canvas_id}}"
-            hx-target="main"
-            hx-swap="beforeend"
-            hx-indicator="#toast"
-        >
-            + Assignment
-        </button>
-    </div>
-    #}
 </div>
 <section class="stored-outcomes">
     {% for outcome in course.outcomes %}

@@ -87,7 +87,6 @@ class SyncOutcomesAPI(MethodView):
         response.headers.set('HX-Trigger', json.dumps({'showToast': "Found {} outcomes".format(len(outcomes))}))
         
         return response
-        # return jsonify(OutcomeSchema(many=True).dump(outcomes))
 
 
 class SyncOutcomeAttemptsAPI(MethodView):
@@ -154,8 +153,12 @@ class SyncAssignmentsAPI(MethodView):
             "partial": "assignment/partials/assignment_small.html",
             "title": "Import assignment..."
         }
-        return render_template(
+
+        response = make_response(render_template(
             'shared/partials/sidebar.html',
             position="right",
             **content
-        )
+        ))
+        response.headers.set('HX-Trigger', json.dumps({'showToast': "Found {} assignments".format(len(assignments))}))
+        
+        return response
