@@ -1,7 +1,32 @@
 {% extends 'home/index.html'%} {% block main_content %}
-<h1>{{ course.name }}</h1>
 <div class="course-header">
-    {% if course.outcomes|length == 0 or course.assignments|length == 0%}
+    <h1>{{ course.name }}</h1>
+    <div class="course-actions-container">
+        <button
+            class="btn"
+            _="on click toggle @active on me 
+                then toggle .show on the next <div />"
+        >
+            + Add
+        </button>
+        <div class="course-actions" _="on click toggle .show on me">
+            <span
+                hx-get="/sync/outcomes/{{course.canvas_id}}"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+                >Import Assignment</span
+            >
+            <span
+                hx-get="/sync/assignments/{{course.canvas_id}}"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+                >Import Outcome</span
+            >
+        </div>
+    </div>
+    {# {% if course.outcomes|length == 0 or course.assignments|length == 0%}
     <section class="messages">
         {% if course.outcomes|length == 0 %}
         <p>
@@ -36,6 +61,7 @@
             + Assignment
         </button>
     </div>
+    #}
 </div>
 <section class="stored-outcomes">
     {% for outcome in course.outcomes %}
