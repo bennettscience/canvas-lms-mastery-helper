@@ -83,7 +83,7 @@ class OutcomeListAPI(MethodView):
             item=OutcomeSchema().dump(target_outcome),
             has_alignment=has_alignment
         ))
-        response.headers.set('HX-Trigger', json.dumps({'showToast': "Imported {} to the course.".format(outcome.name)}))
+        response.headers.set('HX-Trigger', json.dumps({'showToast': "Imported {} to the course.".format(target_outcome.name)}))
 
         
         return response
