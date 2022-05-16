@@ -15,16 +15,9 @@
     <body _="on keyup[key is 'Escape'] remove .show from <div/>">
         <nav>{% include 'shared/partials/nav.html' %}</nav>
         <main>
-            {% if not current_user.is_anonymous %}
-            <section
-                hx-target="this"
-                hx-swap="outerHTML"
-                hx-get="/courses"
-                hx-trigger="load"
-            ></section>
-            {%endif%}
             <section id="course-detail">
-                {% block main_content %} {% endblock %}
+                {% block sidebar %} {% endblock %} {% block main_content %} {%
+                endblock %}
             </section>
             {% include 'shared/partials/toast.html' %}
         </main>

@@ -96,7 +96,7 @@ button:disabled {
 }
 
 button:not(:disabled):active {
-    background-color: #ddd;
+    opacity: 0.85;
 }
 
 button:focus {
@@ -188,7 +188,7 @@ main {
     cursor: not-allowed;
 }
 
-.btn:hover {
+.btn:hover, btn:focus {
     opacity: 0.85;
 }
 
@@ -359,12 +359,66 @@ main {
 
 .course-header {
     display: flex;
-    justify-content: space-between;
-    padding-right: 25px;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1.5rem;
 }
 
-.course-header button {
-    margin: 0;
+.course-header .course-actions-container {
+    height: auto;
+    width: 200px;
+    position: relative;
+}
+
+.course-header .course-actions-container button {
+    display: block;
+    margin: 0 auto;
+    width: 50%;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.course-header .course-actions {
+    color: var(--black);
+    width: 200px;
+    opacity: 0;
+    transition: all 150ms ease-in-out;
+    position: absolute;
+    top: calc(100% + 6px);
+    background-color: rgba(255, 255, 255, 1);
+    border: 2px solid var(--primary-color);
+    border-radius: 3px;
+    box-shadow: var(--active-shadow);
+    z-index: 10;
+}
+
+.course-header .course-actions:before {
+    border: solid;
+    border-color: var(--primary-color) transparent;
+    border-width: 0 6px 6px 6px;
+    content: '';
+    left: 50%;
+    top: -0.5rem;
+    transform: translateX(-50%);
+    position: absolute;
+}
+
+.course-header .course-actions.show {
+    height: auto;
+    opacity: 1;
+}
+
+.course-header .course-actions span {
+    display: block;
+    padding: 1rem;
+}
+
+.course-header .course-actions span:hover {
+    cursor: pointer;
+    background-color: var(--secondary-color);
 }
 
 .stored-outcomes {
@@ -387,6 +441,7 @@ nav {
     top: -16px;
     display: block;
     z-index: 1;
+    backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
 
@@ -435,6 +490,7 @@ nav::after {
     display: block;
     padding: 0 10px;
 }
+
 
 /* Nav shadow on <main> scroll */
 /* https://stijndewitt.com/2018/06/12/pure-css-drop-shadow-on-scroll/ */

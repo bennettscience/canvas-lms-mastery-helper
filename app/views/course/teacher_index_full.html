@@ -1,40 +1,30 @@
-{% extends 'shared/_layout.html'%} {% block main_content %}
-<h1>{{ course.name }}</h1>
+{% extends 'home/index.html'%} {% block main_content %}
 <div class="course-header">
-    {% if course.outcomes|length == 0 or course.assignments|length == 0%}
-    <section class="messages">
-        {% if course.outcomes|length == 0 %}
-        <p>
-            No outcomes imported. Use the <b>+ Outcome</b> button to get
-            started.
-        </p>
-        {% endif %} {% if course.assignments|length == 0 %}
-        <p>
-            No assignments imported. Use the <b>+ Assignment</b> button to get
-            started.
-        </p>
-        {% endif %}
-    </section>
-    {%endif%}
-    <div class="actions">
+    <h1>{{ course.name }}</h1>
+    <div class="course-actions-container">
         <button
             class="btn"
-            hx-get="/sync/outcomes/{{course.canvas_id}}"
-            hx-target="main"
-            hx-swap="beforeend"
-            hx-indicator="#toast"
+            _="on click toggle @active on me 
+                then toggle .show on the next <div />"
         >
-            + Outcome
+            + Add
         </button>
-        <button
-            class="btn"
-            hx-get="/sync/assignments/{{course.canvas_id}}"
-            hx-target="main"
-            hx-swap="beforeend"
-            hx-indicator="#toast"
-        >
-            + Assignment
-        </button>
+        <div class="course-actions" _="on click toggle .show on me">
+            <span
+                hx-get="/sync/assignments/{{course.canvas_id}}"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+                >Import Assignment</span
+            >
+            <span
+                hx-get="/sync/outcomes/{{course.canvas_id}}"
+                hx-target="main"
+                hx-swap="beforeend"
+                hx-indicator="#toast"
+                >Import Outcome</span
+            >
+        </div>
     </div>
 </div>
 <section class="stored-outcomes">
