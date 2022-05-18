@@ -63,7 +63,10 @@ def sync():
     for course in courses:
         app.logger.info('Starting {}'.format(course.name))
         outcome_ids = [outcome.canvas_id for outcome in course.outcomes.all()]
-        result = service.get_outcome_attempts(course.canvas_id, outcome_ids)
+        if outcome_ids:
+            result = service.get_outcome_attempts(course.canvas_id, outcome_ids)
+        else:
+            result = "No outcomes stored for {}".format(course.name)
         app.logger.info(result)
     app.logger.info('Finished')
 
