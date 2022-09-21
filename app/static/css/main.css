@@ -385,6 +385,7 @@ main {
     color: var(--black);
     width: 200px;
     opacity: 0;
+    display: none;
     transition: all 150ms ease-in-out;
     position: absolute;
     top: calc(100% + 6px);
@@ -409,6 +410,7 @@ main {
 .course-header .course-actions.show {
     height: auto;
     opacity: 1;
+    display: block;
 }
 
 .course-header .course-actions span {
@@ -549,6 +551,7 @@ th[data-aligned='True']:after {
     color: var(--black);
     width: 150px;
     opacity: 0;
+    display: none;
     transition: all 150ms ease-in-out;
     position: absolute;
     top: 100%;
@@ -572,6 +575,7 @@ th[data-aligned='True']:after {
 .th-inner-container .outcome-actions.show {
     height: auto;
     opacity: 1;
+    display: block;
 }
 
 .th-inner-container .outcome-actions span {
