@@ -27,8 +27,8 @@ def login():
 
 @auth_bp.route("/logout", methods=["GET"])
 def logout():
-    session.clear()
     logout_user()
+    session.clear()
     return redirect(url_for('home_bp.index'))
 
 @auth_bp.route("/callback", methods=["GET"])
@@ -38,8 +38,6 @@ def callback():
     from app.models import UserPreferences
     token = CanvasAuthService().get_token()
     session['oauth_token'] = token
-
-    tmp_canvas_service = Canvas(os.environ.get('CANVAS_URI'), os.environ.get('CANVAS_KEY'))
 
     user_id = session['oauth_token']['user']['id']
     user_name = session['oauth_token']['user']['name']
@@ -73,34 +71,43 @@ def callback():
         # The user has to be committed in order to get the ID for the preferences record.
         db.session.commit()
 
+        # To store some information about the user, we have to fetch that user using the master API key.
+        # Create a temporary service to run this section only.
+        tmp_canvas_service = Canvas(os.environ.get('CANVAS_URI'), os.environ.get('CANVAS_KEY'))
+        
         # Check the user's permissions and match. If they have a single TeacherEnrollment, then
-        # elevate them to Teacher status.
+        # elevate them to Teacher statuses.
         canvas_user_account = tmp_canvas_service.get_user(user_id)
 
-        # Store the sortable name instead
+        # Since we have the user, store the sortable name instead
         user.name = canvas_user_account.sortable_name
 
         courses = canvas_user_account.get_courses(enrollment_state='active')
 
+        # Enrollment types are set by course, so create a set to get _unique_ enrollment types
         enrollment_types = set()
 
         for course in courses:
             enrollment_types.update([enrollment['type'] for enrollment in course.enrollments])
         
+        # The enrollment types are stored by string. If 'teachers exists in even one course, they get the
+        # teacher permissions here. Set a Mastery Calculation default.
         if 'teacher' in enrollment_types:
             user.usertype_id = 2
             ups = UserPreferences(user_id=user.id, score_calculation_method=MasteryCalculation(2), mastery_score=3)
         else:
+            # Students get a None mastery calculation because we want it to follow the teacher's preferences.
             ups = UserPreferences(user_id=user.id, score_calculation_method=MasteryCalculation(6), mastery_score=None)
 
         # Set default values for the score calculation method and score cutoff.
         db.session.add(ups)
         db.session.commit()
     else:
+        # The user already exists, so jusy update their access token and expiration.
         if user.token != session['oauth_token']['access_token']:
             user.token = session['oauth_token']['access_token']
             user.expires = session['oauth_token']['expires_at']
             db.session.commit()
     
-    login_user(user, True)
+    login_user(user)
     return redirect('/')
