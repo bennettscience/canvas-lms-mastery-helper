@@ -24,7 +24,6 @@ class AssignmentListAPI(MethodView):
     # This isn't necessary for anything in the application. Assignments linked to a course are returned 
     # from CourseAssignmentsAPI now. 
     # Syncing assignments from canvas happens through CanvasSyncService().
-    app.logger.warning('Endpoint deprecated. Will be removed in a future version. Use "/sync/assignments/<int:course_id>" instead.')
     def get(self: None, course_id: int) -> List[Assignment]:
         """ Get stored assignments
 
@@ -191,8 +190,11 @@ class AssignmentAPI(MethodView):
                 student_score = getattr(assignment.watching, self.calculation_method)(student.canvas_id)
                 app.logger.info('{} has {} on {}'.format(student.name, student_score, assignment.watching.name))
                 
+                # Check the score against the cutoff score for the teacher.
                 if student_score is not None:
                     if student_score >= self.mastery_score:
+                        # TODO: Set to all or nothing now, _could_ be set to the Outcome calculated score with a toggle.
+                        # Add a preference to post all/nothing or the outcome score
                         score = assignment.points_possible
                     else:
                         score = 0

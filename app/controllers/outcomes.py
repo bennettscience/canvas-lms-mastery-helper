@@ -19,7 +19,6 @@ class OutcomeListAPI(MethodView):
         Returns:
             List[Outcome]: List of <Outcome>
         """
-        app.logger.warning('Endpoint deprecated. Use "/courses/<int:course_id>/outcomes" insetead.')
         outcomes = Outcome.query.all()
         return jsonify(OutcomeListSchema(many=True, exclude=('alignment',)).dump(outcomes))
 
