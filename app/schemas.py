@@ -4,7 +4,7 @@ from marshmallow import fields, Schema
 class UserPrefsSchema(Schema):
     id = fields.Int(dump_only=True)
     score_calculation_method = fields.Str()
-    mastery_score = fields.Int()
+    mastery_score = fields.Float()
 
 
 class UserLoginSchema(Schema):

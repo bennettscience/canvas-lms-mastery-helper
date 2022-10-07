@@ -30,7 +30,7 @@ sentry_sdk.init(
 app = Flask(__name__, static_folder='static', template_folder='views')
 app.config.from_object(Config)
 db = SQLAlchemy(app, metadata=metadata)
-migrate = Migrate(app, db, render_as_batch=True)
+migrate = Migrate(app, db, render_as_batch=True, compare_type=True)
 ma = Marshmallow(app)
 lm = LoginManager(app)
 

@@ -1,6 +1,6 @@
-
 from flask_login import UserMixin
 from sqlalchemy.orm import backref
+from sqlalchemy.dialects.mysql import FLOAT
 
 from app import db, lm
 from app.enums import MasteryCalculation
@@ -306,7 +306,7 @@ class UserPreferences(Manager, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", onupdate="CASCADE", ondelete="CASCADE"))
     score_calculation_method = db.Column(db.Enum(MasteryCalculation))
-    mastery_score = db.Column(db.Integer)
+    mastery_score = db.Column(FLOAT(precision=2, scale=1))
 
 
 user_courses = db.Table(

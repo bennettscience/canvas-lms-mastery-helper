@@ -7,7 +7,7 @@ from typing import List
 
 from app import db
 from app.models import User, Manager, Course
-from app.schemas import UserSchema, CourseSchema
+from app.schemas import UserPrefsSchema, UserSchema, CourseSchema
 
 
 class UserListAPI(MethodView):
@@ -48,7 +48,7 @@ class UserPrefsAPI(MethodView):
         if user is None:
             abort(404)
         
-        args = parser.parse({"mastery_score": fields.Int(), "score_calculation_method": fields.Str()}, location='form')
+        args = parser.parse(UserPrefsSchema(), location="form")
 
         user.preferences.update(args)
 

@@ -45,7 +45,7 @@
         {%endfor%}
     </select>
     <label for="mastery_score">Mastery Score</label>
-    <input name="mastery_score" value="{{user.preferences.mastery_score}}" type="number" />
+    <input name="mastery_score" value="{{user.preferences.mastery_score}}" type="number" step="0.1" />
 <button class="btn btn-primary" type="submit" form="user-prefs-form">Submit</button>
-<button hx-get="/users/{{user.id}}" hx-target="#form-wrap" hx-swap="outerHTML" class="btn btn-secondary">Cancel</button>
+<button hx-get="/users/{{user.canvas_id}}" hx-target="#form-wrap" hx-swap="outerHTML" class="btn btn-secondary">Cancel</button>
 </form>
