@@ -24,16 +24,24 @@ class SyncCoursesAPI(MethodView):
             list: Canvas courses as JSON
         """
         from app.models import Course
-        fetched_courses = self.service.get_courses("TeacherEnrollment", "available")
+        fetched_courses = self.service.get_courses("teacher", "available")
         stored_courses = [course.canvas_id for course in Course.query.all()]
 
-        courses = [{"name": course.name, "id": course.id} for course in fetched_courses if course.id not in stored_courses]
+        courses = [
+            {
+                "start_at": course.start_at,
+                "name": f"{course.start_at[0:4]} - {course.name}", 
+                "id": course.id, 
+            } 
+            for course in fetched_courses if course.id not in stored_courses and course.start_at is not None
+        ]
 
         content = {
-            "items": CourseSchema(many=True).dump(courses),
+            "items": CourseSchema(many=True).dump(sorted(courses, key=lambda d: d['start_at'], reverse=True)),
             "partial": 'course/partials/course_small.html',
             "title": 'Import a course'
         }
+
         return render_template(
             'shared/partials/sidebar.html',
             position="right",

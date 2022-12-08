@@ -31,7 +31,7 @@ class CanvasSyncService:
         # self.canvas = Canvas(Config.CANVAS_URI, Config.CANVAS_KEY)
         self.canvas = CanvasAuthService(mode).init_canvas()
 
-    def get_courses(self: None, enrollment_type: str='TeacherEnrollment', state: str='active') -> List[Course]:
+    def get_courses(self: None, enrollment_type: str='teacher', state: str='active') -> List[Course]:
         """ Fetch all courses from Canvas. Calls `canvasapi.Canvas.get_courses()`.
 
         Args:
@@ -41,7 +41,7 @@ class CanvasSyncService:
         Returns:
             List[Course]: List of <Course>
         """
-        return self.canvas.get_courses(enrollment_role=enrollment_type, state=state)
+        return self.canvas.get_courses(enrollment_type=enrollment_type, enrollment_state=state, include='term')
     
     def get_course(self: None, course_id: int) -> Course:
         """ Fetch a single course from Canvas. Most resources are course-bound, so this provides
@@ -53,7 +53,6 @@ class CanvasSyncService:
         Returns:
             Course: instance of <Course>
         """
-        app.logger.warning('This method will be removed in a future version. Use SyncCourseAPI.get() instead.')
         return self.canvas.get_course(course_id)
     
     def get_outcomes(self: None, course_id: int) -> List["Outcome"]:
@@ -70,7 +69,6 @@ class CanvasSyncService:
         Returns:
             list: list of dict
         """
-        app.logger.warning('This method will be removed in a future version. Use SyncOutcomesAPI.get() instead')
         request = self.canvas.get_course(course_id).get_all_outcome_links_in_context()
         
         # We don't need full Outcome objects to do the work, so pare the results down into
@@ -94,7 +92,6 @@ class CanvasSyncService:
         Returns:
             Outcome: <Outcome>
         """
-        app.logger.warning('This method will be remove din a future version. Use SyncOutcomesAPI.get() instead')
         # Check that the Outcome does not exist locally. 
         outcome_exists = Outcome.query.filter(Outcome.canvas_id == outcome_id).scalar()
         if outcome_exists is None:
@@ -165,6 +162,8 @@ class CanvasSyncService:
 
         # results is a flat array that can be iterated directly.
         for attempt in results:
+
+            # Prevent FK exceptions if the outcome doesn't exist
 
             attempt_exists = OutcomeAttempt.query.filter(OutcomeAttempt.attempt_canvas_id == attempt.id).scalar()
             user_exists = User.query.filter(User.canvas_id == attempt.links['user']).first()
@@ -282,7 +281,7 @@ class CanvasSyncService:
             self.post_assignment_submission(local_assignment)
 
     def post_assignment_submission(self: None, assignment: Assignment):
-        """ Post a score for the student back to the course gradebook
+        """ Post a score for all students in an assignment back to the course gradebook
 
         Args:
             assignment (Assignment): <Assignment>
@@ -291,6 +290,9 @@ class CanvasSyncService:
         course = self.canvas.get_course(assignment.course[0].canvas_id)
         canvas_assignment = course.get_assignment(assignment.canvas_id)
 
+        # This loops all student records for a given assignment and puts an update into Canvas for that student.
+        # TODO: May be more economical to do a bulk submit for each user. Build a list to submit and pass it to the bulk
+        # update endpoint?
         for assignment_attempt in assignment.student_attempts:
             student_submission = canvas_assignment.get_submission(assignment_attempt.user_id)
 
@@ -298,3 +300,4 @@ class CanvasSyncService:
             response = student_submission.edit(submission={"posted_grade": assignment_attempt.score})
 
             app.logger.info('Score submission finished')
+        return
