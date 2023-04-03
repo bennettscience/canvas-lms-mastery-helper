@@ -11,7 +11,7 @@ class TestBase(unittest.TestCase):
     @app.route('/auto_login/<user_name>')
     def auto_login(user_name):
         user = User.query.filter(User.name == user_name).first()
-        login_user(user, remember=True)
+        login_user(user)
         return "ok"
 
     def login(self, user_name):

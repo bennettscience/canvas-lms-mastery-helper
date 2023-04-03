@@ -34,7 +34,6 @@ class CourseSchema(Schema):
     name = fields.Str()
     outcomes = fields.List(fields.Nested("OutcomeListSchema"), dump_only=True)
     assignments = fields.List(fields.Nested(lambda: AssignmentSchema(exclude=('watching',))))
-    # enrollments = fields.List(fields.Nested(lambda: UserSchema(exclude=('enrollments',))))
 
 
 class UserAssignment(Schema):
