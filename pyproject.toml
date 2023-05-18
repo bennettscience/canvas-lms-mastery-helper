@@ -20,8 +20,8 @@ gunicorn = "^20.1.0"
 Flask-Admin = "^1.6.0"
 PyMySQL = "^1.0.2"
 sentry-sdk = {extras = ["flask"], version = "^1.5.6"}
-canvasapi = {git = "https://github.com/bennettscience/canvasapi.git", rev = "develop"}
 python-dotenv = "^0.19.0"
+canvasapi = "^3.1.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"

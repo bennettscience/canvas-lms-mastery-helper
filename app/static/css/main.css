@@ -6,6 +6,7 @@
     --success-color: #00915b;
     --tooltip-color: #f9f871;
     --black: #333;
+    --gray: #8b8b8b;
     --white: #f8f8ff;
 
     --active-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
@@ -317,6 +318,12 @@ main {
 
 .item--small:hover {
     border-color: var(--primary-color);
+}
+
+.item--small > .term {
+    margin-before:0;
+    font-size: 0.8rem;
+    color: var(--gray);
 }
 
 .item.attempt {

@@ -25,11 +25,12 @@ class SyncCoursesAPI(MethodView):
         """
         from app.models import Course
         fetched_courses = self.service.get_courses("teacher", "available")
-        breakpoint()
         stored_courses = [course.canvas_id for course in Course.query.all()]
 
         courses = [
             {
+                "term_id": course.term['id'],
+                "term_name": course.term['name'],
                 "name": f"{course.name}", 
                 "id": course.id, 
             } 
@@ -37,7 +38,7 @@ class SyncCoursesAPI(MethodView):
         ]
 
         content = {
-            "items": CourseSchema(many=True).dump(sorted(courses, key=lambda d: d['id'])),
+            "items": CourseSchema(many=True).dump(sorted(courses, key=lambda d: d['term_id'], reverse=True)),
             "partial": 'course/partials/course_small.html',
             "title": 'Import a course'
         }
