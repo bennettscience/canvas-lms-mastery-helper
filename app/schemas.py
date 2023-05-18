@@ -10,7 +10,12 @@ class UserPrefsSchema(Schema):
 class UserLoginSchema(Schema):
     id = fields.Int()
 
+class TermSchema(Schema):
+    id = fields.Int()
+    start_at = fields.DateTime()
+    end_at = fields.DateTime()
 
+    
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
@@ -34,7 +39,7 @@ class CourseSchema(Schema):
     name = fields.Str()
     outcomes = fields.List(fields.Nested("OutcomeListSchema"), dump_only=True)
     assignments = fields.List(fields.Nested(lambda: AssignmentSchema(exclude=('watching',))))
-
+    term = fields.Nested(TermSchema)
 
 class UserAssignment(Schema):
     id = fields.Int(dump_only=True)

@@ -35,14 +35,15 @@ class CanvasSyncService:
         """ Fetch all courses from Canvas. Calls `canvasapi.Canvas.get_courses()`.
 
         Args:
-            enrollment_type ([str], optional): Canvas enrollment type to filter by. Defaults to 'TeacherEnrollment'.
+            enrollment_type ([str], optional): Canvas enrollment type to filter by. Defaults to 'teacher'.
             state ([str], optional): Canvas enrollment state to filter. Defaults to 'active'.
 
         Returns:
             List[Course]: List of <Course>
         """
-        return self.canvas.get_courses(enrollment_type=enrollment_type, enrollment_state=state, include='term')
-    
+        request = self.canvas.get_courses(enrollment_type=enrollment_type, enrollment_state=state, include='term')
+        
+        return request
     def get_course(self: None, course_id: int) -> Course:
         """ Fetch a single course from Canvas. Most resources are course-bound, so this provides
         a nice way to scope requests automatically.
